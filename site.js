@@ -36,6 +36,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Products mega-menu: tap-to-expand chevron buttons (mobile, and as a
+  // click fallback everywhere). The chevron only expands/collapses the list
+  // in place — it never navigates. The "Products"/category NAME link next
+  // to it still navigates normally, since it's a plain <a href>.
+  document.querySelectorAll('.mega-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.nav-item.has-mega');
+      const isOpen = item.classList.toggle('mega-open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
+  document.querySelectorAll('.mega-cat-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.closest('.mega-cat');
+      const isOpen = cat.classList.toggle('mega-open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
+
   // Carousel galleries
   document.querySelectorAll('.carousel').forEach(carousel => {
     const track = carousel.querySelector('.carousel-track');

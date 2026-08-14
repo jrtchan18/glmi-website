@@ -57,24 +57,39 @@ directly going forward.)
 
 Nav is fixed to: **Who We Are, Products, Brands, Contact**.
 
-**Products mega-menu**: hovering "Products" in the header opens a flyout
-listing all 14 categories (flat, like Wyler's `/brands/` browse-categories
-menu); hovering a category opens a second flyout listing that category's
-items. Each item links to its own product page if its `CATEGORIES` entry
-has one (see Gloves), otherwise falls back to `{category}.html#{item-slug}`
-(`item_href()` in `generate.py`). Built from
-`CATEGORIES`/`MEGA_MENU_HTML` in `generate.py` (`mega_menu_html()`), styled in
-`styles.css` under "Products mega-menu". Opens/closes are driven by a small
-hover-intent script in `site.js` (adds/removes a `.mega-open` class with a
-~250ms close delay, so a diagonal mouse path from the trigger into the flyout
-— or from a category row into its item sub-panel — doesn't slip through the
-gap and close it early); gated to `@media (hover: hover) and (pointer: fine)`
-in JS so touch/mobile just gets a normal link to `products.html`. A plain
-CSS `:hover` fallback (same media guard) and `:focus-within` (keyboard,
-ungated) cover the no-JS case. Open/close is animated with a CSS
-`opacity`/`transform` transition rather than a JS animation library — same
-visual effect, no external dependency; swap in anime.js here if a fancier
-effect (e.g. staggered item reveal) is ever wanted.
+**Products mega-menu**: "Products" in the header opens a flyout listing all
+14 categories (flat, like Wyler's `/brands/` browse-categories menu); a
+category opens a second flyout listing that category's items. Each item
+links to its own product page if its `CATEGORIES` entry has one (see
+Gloves), otherwise falls back to `{category}.html#{item-slug}`
+(`item_href()` in `generate.py`). Built from `CATEGORIES`/`MEGA_MENU_HTML`
+in `generate.py` (`mega_menu_html()`), styled in `styles.css` under
+"Products mega-menu".
+
+The **name/label is always a separate element from the chevron**, on
+purpose: `.mega-label`/`.mega-cat-link` (an `<a>`, navigates to the
+page) sits next to `.mega-toggle`/`.mega-cat-toggle` (a `<button
+type="button">`, only ever expands/collapses — never navigates). Don't
+merge them back into one clickable element; that's what made the mobile
+arrow-vs-navigate distinction impossible before.
+- **Desktop** (`@media (hover: hover) and (pointer: fine)`): hovering the
+  row opens the flyout via a hover-intent script in `site.js` (adds/removes
+  `.mega-open` with a ~250ms close delay so a diagonal mouse path from the
+  trigger into the flyout, or from a category into its item sub-panel,
+  doesn't slip through the gap and close it early). A plain CSS `:hover`
+  fallback (same media guard) and `:focus-within` (keyboard, ungated) cover
+  the no-JS case. The chevron button also works here (click toggles
+  `.mega-open` directly) but is mostly redundant with hover.
+- **Mobile** (`@media (max-width: 860px)`, no hover): the chevron
+  button is the only way to expand the list — clicking/tapping it toggles
+  `.mega-open` (always-on click handlers in `site.js`, not gated) and the
+  flyout collapses into a static, dark-themed, tap-to-expand accordion
+  (`max-height` transition instead of the desktop's floating
+  opacity/transform dropdown). Tapping the name still navigates normally.
+Open/close is animated with a CSS `opacity`/`transform`/`max-height`
+transition rather than a JS animation library — same visual effect, no
+external dependency; swap in anime.js here if a fancier effect (e.g.
+staggered item reveal) is ever wanted.
 **Do not re-add `overflow-y:auto`/`max-height` to `.mega-menu` or
 `.mega-sub`** — that was the bug that made the second-level flyout
 invisible: setting `overflow-y` to non-`visible` also computes `overflow-x`

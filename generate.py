@@ -266,10 +266,12 @@ def mega_menu_html():
             f'<a href="{item_href(cat, item)}">{item[0]}</a>' for item in cat["items"]
         ) or f'<a href="{cat["slug"]}.html">View {cat["title"]}</a>'
         rows.append(f"""<li class="mega-cat">
-          <a href="{cat['slug']}.html" class="mega-cat-link">
-            <span>{cat['title']}</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
-          </a>
+          <div class="mega-cat-row">
+            <a href="{cat['slug']}.html" class="mega-cat-link">{cat['title']}</a>
+            <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show {cat['title']} items">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
           <div class="mega-sub">
             {sub_links}
           </div>
@@ -304,7 +306,12 @@ def header(active=None, depth=""):
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">MENU</button>
     <nav id="mainNav">
       <div class="nav-item has-mega">
-        <a href="{depth}products.html"{' aria-current="page"' if active=="products" else ""}>Products</a>
+        <div class="mega-row">
+          <a href="{depth}products.html" class="mega-label"{' aria-current="page"' if active=="products" else ""}>Products</a>
+          <button type="button" class="mega-toggle" aria-expanded="false" aria-label="Show product categories">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
         <div class="mega-menu">
           <ul class="mega-cats">
             {MEGA_MENU_HTML}
