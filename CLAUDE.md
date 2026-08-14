@@ -31,8 +31,18 @@ directly going forward.)
 - `who-we-are.html` — dedicated About page: story/history, established-year +
   years-in-business + location stat plate, "What We Stand For" pillars, CTA
 - `products.html` — hub listing all 14 categories, grouped under 7 sections
-- `brands.html` — dedicated brands page, grouped by product line (Bearings,
-  Power Drills, Electrical Wires & Cables)
+- `brands.html` — dedicated brands page: a flat, ungrouped logo wall (all of
+  `BRANDS`), modeled on bakalatbp.com/brands/ — **no per-category grouping,
+  don't reintroduce it.** Each tile is either a real logo (`<img>`) or,
+  until the client uploads one, a placeholder tile (icon + brand name text).
+  `BRANDS` in `generate.py` is `(name, icon_key, img_path_or_None)` — no
+  group/product-line field anymore. `brand_item_html()` renders one tile;
+  `.brand-wall`/`.brand-tile`/`.brand-placeholder`/`.brand-logo` in
+  `styles.css`. The homepage's "Brands we carry" section shows a curated
+  subset — `HOMEPAGE_BRAND_NAMES` in `generate.py` (currently Sumotech,
+  G-Weld, Grand Sumoweld, ABC, Yanase, Boysen) — in that exact order, with a
+  "View All Brands" link to the full wall. To change which brands appear on
+  the homepage, edit `HOMEPAGE_BRAND_NAMES`, not `BRANDS` itself.
 - 14 category pages (`welding-materials.html`, `abrasives.html`, `bearings.html`,
   etc.) — each has a photo gallery carousel + item cards. Item cards are
   intentionally minimal: picture + name only, no description text — the
@@ -99,6 +109,26 @@ viewport, fix it by scrolling an inner wrapper, not `.mega-menu`/`.mega-sub`
 themselves. Item ids are slugified item names (`slugify()`), added to each
 item-card in the category page loop — keep item names unique within a
 category or ids collide.
+
+**Homepage scroll-reveal animations (anime.js)** — homepage only, not any
+other page, and not the Products mega-menu (that stays instant/CSS-only,
+deliberately). anime.js is loaded via CDN (`ANIME_JS_TAG`, only passed into
+`head()`'s `extra_head` param for `index_page` — don't add it to `head()`
+globally, other pages don't need the extra request). Mark any element
+`data-reveal` in the homepage HTML and `site.js` will fade + slide it up
+(anime.js) when it scrolls into view (IntersectionObserver). Add
+`data-reveal-delay="N"` (ms) to stagger items in a grid — set per-element
+index in the Python loop that builds the grid (e.g. `i * 60`), not in CSS.
+Respects `prefers-reduced-motion` and falls back to plain-visible if
+anime.js fails to load. There's also a 2.5s safety-net timeout per element
+in case the IntersectionObserver never fires, so content can never get
+permanently stuck invisible — keep that when touching this code, it's a
+deliberate defensive measure, not dead code. (Note for future debugging: if
+you ever test this in an automated/headless browser tab and reveal
+animations look stuck, check `document.visibilityState` first —
+`requestAnimationFrame`, which anime.js's tweening depends on, is
+suspended by the browser for backgrounded/hidden tabs. That's a testing-tool
+artifact, not a site bug, and doesn't affect real visitors.)
 
 ## Design system
 

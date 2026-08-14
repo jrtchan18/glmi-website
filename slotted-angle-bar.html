@@ -187,15 +187,14 @@ a.plate-card{display:block;}
 .cat-pagination .next{text-align:right; margin-left:auto;}
 
 /* ===== Brands strip ===== */
-.brands{background:var(--ink); color:var(--white); padding:56px 0;}
-.brands .section-head{border-color:#35473B;}
-.brands .section-head .kicker{color:var(--green);}
-.brands .section-head h2{color:var(--white);}
-.brands .section-head .sub{color:#AEBCB2;}
-.brand-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:2px; background:#263029;}
-.brand-item{background:var(--ink); padding:22px 16px; font-family:'IBM Plex Mono', monospace; font-size:13px; letter-spacing:0.04em; color:#D9E2DB; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:76px;}
-.brand-item span.grp{display:block;font-size:10px;color:var(--steel-light);letter-spacing:0.1em;margin-top:0;text-transform:uppercase;}
-.brand-logo{max-width:100%; max-height:34px; background:#fff; padding:8px 14px; border-radius:2px; object-fit:contain;}
+/* Flat, ungrouped logo wall — brands.html (all) and the homepage's curated subset */
+.brand-wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:16px;}
+.brand-tile{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:20px; min-height:96px; display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, transform .15s ease;}
+.brand-tile:hover{border-color:var(--green); transform:translateY(-2px);}
+.brand-logo{max-width:100%; max-height:44px; object-fit:contain;}
+.brand-placeholder{display:flex; flex-direction:column; align-items:center; gap:8px;}
+.brand-placeholder svg{stroke:var(--green); stroke-width:1.5;}
+.brand-placeholder span{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--steel); text-align:center;}
 
 /* ===== About ===== */
 .about{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
@@ -814,6 +813,52 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 </footer>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // Homepage scroll-reveal (anime.js) — elements marked [data-reveal] fade
+  // + slide up as they enter the viewport. [data-reveal-delay] (ms) staggers
+  // items within a grid (set per-element in generate.py). Not used on the
+  // Products mega-menu or any other page — this only runs where anime.js is
+  // actually loaded (homepage only, see ANIME_JS_TAG in generate.py) and
+  // where reduced-motion isn't requested.
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  if (revealEls.length) {
+    if (window.anime && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealed = new WeakSet();
+      const reveal = (el) => {
+        if (revealed.has(el)) return;
+        revealed.add(el);
+        anime({
+          targets: el,
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 550,
+          easing: 'easeOutQuad',
+          delay: Number(el.dataset.revealDelay || 0),
+        });
+      };
+      anime.set(revealEls, { opacity: 0, translateY: 24 });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+          reveal(entry.target);
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+      revealEls.forEach((el) => io.observe(el));
+      // Safety net: IntersectionObserver should always fire for in-view
+      // elements on page load, but if it doesn't (older browser, odd edge
+      // case), don't leave content permanently invisible — force it in.
+      setTimeout(() => {
+        revealEls.forEach((el) => {
+          if (!revealed.has(el)) { io.unobserve(el); reveal(el); }
+        });
+      }, 2500);
+    } else {
+      // anime.js failed to load (e.g. offline) or reduced-motion requested —
+      // make sure content is just visible, not stuck hidden.
+      revealEls.forEach((el) => { el.style.opacity = '1'; });
+    }
+  }
+
   // Mobile nav toggle
   const toggle = document.getElementById('navToggle');
   const nav = document.getElementById('mainNav');

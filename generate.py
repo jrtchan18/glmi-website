@@ -240,25 +240,39 @@ slug_order = [c["slug"] for c in CATEGORIES]
 
 # ---- Brand data (single source for both the homepage brand strip and brands.html) ----
 # name, product-line group, icon key, logo image path (None until a real logo is uploaded)
+# Brands are shown as a flat, ungrouped logo wall (brands.html + a curated
+# subset on the homepage) — name, icon key (used only when there's no real
+# logo yet), logo image path (None until the client uploads one).
 BRANDS = [
-    ("FAG", "Bearings", "bearing", None),
-    ("IKO", "Bearings", "bearing", None),
-    ("KOYO", "Bearings", "bearing", None),
-    ("Makita", "Power Drills", "drill", "images/Brands/makita.webp"),
-    ("Hitachi", "Power Drills", "drill", None),
-    ("Bosch", "Power Drills", "drill", "images/Brands/bosch.png"),
-    ("AEG", "Power Drills", "drill", None),
-    ("Phelps Dodge", "Electrical Wires & Cables", "wire", None),
-    ("Columbia", "Electrical Wires & Cables", "wire", None),
-    ("Duraflex", "Electrical Wires & Cables", "wire", None),
-    ("Philflex", "Electrical Wires & Cables", "wire", None),
-    ("G Weld PF-Series", "Welding Materials", "welding", "images/Brands/G Weld PF Series.png"),
-    ("Mitutoyo", "Cutting Tools / Precision", "cutting", "images/Brands/mitotuyo.png"),
+    ("FAG", "bearing", None),
+    ("IKO", "bearing", None),
+    ("KOYO", "bearing", None),
+    ("Makita", "drill", "images/Brands/makita.webp"),
+    ("Hitachi", "drill", None),
+    ("Bosch", "drill", "images/Brands/bosch.png"),
+    ("AEG", "drill", None),
+    ("Phelps Dodge", "wire", None),
+    ("Columbia", "wire", None),
+    ("Duraflex", "wire", None),
+    ("Philflex", "wire", None),
+    ("G-Weld", "welding", "images/Brands/G Weld PF Series.png"),
+    ("Mitutoyo", "cutting", "images/Brands/mitotuyo.png"),
+    ("Sumotech", "brand", None),
+    ("Grand Sumoweld", "welding", None),
+    ("ABC", "brand", None),
+    ("Yanase", "brand", None),
+    ("Boysen", "brand", None),
 ]
+BRANDS_BY_NAME = {b[0]: b for b in BRANDS}
+HOMEPAGE_BRAND_NAMES = ["Sumotech", "G-Weld", "Grand Sumoweld", "ABC", "Yanase", "Boysen"]
 
-def brand_item_html(name, grp, img):
-    inner = f'<img class="brand-logo" src="{img}" alt="{name}">' if img else name
-    return f'<div class="brand-item">{inner}<span class="grp">{grp}</span></div>'
+def brand_item_html(name, icon_key, img, reveal_delay=None):
+    if img:
+        inner = f'<img class="brand-logo" src="{img}" alt="{name}">'
+    else:
+        inner = f'<div class="brand-placeholder">{icon(icon_key, size=26)}<span>{name}</span></div>'
+    attrs = f' data-reveal data-reveal-delay="{reveal_delay}"' if reveal_delay is not None else ''
+    return f'<div class="brand-tile"{attrs}>{inner}</div>'
 
 # ---- Nav "Products" mega-menu: hover a category, see the items under it ----
 def item_href(cat, item):
@@ -355,7 +369,7 @@ def footer(depth=""):
 CSS_CONTENT = open(os.path.join(os.path.dirname(__file__), "styles.css")).read()
 JS_CONTENT = open(os.path.join(os.path.dirname(__file__), "site.js")).read()
 
-def head(title, desc):
+def head(title, desc, extra_head=""):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -368,8 +382,12 @@ def head(title, desc):
 <style>
 {CSS_CONTENT}
 </style>
-</head>
+{extra_head}</head>
 <body>"""
+
+# Loaded only on the homepage — scroll-reveal animations (see site.js) use
+# this. Other pages don't need it, so don't add this to head() globally.
+ANIME_JS_TAG = '<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>\n'
 
 def mini_cta(cat_title=None, heading=None, sub=None):
     heading = heading or f"Need pricing for {cat_title}?"
@@ -538,7 +556,7 @@ group_teasers = [
     ("packaging-materials", "packaging", "Packaging Materials", "Tape, stretch film, plastic &amp; metal straps."),
 ]
 teaser_cards = "\n        ".join(
-    f"""<a href="{slug}.html" class="plate-card">
+    f"""<a href="{slug}.html" class="plate-card" data-reveal data-reveal-delay="{i * 60}">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           {thumb(name, ic)}
           <div class="plate-body">
@@ -546,17 +564,21 @@ teaser_cards = "\n        ".join(
             <p>{desc}</p>
             <span class="go">View Products &rarr;</span>
           </div>
-        </a>""" for slug, ic, name, desc in group_teasers
+        </a>""" for i, (slug, ic, name, desc) in enumerate(group_teasers)
 )
 
-brand_grid_html = "\n        ".join(brand_item_html(name, grp, img) for name, grp, ic, img in BRANDS)
+homepage_brand_tiles = "\n        ".join(
+    brand_item_html(*BRANDS_BY_NAME[name], reveal_delay=i * 60)
+    for i, name in enumerate(HOMEPAGE_BRAND_NAMES)
+)
 
 index_page = head(f"{COMPANY} | Industrial Supplies Trading",
-                   f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.") + "\n" + header() + f"""
+                   f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.",
+                   extra_head=ANIME_JS_TAG) + "\n" + header() + f"""
 
 <a id="top"></a>
 <section class="hero">
-  <div class="wrap hero-inner">
+  <div class="wrap hero-inner" data-reveal>
     <div>
       <span class="eyebrow">Wholesaler &middot; Retailer</span>
       <h1>Top-quality materials. <em>Trusted brands.</em></h1>
@@ -579,7 +601,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
 <main>
   <section class="why-us">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <div>
           <span class="kicker">Why {COMPANY}</span>
           <h2>Built on quality, trust, and service.</h2>
@@ -587,22 +609,22 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
         <p class="sub">What sets us apart as your industrial supply partner.</p>
       </div>
       <div class="why-grid">
-        <div class="why-card">
+        <div class="why-card" data-reveal data-reveal-delay="0">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div>
           <h3>Top-Quality Materials</h3>
           <p>Genuine, dependable stock across every category &mdash; from welding wire to structural steel &mdash; so what you install or resell holds up.</p>
         </div>
-        <div class="why-card">
+        <div class="why-card" data-reveal data-reveal-delay="80">
           <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg></div>
           <h3>Trusted Industrial Supplier</h3>
           <p>{COMPANY} has built its reputation as a dependable wholesaler and retailer for contractors and industrial buyers.</p>
         </div>
-        <div class="why-card">
+        <div class="why-card" data-reveal data-reveal-delay="160">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg></div>
           <h3>Trusted Brands</h3>
           <p>FAG, Makita, Bosch, Phelps Dodge, and more &mdash; established names you already recognize and can rely on.</p>
         </div>
-        <div class="why-card">
+        <div class="why-card" data-reveal data-reveal-delay="240">
           <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3>Exceptional Service, Best Prices</h3>
           <p>Direct, responsive support and competitive pricing on bulk and trade orders &mdash; call or message us for a quote.</p>
@@ -613,7 +635,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
 
   <section id="products">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <div>
           <span class="kicker">What We Supply</span>
           <h2>Product groups</h2>
@@ -629,17 +651,17 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
     </div>
   </section>
 
-  <section class="brands" id="brands">
+  <section id="brands">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <div>
           <span class="kicker">Trusted Names</span>
           <h2>Brands we carry</h2>
         </div>
         <p class="sub">Genuine stock from established manufacturers across our product lines.</p>
       </div>
-      <div class="brand-grid">
-        {brand_grid_html}
+      <div class="brand-wall">
+        {homepage_brand_tiles}
       </div>
       <div style="text-align:center;margin-top:32px;">
         <a href="brands.html" class="btn btn-primary" style="display:inline-flex;">View All Brands</a>
@@ -649,22 +671,22 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
 
   <section class="stats-band">
     <div class="wrap stats-grid">
-      <div class="stat"><h3>14</h3><p>Product Categories</p></div>
-      <div class="stat"><h3>15+</h3><p>Brands Carried</p></div>
-      <div class="stat"><h3>{YEARS_IN_BUSINESS}+</h3><p>Years in Business</p></div>
-      <div class="stat"><h3>[X]</h3><p>Clients Served</p></div>
+      <div class="stat" data-reveal data-reveal-delay="0"><h3>14</h3><p>Product Categories</p></div>
+      <div class="stat" data-reveal data-reveal-delay="60"><h3>15+</h3><p>Brands Carried</p></div>
+      <div class="stat" data-reveal data-reveal-delay="120"><h3>{YEARS_IN_BUSINESS}+</h3><p>Years in Business</p></div>
+      <div class="stat" data-reveal data-reveal-delay="180"><h3>[X]</h3><p>Clients Served</p></div>
     </div>
   </section>
 
   <section id="who-we-are">
     <div class="wrap about">
-      <div class="about-copy">
+      <div class="about-copy" data-reveal>
         <span class="kicker">Who We Are</span>
         <h2>Built for the trade, not the storefront.</h2>
         <p>{COMPANY} is a trusted wholesaler and retailer of quality industrial and construction materials, established in {ESTABLISHED_YEAR}. We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices.</p>
         <p><a href="who-we-are.html" class="btn btn-ghost" style="color:var(--ink);border-color:var(--ink);display:inline-flex;margin-top:8px;">Read Our Full Story &rarr;</a></p>
       </div>
-      <div class="stat-plate">
+      <div class="stat-plate" data-reveal data-reveal-delay="120">
         <div class="stat"><h3>{ESTABLISHED_YEAR}</h3><p>Established</p></div>
         <div class="stat"><h3 style="font-size:20px;">San Juan City</h3><p>Metro Manila, PH</p></div>
       </div>
@@ -673,7 +695,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
 
   <section class="contact" id="contact">
     <div class="wrap contact-inner">
-      <div>
+      <div data-reveal>
         <h2>Need stock or a quote?</h2>
         <p>Send us your item list and quantities &mdash; we'll get back with pricing and availability. No online orders, just a direct line to us.</p>
         <div class="contact-ctas">
@@ -681,7 +703,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
           <a href="mailto:{EMAIL}" class="btn btn-ghost">Email Us</a>
         </div>
       </div>
-      <div class="contact-plate">
+      <div class="contact-plate" data-reveal data-reveal-delay="120">
         <div class="row">{icon("tag")}<div><div class="label">Mobile / Viber</div><div class="value">{PHONE_DISPLAY}</div></div></div>
         <div class="row">{icon("tag")}<div><div class="label">Telephone</div><div class="value">{LANDLINE_DISPLAY}</div></div></div>
         <div class="row">{icon("tag")}<div><div class="label">Email</div><div class="value">{EMAIL_DISPLAY}</div></div></div>
@@ -987,30 +1009,9 @@ for name, desc, slug in steel_cat["items"]:
 print(f"Generated {len(steel_cat['items'])} Tubing & Structural Steel product pages")
 
 # =========================================================
-# 5. Generate dedicated Brands page
+# 5. Generate dedicated Brands page — flat logo wall, no grouping
 # =========================================================
-brand_groups = {}
-for name, grp, ic, img in BRANDS:
-    brand_groups.setdefault(grp, []).append((name, ic, img))
-
-brand_group_html = []
-for gi, (grp, brands) in enumerate(brand_groups.items(), start=1):
-    cards = "\n          ".join(
-        f"""<div class="plate-card">
-            <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-            {thumb(name, ic, size=32, img=img, logo=bool(img))}
-            <div class="plate-body"><h4>{name}</h4></div>
-          </div>""" for name, ic, img in brands
-    )
-    brand_group_html.append(f"""<div class="group">
-        <div class="group-head">
-          <span class="group-code mono">GRP.0{gi}</span>
-          <h3>{grp}</h3>
-        </div>
-        <div class="card-grid">
-          {cards}
-        </div>
-      </div>""")
+all_brand_tiles = "\n        ".join(brand_item_html(*b) for b in BRANDS)
 
 brands_page = head("Brands We Carry", f"Genuine stock from established manufacturers {COMPANY} carries — FAG, Makita, Bosch, Phelps Dodge, and more.") + "\n" + header(active="brands") + f"""
 
@@ -1029,7 +1030,9 @@ brands_page = head("Brands We Carry", f"Genuine stock from established manufactu
 <main>
   <section>
     <div class="wrap">
-      {"".join(brand_group_html)}
+      <div class="brand-wall">
+        {all_brand_tiles}
+      </div>
 
       <div class="pd-block">
         {mini_cta("a specific brand")}

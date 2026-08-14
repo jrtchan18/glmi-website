@@ -1,4 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Homepage scroll-reveal (anime.js) — elements marked [data-reveal] fade
+  // + slide up as they enter the viewport. [data-reveal-delay] (ms) staggers
+  // items within a grid (set per-element in generate.py). Not used on the
+  // Products mega-menu or any other page — this only runs where anime.js is
+  // actually loaded (homepage only, see ANIME_JS_TAG in generate.py) and
+  // where reduced-motion isn't requested.
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  if (revealEls.length) {
+    if (window.anime && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const revealed = new WeakSet();
+      const reveal = (el) => {
+        if (revealed.has(el)) return;
+        revealed.add(el);
+        anime({
+          targets: el,
+          opacity: [0, 1],
+          translateY: [24, 0],
+          duration: 550,
+          easing: 'easeOutQuad',
+          delay: Number(el.dataset.revealDelay || 0),
+        });
+      };
+      anime.set(revealEls, { opacity: 0, translateY: 24 });
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+          reveal(entry.target);
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+      revealEls.forEach((el) => io.observe(el));
+      // Safety net: IntersectionObserver should always fire for in-view
+      // elements on page load, but if it doesn't (older browser, odd edge
+      // case), don't leave content permanently invisible — force it in.
+      setTimeout(() => {
+        revealEls.forEach((el) => {
+          if (!revealed.has(el)) { io.unobserve(el); reveal(el); }
+        });
+      }, 2500);
+    } else {
+      // anime.js failed to load (e.g. offline) or reduced-motion requested —
+      // make sure content is just visible, not stuck hidden.
+      revealEls.forEach((el) => { el.style.opacity = '1'; });
+    }
+  }
+
   // Mobile nav toggle
   const toggle = document.getElementById('navToggle');
   const nav = document.getElementById('mainNav');
