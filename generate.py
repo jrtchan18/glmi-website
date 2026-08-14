@@ -4,12 +4,18 @@ import datetime
 
 OUT = os.path.dirname(os.path.abspath(__file__))
 
-PHONE = "+639178960800"
-PHONE_DISPLAY = "(0917) 896 0800"
-LANDLINE_DISPLAY = "8366-2167 / 8367-8298"
-EMAIL = "grandlexther2012@gmail.com"
+COMPANY = "GLMI"
+# Contact details are placeholders — real numbers/email not finalized yet.
+# PHONE/EMAIL (used in tel:/mailto: hrefs) are intentionally blank so the
+# Call/Email buttons degrade gracefully (open the dialer/mail app with
+# nothing pre-filled) instead of linking to fake contact info.
+PHONE = ""
+PHONE_DISPLAY = "[Mobile/Viber number]"
+LANDLINE_DISPLAY = "[Telephone number]"
+EMAIL = ""
+EMAIL_DISPLAY = "[Email address]"
 ADDRESS = "197 T. Claudio St., Brgy. Sta. Lucia, San Juan City, Philippines"
-TAGLINE = "Wholesaler, Retailer, and Importer of Quality Industrial and Construction Materials"
+TAGLINE = "Wholesaler and Retailer of Quality Industrial and Construction Materials"
 ESTABLISHED_YEAR = 2003
 YEARS_IN_BUSINESS = datetime.date.today().year - ESTABLISHED_YEAR
 
@@ -300,8 +306,8 @@ def header(active=None, depth=""):
     return f"""<header>
   <div class="header-inner">
     <a href="{depth}index.html" class="logo">
-      <span class="name">GRAND <span>LEXTHER</span></span>
-      <span class="tagline">Wholesaler &middot; Retailer &middot; Importer</span>
+      <span class="name">GL<span>MI</span></span>
+      <span class="tagline">Wholesaler &middot; Retailer</span>
     </a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">MENU</button>
     <nav id="mainNav">
@@ -333,7 +339,7 @@ def header(active=None, depth=""):
 def footer(depth=""):
     return f"""<footer>
   <div class="wrap footer-inner">
-    <span>&copy; 2026 Grand Lexther Marketing, Inc. All rights reserved.</span>
+    <span>&copy; 2026 {COMPANY}. All rights reserved.</span>
     <div class="footer-links">
       <a href="{depth}products.html">Products</a>
       <a href="{depth}brands.html">Brands</a>
@@ -355,7 +361,7 @@ def head(title, desc):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | Grand Lexther</title>
+<title>{title} | {COMPANY}</title>
 <meta name="description" content="{desc}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -502,7 +508,7 @@ products_page = head("Products", "Full product catalog — welding materials, ab
   <div class="wrap">
     <span class="group-code mono">Full Catalog</span>
     <h1 style="margin-top:8px;">All Product Categories</h1>
-    <p style="color:#C7CDD3;font-size:15px;margin-top:8px;max-width:560px;">14 categories across 7 product groups. Select a category to view items, or contact us directly with your requirements.</p>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">14 categories across 7 product groups. Select a category to view items, or contact us directly with your requirements.</p>
   </div>
 </section>
 
@@ -545,14 +551,14 @@ teaser_cards = "\n        ".join(
 
 brand_grid_html = "\n        ".join(brand_item_html(name, grp, img) for name, grp, ic, img in BRANDS)
 
-index_page = head("Grand Lexther | Industrial Supplies Trading",
-                   "Grand Lexther supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.") + "\n" + header() + f"""
+index_page = head(f"{COMPANY} | Industrial Supplies Trading",
+                   f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.") + "\n" + header() + f"""
 
 <a id="top"></a>
 <section class="hero">
   <div class="wrap hero-inner">
     <div>
-      <span class="eyebrow">Wholesaler &middot; Retailer &middot; Importer</span>
+      <span class="eyebrow">Wholesaler &middot; Retailer</span>
       <h1>Top-quality materials. <em>Trusted brands.</em></h1>
       <p>{TAGLINE}. A trusted industrial supplier for contractors and industrial buyers &mdash; backed by exceptional service and competitive prices.</p>
       <div class="hero-ctas">
@@ -575,7 +581,7 @@ index_page = head("Grand Lexther | Industrial Supplies Trading",
     <div class="wrap">
       <div class="section-head">
         <div>
-          <span class="kicker">Why Grand Lexther</span>
+          <span class="kicker">Why {COMPANY}</span>
           <h2>Built on quality, trust, and service.</h2>
         </div>
         <p class="sub">What sets us apart as your industrial supply partner.</p>
@@ -587,9 +593,9 @@ index_page = head("Grand Lexther | Industrial Supplies Trading",
           <p>Genuine, dependable stock across every category &mdash; from welding wire to structural steel &mdash; so what you install or resell holds up.</p>
         </div>
         <div class="why-card">
-          <div class="icon-badge gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg></div>
+          <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg></div>
           <h3>Trusted Industrial Supplier</h3>
-          <p>Grand Lexther Marketing, Inc. has built its reputation as a dependable wholesaler, retailer, and importer for contractors and industrial buyers.</p>
+          <p>{COMPANY} has built its reputation as a dependable wholesaler and retailer for contractors and industrial buyers.</p>
         </div>
         <div class="why-card">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg></div>
@@ -597,7 +603,7 @@ index_page = head("Grand Lexther | Industrial Supplies Trading",
           <p>FAG, Makita, Bosch, Phelps Dodge, and more &mdash; established names you already recognize and can rely on.</p>
         </div>
         <div class="why-card">
-          <div class="icon-badge gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
           <h3>Exceptional Service, Best Prices</h3>
           <p>Direct, responsive support and competitive pricing on bulk and trade orders &mdash; call or message us for a quote.</p>
         </div>
@@ -655,7 +661,7 @@ index_page = head("Grand Lexther | Industrial Supplies Trading",
       <div class="about-copy">
         <span class="kicker">Who We Are</span>
         <h2>Built for the trade, not the storefront.</h2>
-        <p>Grand Lexther Marketing, Inc. is a trusted wholesaler, retailer, and importer of quality industrial and construction materials, established in {ESTABLISHED_YEAR}. We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices.</p>
+        <p>{COMPANY} is a trusted wholesaler and retailer of quality industrial and construction materials, established in {ESTABLISHED_YEAR}. We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices.</p>
         <p><a href="who-we-are.html" class="btn btn-ghost" style="color:var(--ink);border-color:var(--ink);display:inline-flex;margin-top:8px;">Read Our Full Story &rarr;</a></p>
       </div>
       <div class="stat-plate">
@@ -678,7 +684,7 @@ index_page = head("Grand Lexther | Industrial Supplies Trading",
       <div class="contact-plate">
         <div class="row">{icon("tag")}<div><div class="label">Mobile / Viber</div><div class="value">{PHONE_DISPLAY}</div></div></div>
         <div class="row">{icon("tag")}<div><div class="label">Telephone</div><div class="value">{LANDLINE_DISPLAY}</div></div></div>
-        <div class="row">{icon("tag")}<div><div class="label">Email</div><div class="value">{EMAIL}</div></div></div>
+        <div class="row">{icon("tag")}<div><div class="label">Email</div><div class="value">{EMAIL_DISPLAY}</div></div></div>
         <div class="row">{icon("tag")}<div><div class="label">Address</div><div class="value">{ADDRESS}</div></div></div>
         <div class="row">{icon("tag")}<div><div class="label">Business Hours</div><div class="value">[Mon&ndash;Sat, 8:00 AM &ndash; 5:00 PM]</div></div></div>
       </div>
@@ -1006,7 +1012,7 @@ for gi, (grp, brands) in enumerate(brand_groups.items(), start=1):
         </div>
       </div>""")
 
-brands_page = head("Brands We Carry", "Genuine stock from established manufacturers Grand Lexther carries — FAG, Makita, Bosch, Phelps Dodge, and more.") + "\n" + header(active="brands") + f"""
+brands_page = head("Brands We Carry", f"Genuine stock from established manufacturers {COMPANY} carries — FAG, Makita, Bosch, Phelps Dodge, and more.") + "\n" + header(active="brands") + f"""
 
 <div class="breadcrumb">
   <div class="wrap"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Brands</span></div>
@@ -1016,7 +1022,7 @@ brands_page = head("Brands We Carry", "Genuine stock from established manufactur
   <div class="wrap">
     <span class="group-code mono">Trusted Names</span>
     <h1 style="margin-top:8px;">Brands We Carry</h1>
-    <p style="color:#C7CDD3;font-size:15px;margin-top:8px;max-width:560px;">Genuine stock from established manufacturers across our product lines &mdash; not generic substitutes.</p>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">Genuine stock from established manufacturers across our product lines &mdash; not generic substitutes.</p>
   </div>
 </section>
 
@@ -1053,7 +1059,7 @@ value_rows_html = "\n        ".join(
     for path, label, val in value_rows
 )
 
-about_page = head("Who We Are", f"Grand Lexther Marketing, Inc. has been a trusted wholesaler, retailer, and importer of quality industrial and construction materials since {ESTABLISHED_YEAR}.") + "\n" + header(active="about") + f"""
+about_page = head("Who We Are", f"{COMPANY} has been a trusted wholesaler and retailer of quality industrial and construction materials since {ESTABLISHED_YEAR}.") + "\n" + header(active="about") + f"""
 
 <div class="breadcrumb">
   <div class="wrap"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Who We Are</span></div>
@@ -1063,7 +1069,7 @@ about_page = head("Who We Are", f"Grand Lexther Marketing, Inc. has been a trust
   <div class="wrap">
     <span class="group-code mono">Est. {ESTABLISHED_YEAR}</span>
     <h1 style="margin-top:8px;">Who We Are</h1>
-    <p style="color:#C7CDD3;font-size:15px;margin-top:8px;max-width:560px;">{TAGLINE}, serving contractors, fabricators, and industrial buyers since {ESTABLISHED_YEAR}.</p>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">{TAGLINE}, serving contractors, fabricators, and industrial buyers since {ESTABLISHED_YEAR}.</p>
   </div>
 </section>
 
@@ -1073,7 +1079,7 @@ about_page = head("Who We Are", f"Grand Lexther Marketing, Inc. has been a trust
       <div class="about-copy">
         <span class="kicker">Our Story</span>
         <h2>More than two decades of industrial supply.</h2>
-        <p>Grand Lexther Marketing, Inc. was established in {ESTABLISHED_YEAR} as a wholesaler, retailer, and importer of quality industrial and construction materials. What began as a direct line between suppliers and the trade has grown into a catalog spanning welding materials, tools, bearings, electrical wires, safety gear, and construction hardware.</p>
+        <p>{COMPANY} was established in {ESTABLISHED_YEAR} as a wholesaler and retailer of quality industrial and construction materials. What began as a direct line between suppliers and the trade has grown into a catalog spanning welding materials, tools, bearings, electrical wires, safety gear, and construction hardware.</p>
         <p>We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices. No storefront browsing, no cart &mdash; just a direct line to people who know the stock.</p>
       </div>
       <div class="stat-plate">

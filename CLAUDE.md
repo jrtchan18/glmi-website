@@ -1,4 +1,4 @@
-# Grand Lexther Marketing, Inc. — Website
+# GLMI — Website
 
 Static HTML/CSS/JS catalog site (not e-commerce). Customers browse products and
 brands, then call/email/message to inquire — there is no cart or checkout.
@@ -25,7 +25,7 @@ directly going forward.)
 
 ## Site structure
 
-- `index.html` — homepage: hero → "Why Grand Lexther" (4 trust pillars) →
+- `index.html` — homepage: hero → "Why GLMI" (4 trust pillars) →
   product groups teaser → brands teaser → stats band → Who We Are teaser
   (links out to `who-we-are.html`) → Contact
 - `who-we-are.html` — dedicated About page: story/history, established-year +
@@ -102,15 +102,27 @@ category or ids collide.
 
 ## Design system
 
-- Colors pulled from the client's real calling card + a later "make it more
-  visually appealing" request: deep charcoal-green ink `#16241D`, forest green
-  `#1C7A41` / `#125C2F`, warm gold accent `#C89B3C` / `#A67F2C`, cream
-  background `#FAF8F2`. No navy anymore (an earlier version used navy — since
-  replaced).
+- **White + green only — no blue, no gold.** This was a deliberate rebrand
+  (2026): the palette used to lean on navy/steel-blue tones (`--ink:#123A52`,
+  `--steel:#2F6178`) plus a "gold" accent that was never actually gold in the
+  CSS. Both are gone. Current tokens (`:root` in `styles.css`):
+  `--ink:#16241D` (deep charcoal-green, replaces navy — used for header/hero/
+  footer backgrounds and body text), `--steel:#3F5C48` / `--steel-light:#8FAE97`
+  (muted green-grays, secondary text/borders), `--green:#1C7A41` /
+  `--green-dark:#125C2F` (the accent — was misleadingly named `--amber`
+  before the rebrand), `--plate:#F3F6F2` (near-white page background),
+  `--paper:#FFFFFF`. **If you add a new color anywhere, it must be a shade of
+  green, white, or a neutral gray — never blue/navy, never literal gold.**
+  There are also several hardcoded green-gray hex values scattered through
+  `styles.css` (e.g. `#C7D3C9`, `#46594B`) for text/borders on dark
+  backgrounds where a CSS var didn't fit — keep new ones in that same
+  green-gray family, don't reach for blue-gray defaults.
 - Headings: Playfair Display (serif, echoes the client's card wordmark). Body:
   IBM Plex Sans. Labels/kickers/mono chips: IBM Plex Mono.
-- Cards have soft shadows + hover lift (`--shadow-sm`/`--shadow-md`), ~12px
-  radius. Icon badges are circular gradient (green/gold alternating).
+- Cards have a border + hover lift, ~12px radius (no box-shadow on plain
+  cards — `.why-card`/`.mega-menu`/`.mega-sub` do use a subtle shadow, see
+  their rules). Icon badges (`.icon-badge`) are circular gradient, alternating
+  between the green accent and the steel tone (`.icon-badge.alt`).
 
 ## Images — currently all placeholders
 
@@ -126,19 +138,32 @@ name/logo images to add to `brands.html`.
 
 ## Business facts (real, from the client)
 
-- Legal name: Grand Lexther Marketing, Inc.
+- Brand name: **GLMI** (`COMPANY` in `generate.py`) — rebranded (2026) from
+  "Grand Lexther Marketing, Inc.". The old name should not appear anywhere
+  on the site, including the footer copyright line — that's a deliberate
+  choice, not an oversight, so don't "restore" the full legal name there.
 - Established: 2003 (`ESTABLISHED_YEAR` in `generate.py` — "years in business"
   on `who-we-are.html` and the homepage stats band is derived from this
   automatically each time the site is regenerated, not hardcoded)
-- Tagline: "Wholesaler, Retailer, and Importer of Quality Industrial and
-  Construction Materials"
+- Tagline: "Wholesaler and Retailer of Quality Industrial and Construction
+  Materials" — **no "Importer"**. The client dropped that line of business;
+  don't reintroduce "importer"/"Importer" anywhere (tagline, hero eyebrow,
+  trust-pillar copy, meta descriptions).
 - Address: 197 T. Claudio St., Brgy. Sta. Lucia, San Juan City, Philippines
-- Mobile/Viber: (0917) 896 0800 — Telephone: 8366-2167 / 8367-8298
-- Email: grandlexther2012@gmail.com
+  (real, unchanged)
+- **Phone (mobile/Viber + telephone) and email are placeholders**, not real
+  data: `PHONE`/`EMAIL` in `generate.py` are empty strings (so `tel:`/
+  `mailto:` links degrade gracefully — dialer/mail app opens with nothing
+  pre-filled, instead of linking to fake info), and `PHONE_DISPLAY` /
+  `LANDLINE_DISPLAY` / `EMAIL_DISPLAY` hold the bracketed placeholder text
+  shown in the contact section (`[Mobile/Viber number]` etc.). The old real
+  number and the grandlexther2012@gmail.com inbox were intentionally
+  removed as part of the rebrand — waiting on the client for new
+  GLMI-branded contact details to fill back in.
 - Content emphasis the client asked for: top-quality materials/equipment,
   trusted industrial supplier, trusted brands, exceptional service,
   best/competitive prices — this is already woven into hero copy and the
-  "Why Grand Lexther" section.
+  "Why GLMI" section.
 
 ## Still pending / open TODOs
 
@@ -157,7 +182,17 @@ name/logo images to add to `brands.html`.
   photos, via `product_page()` — see Site structure above). Deciding which
   other categories/items should get the same treatment next, and whether
   real photos are available yet for these four
-- Eventually: domain + hosting choice to go live (currently local-only)
+- Real phone number(s) and a new GLMI-branded email inbox — see "Business
+  facts" above, these are currently placeholder text sitewide
+- Confirm with the client whether "GLMI" is meant to stand alone going
+  forward, or whether a full legal name should still appear somewhere (e.g.
+  a required-by-law line in the footer) once that's finalized
+
+Hosting: live on GitHub Pages at https://jrtchan18.github.io/glmi-website/,
+served from the `main` branch of github.com/jrtchan18/glmi-website (repo was
+renamed from `grand-lexther-website` as part of the GLMI rebrand). **Changes
+only go live once committed AND pushed** — regenerating locally isn't
+enough.
 
 ## Reference sites the client likes
 
