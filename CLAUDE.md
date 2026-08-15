@@ -104,10 +104,11 @@ arrow-vs-navigate distinction impossible before.
   flyout collapses into a static, dark-themed, tap-to-expand accordion
   (`max-height` transition instead of the desktop's floating
   opacity/transform dropdown). Tapping the name still navigates normally.
-Open/close is animated with a CSS `opacity`/`transform`/`max-height`
-transition rather than a JS animation library — same visual effect, no
-external dependency; swap in anime.js here if a fancier effect (e.g.
-staggered item reveal) is ever wanted.
+**Desktop open/close is instant, no fade** — `.mega-menu`/`.mega-sub` have
+no `transition` (removed deliberately, 2026 — the client didn't want a fade
+here). Don't re-add one; if animation is wanted on this menu again, ask
+first. The mobile accordion's `max-height` transition is unrelated and
+untouched (that's a slide/height animation, not a fade).
 **Do not re-add `overflow-y:auto`/`max-height` to `.mega-menu` or
 `.mega-sub`** — that was the bug that made the second-level flyout
 invisible: setting `overflow-y` to non-`visible` also computes `overflow-x`

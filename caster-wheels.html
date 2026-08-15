@@ -75,7 +75,7 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 .mega-toggle{background:none; border:none; padding:4px; margin-left:4px; color:inherit; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;}
 .mega-toggle svg{width:13px; height:13px; stroke:currentColor; opacity:0.75; transition:transform .2s ease;}
 .nav-item.has-mega.mega-open .mega-toggle svg{transform:rotate(180deg);}
-.mega-menu{position:absolute; top:100%; left:0; margin-top:3px; background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--green); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:270px; z-index:70; opacity:0; visibility:hidden; pointer-events:none; transform:translateY(-8px); transition:opacity .18s ease, transform .18s ease, visibility .18s;}
+.mega-menu{position:absolute; top:100%; left:0; margin-top:3px; background:var(--paper); border:1px solid var(--line); border-top:3px solid var(--green); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:270px; z-index:70; opacity:0; visibility:hidden; pointer-events:none;}
 .mega-cats{list-style:none;}
 .mega-cat{position:relative; border-bottom:1px solid var(--line);}
 .mega-cat:last-child{border-bottom:none;}
@@ -86,7 +86,7 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 .mega-cat-toggle .chev{width:14px; height:14px; stroke:currentColor; flex-shrink:0; transition:transform .18s ease;}
 .mega-cat.mega-open .mega-cat-toggle{color:var(--green-dark);}
 .mega-cat.mega-open .mega-cat-toggle .chev{transform:rotate(90deg);}
-.mega-sub{position:absolute; top:0; left:100%; margin-left:0; background:var(--paper); border:1px solid var(--line); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:230px; padding:8px 0; opacity:0; visibility:hidden; pointer-events:none; transform:translateX(-8px); transition:opacity .16s ease, transform .16s ease, visibility .16s;}
+.mega-sub{position:absolute; top:0; left:100%; margin-left:0; background:var(--paper); border:1px solid var(--line); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:230px; padding:8px 0; opacity:0; visibility:hidden; pointer-events:none;}
 .mega-sub a{display:block; padding:9px 16px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; letter-spacing:0; text-transform:none; color:var(--steel); opacity:1; border:none; transition:background .12s ease, color .12s ease;}
 .mega-sub a:hover{background:var(--plate); color:var(--green-dark);}
 .mega-cta{border-top:1px solid var(--line); padding:11px 16px;}
@@ -95,13 +95,13 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 
 /* JS-driven (hover-intent + tap-to-expand, tolerates a diagonal mouse path) + keyboard-focus fallback */
 .nav-item.has-mega.mega-open .mega-menu,
-.nav-item.has-mega:focus-within .mega-menu{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
+.nav-item.has-mega:focus-within .mega-menu{opacity:1; visibility:visible; pointer-events:auto;}
 .mega-cat.mega-open .mega-sub,
-.mega-cat:focus-within .mega-sub{opacity:1; visibility:visible; pointer-events:auto; transform:translateX(0);}
+.mega-cat:focus-within .mega-sub{opacity:1; visibility:visible; pointer-events:auto;}
 /* Pure-CSS :hover fallback if JS is unavailable — gated so touch devices never get a stuck-open menu */
 @media (hover:hover) and (pointer:fine){
-  .nav-item.has-mega:hover .mega-menu{opacity:1; visibility:visible; pointer-events:auto; transform:translateY(0);}
-  .mega-cat:hover .mega-sub{opacity:1; visibility:visible; pointer-events:auto; transform:translateX(0);}
+  .nav-item.has-mega:hover .mega-menu{opacity:1; visibility:visible; pointer-events:auto;}
+  .mega-cat:hover .mega-sub{opacity:1; visibility:visible; pointer-events:auto;}
 }
 
 /* ===== Hero ===== */
