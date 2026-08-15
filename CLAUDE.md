@@ -248,15 +248,19 @@ a single **Add to Quote** button. This is a real feature, not decoration:
   every other page).
 - **Sending the email is EmailJS** (client-side, no backend) — chosen over
   a plain `mailto:` link so it works reliably on mobile/webmail users with
-  no configured mail app, not just desktop. Credentials are placeholder
-  constants at the top of `site.js`: `QUOTE_EMAILJS_PUBLIC_KEY`,
-  `QUOTE_EMAILJS_SERVICE_ID`, `QUOTE_EMAILJS_TEMPLATE_ID` (all
-  `'YOUR_...'` until real values are filled in), plus `QUOTE_EMAIL_TO`
-  (`jrtchan18@gmail.com`, already real). The submit handler checks for the
+  no configured mail app, not just desktop. **Configured and live** (2026)
+  — real credentials are in constants at the top of `site.js`:
+  `QUOTE_EMAILJS_PUBLIC_KEY`, `QUOTE_EMAILJS_SERVICE_ID`
+  (`service_3d2q6dy`), `QUOTE_EMAILJS_TEMPLATE_ID` (`template_e31ibb4`),
+  `QUOTE_EMAIL_TO` (`jrtchan18@gmail.com`). Verified working end-to-end
+  (real test send returned `status: 200`). EmailJS free tier caps at
+  ~200 emails/month — if the client outgrows that, they'll need to upgrade
+  their EmailJS plan (dashboard.emailjs.com), nothing in this codebase
+  needs to change. The submit handler still checks for a `'YOUR_'`
   placeholder prefix and shows a friendly "not set up yet, call or email us
-  directly" message instead of silently failing or throwing — **don't
-  remove that check**, it's the difference between a graceful fallback and
-  a broken form for site visitors if the credentials are ever blank/wrong.
+  directly" message instead of silently failing — **don't remove that
+  check**, it's the fallback if credentials are ever blanked out again
+  (e.g. rotated for a new EmailJS account).
   The EmailJS template must accept these params (sent from `site.js`):
   `to_email`, `from_name`, `company`, `phone`, `reply_to`, `notes`,
   `items_list` (a newline-joined "- Name (xQty)" list).
@@ -271,13 +275,6 @@ a single **Add to Quote** button. This is a real feature, not decoration:
 
 ## Still pending / open TODOs
 
-- **EmailJS not configured yet** — `request-quote.html` is fully built and
-  works end-to-end (cart, item editing, form, validation), but sending
-  actually requires a real EmailJS account: create one at
-  dashboard.emailjs.com (free tier, ~200 emails/month), connect it to
-  jrtchan18@gmail.com, create a template with the params listed above, and
-  fill the 3 real credentials into `site.js`. Until then the form shows a
-  graceful "not set up yet" message rather than failing silently.
 - Caster Wheels items list (Swivel/Rigid/Heavy-Duty/Light-Duty Casters) is
   a generic placeholder — ask the client for their actual caster wheel
   product list, same as every other category's real item list
