@@ -703,6 +703,13 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <a href="products.html" class="btn btn-primary" style="display:inline-flex;">Browse Products</a>
       </div>
 
+      <div id="quoteSuccessState" hidden style="text-align:center;padding:32px 0 48px;">
+        <div class="icon-badge" style="margin:0 auto 20px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M9 2h6a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1V4a2 2 0 0 1 2-2z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h2 style="margin-bottom:10px;">Thank you!</h2>
+        <p style="color:var(--steel);font-size:15px;max-width:420px;margin:0 auto 24px;">Your request for quotation has been submitted. We'll review it and get back to you shortly with pricing and availability.</p>
+        <a href="products.html" class="btn btn-primary" style="display:inline-flex;">Browse More Products</a>
+      </div>
+
       <div id="quoteForm">
         <div class="pd-block" style="margin-top:0;">
           <h2>Your Items</h2>
@@ -835,6 +842,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const quoteItemsEl = document.getElementById('quoteItems');
   if (quoteItemsEl) {
     const emptyState = document.getElementById('quoteEmptyState');
+    const successState = document.getElementById('quoteSuccessState');
     const formWrap = document.getElementById('quoteForm');
     const form = document.getElementById('quoteContactForm');
     const statusEl = document.getElementById('quoteStatus');
@@ -924,10 +932,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       emailjs.send(QUOTE_EMAILJS_SERVICE_ID, QUOTE_EMAILJS_TEMPLATE_ID, params)
         .then(() => {
-          showStatus("Thanks — your quote request has been sent. We'll get back to you shortly.", false);
           saveQuoteCart([]);
           form.reset();
-          renderQuoteItems();
+          // Show a dedicated thank-you state — NOT renderQuoteItems(), which
+          // would just show the generic "cart is empty" message now that
+          // the cart's been cleared and bury the confirmation.
+          emptyState.hidden = true;
+          formWrap.hidden = true;
+          successState.hidden = false;
         })
         .catch(() => {
           showStatus('Something went wrong sending your request. Please call or email us directly.', true);

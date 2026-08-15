@@ -241,11 +241,19 @@ a single **Add to Quote** button. This is a real feature, not decoration:
   the cart by `url`, give a 1.6s "Added ✓" confirmation. They never
   navigate — always `type="button"`.
 - **`request-quote.html`** is a static shell (`generate.py` section "7")
-  with empty containers (`#quoteItems`, `#quoteEmptyState`, `#quoteForm`) —
-  Python can't know a visitor's cart contents at build time, so all
-  rendering (item rows, qty +/-, remove, empty state) happens client-side
-  in `site.js`, gated on `#quoteItems` existing (so this code is a no-op on
-  every other page).
+  with empty containers (`#quoteItems`, `#quoteEmptyState`,
+  `#quoteSuccessState`, `#quoteForm`) — Python can't know a visitor's cart
+  contents at build time, so all rendering (item rows, qty +/-, remove,
+  empty state) happens client-side in `site.js`, gated on `#quoteItems`
+  existing (so this code is a no-op on every other page). There are three
+  mutually-exclusive views toggled by hiding/showing these containers:
+  empty cart, the form, and post-submit success. **On a successful send,
+  show `#quoteSuccessState` directly — do not call `renderQuoteItems()`.**
+  That function decides empty-vs-form purely from current cart contents,
+  and the cart is intentionally cleared right after a successful send, so
+  calling it there would show the generic "cart is empty" message instead
+  of a thank-you — that exact bug happened once already, don't reintroduce
+  it.
 - **Sending the email is EmailJS** (client-side, no backend) — chosen over
   a plain `mailto:` link so it works reliably on mobile/webmail users with
   no configured mail app, not just desktop. **Configured and live** (2026)

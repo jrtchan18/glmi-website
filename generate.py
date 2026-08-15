@@ -1187,6 +1187,13 @@ quote_page = head("Request a Quote", f"Review your requested items and send {COM
         <a href="products.html" class="btn btn-primary" style="display:inline-flex;">Browse Products</a>
       </div>
 
+      <div id="quoteSuccessState" hidden style="text-align:center;padding:32px 0 48px;">
+        <div class="icon-badge" style="margin:0 auto 20px;">{icon("quote", cls="")}</div>
+        <h2 style="margin-bottom:10px;">Thank you!</h2>
+        <p style="color:var(--steel);font-size:15px;max-width:420px;margin:0 auto 24px;">Your request for quotation has been submitted. We'll review it and get back to you shortly with pricing and availability.</p>
+        <a href="products.html" class="btn btn-primary" style="display:inline-flex;">Browse More Products</a>
+      </div>
+
       <div id="quoteForm">
         <div class="pd-block" style="margin-top:0;">
           <h2>Your Items</h2>

@@ -907,6 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const quoteItemsEl = document.getElementById('quoteItems');
   if (quoteItemsEl) {
     const emptyState = document.getElementById('quoteEmptyState');
+    const successState = document.getElementById('quoteSuccessState');
     const formWrap = document.getElementById('quoteForm');
     const form = document.getElementById('quoteContactForm');
     const statusEl = document.getElementById('quoteStatus');
@@ -996,10 +997,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       emailjs.send(QUOTE_EMAILJS_SERVICE_ID, QUOTE_EMAILJS_TEMPLATE_ID, params)
         .then(() => {
-          showStatus("Thanks — your quote request has been sent. We'll get back to you shortly.", false);
           saveQuoteCart([]);
           form.reset();
-          renderQuoteItems();
+          // Show a dedicated thank-you state — NOT renderQuoteItems(), which
+          // would just show the generic "cart is empty" message now that
+          // the cart's been cleared and bury the confirmation.
+          emptyState.hidden = true;
+          formWrap.hidden = true;
+          successState.hidden = false;
         })
         .catch(() => {
           showStatus('Something went wrong sending your request. Please call or email us directly.', true);
