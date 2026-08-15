@@ -30,7 +30,15 @@ directly going forward.)
   (links out to `who-we-are.html`) → Contact
 - `who-we-are.html` — dedicated About page: story/history, established-year +
   years-in-business + location stat plate, "What We Stand For" pillars, CTA
-- `products.html` — hub listing all 14 categories, grouped under 7 sections
+- `products.html` — hub listing all 14 categories as one flat A&ndash;Z grid
+  (modeled on wyler.com.ph/products/), Welding Materials pinned first
+  regardless of alphabetical order, everything else sorted by title. **No
+  group sections** — that was deliberately removed (2026); `GROUP_ORDER`
+  and the `.group`/`.group-head` CSS are gone too, don't re-add them.
+  Category pages and product-detail pages also no longer show a
+  "SEC.02 &middot; Welding & Metal Work" style label (`cat['sec']`/
+  `cat['group']` are still on each `CATEGORIES` entry and still drive the
+  breadcrumb/sort, just not rendered as a visible badge anymore)
 - `brands.html` — dedicated brands page: a flat, ungrouped logo wall (all of
   `BRANDS`), modeled on bakalatbp.com/brands/ — **no per-category grouping,
   don't reintroduce it.** Each tile is either a real logo (`<img>`) or,

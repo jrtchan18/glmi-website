@@ -232,9 +232,6 @@ CATEGORIES = [
        ]),
 ]
 
-# Group order for hub page display
-GROUP_ORDER = ["Welding & Metal Work", "Tools & Equipment", "Electrical", "Construction & Steel", "Bearings", "Safety & PPE", "Packaging Materials"]
-
 by_slug = {c["slug"]: c for c in CATEGORIES}
 slug_order = [c["slug"] for c in CATEGORIES]
 
@@ -462,7 +459,6 @@ for idx, cat in enumerate(CATEGORIES):
   <div class="wrap cat-hero-inner">
     <div class="cat-hero-icon">{icon(cat["icon"], size=34)}</div>
     <div>
-      <span class="group-code mono">{cat['sec']} &middot; {cat['group']}</span>
       <h1>{cat['title']}</h1>
       <p>{cat['desc']}</p>
     </div>
@@ -510,31 +506,25 @@ for idx, cat in enumerate(CATEGORIES):
         f.write(page)
 
 # =========================================================
-# 2. Generate products hub page
+# 2. Generate products hub page — flat A-Z grid, no group sections
+#    (Welding Materials pinned first, like Wyler's /products/ page)
 # =========================================================
-groups_html = []
-for gi, group_name in enumerate(GROUP_ORDER, start=1):
-    cats_in_group = [c for c in CATEGORIES if c["group"] == group_name]
-    cards = "\n          ".join(
-        f"""<a href="{c['slug']}.html" class="plate-card">
-            <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-            {thumb(c['title'], c['icon'])}
-            <div class="plate-body">
-              <h4>{c['title']}</h4>
-              <p>{c['desc']}</p>
-              <span class="go">View Products &rarr;</span>
-            </div>
-          </a>""" for c in cats_in_group
-    )
-    groups_html.append(f"""<div class="group">
-        <div class="group-head">
-          <span class="group-code mono">GRP.0{gi}</span>
-          <h3>{group_name}</h3>
-        </div>
-        <div class="card-grid">
-          {cards}
-        </div>
-      </div>""")
+az_categories = sorted(CATEGORIES, key=lambda c: c["title"])
+welding_cat = next(c for c in az_categories if c["slug"] == "welding-materials")
+az_categories.remove(welding_cat)
+az_categories.insert(0, welding_cat)
+
+category_cards = "\n        ".join(
+    f"""<a href="{c['slug']}.html" class="plate-card">
+          <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
+          {thumb(c['title'], c['icon'])}
+          <div class="plate-body">
+            <h4>{c['title']}</h4>
+            <p>{c['desc']}</p>
+            <span class="go">View Products &rarr;</span>
+          </div>
+        </a>""" for c in az_categories
+)
 
 products_page = head("Products", "Full product catalog — welding materials, abrasives, bearings, tools, electrical wires, safety gear, and construction hardware.") + "\n" + header(active="products") + f"""
 
@@ -546,14 +536,16 @@ products_page = head("Products", "Full product catalog — welding materials, ab
   <div class="wrap">
     <span class="group-code mono">Full Catalog</span>
     <h1 style="margin-top:8px;">All Product Categories</h1>
-    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">14 categories across 7 product groups. Select a category to view items, or contact us directly with your requirements.</p>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">14 categories, A&ndash;Z. Select a category to view items, or contact us directly with your requirements.</p>
   </div>
 </section>
 
 <main>
   <section>
     <div class="wrap">
-      {"".join(groups_html)}
+      <div class="card-grid">
+        {category_cards}
+      </div>
     </div>
   </section>
 </main>
@@ -676,7 +668,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
       <div class="section-head" data-reveal>
         <div>
           <span class="kicker">Trusted Names</span>
-          <h2>Brands we carry</h2>
+          <h2>Featured brands</h2>
         </div>
         <p class="sub">Genuine stock from established manufacturers across our product lines.</p>
       </div>
@@ -825,8 +817,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
       </div>
 
       <div class="product-info">
-        <span class="group-code mono" style="background:var(--steel);color:#fff;">SEC.01 &middot; Welding &amp; Metal Work</span>
-        <h1 style="margin-top:10px;">MIG Welding Wire &mdash; ER70S-6</h1>
+        <h1>MIG Welding Wire &mdash; ER70S-6</h1>
         <div class="quickfacts">
           <span class="qf">Classification: <b>ER70S-6</b></span>
           <span class="qf">Material: <b>Copper-coated mild steel</b></span>
@@ -946,8 +937,7 @@ def product_page(cat, name, desc, gallery_items, slug):
       </div>
 
       <div class="product-info">
-        <span class="group-code mono" style="background:var(--steel);color:#fff;">{cat['sec']} &middot; {cat['group']}</span>
-        <h1 style="margin-top:10px;">{name}</h1>
+        <h1>{name}</h1>
         <p class="desc">{desc}</p>
 
         <div class="inquire-box">
