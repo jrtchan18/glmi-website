@@ -57,6 +57,11 @@ nav a{font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:0
 nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 .call-btn{display:flex; align-items:center; gap:8px; background:var(--green); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:13px; padding:9px 16px; border-radius:2px; white-space:nowrap; transition:background .15s;}
 .call-btn:hover{background:#fff;}
+.btn svg, .call-btn svg{width:16px; height:16px; stroke:currentColor; flex-shrink:0;}
+.quote-link{display:flex; align-items:center; gap:7px; font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--white); opacity:0.85; padding:6px 2px; border-bottom:2px solid transparent; transition:border-color .15s, opacity .15s; white-space:nowrap;}
+.quote-link:hover, .quote-link[aria-current="page"]{opacity:1; border-color:var(--green);}
+.quote-link svg{width:16px; height:16px; stroke:currentColor; flex-shrink:0;}
+.quote-badge{background:var(--green); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:700; border-radius:999px; min-width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; padding:0 4px; line-height:1;}
 .nav-toggle{display:none;}
 
 /* ===== Products mega-menu =====
@@ -371,6 +376,31 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 
 .related-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:14px;}
 
+/* ===== Request a Quote page ===== */
+.quote-items{display:flex; flex-direction:column; gap:10px;}
+.quote-item{display:flex; align-items:center; gap:16px; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:14px 16px;}
+.quote-item-name{flex:1; font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink);}
+.quote-item-name:hover{color:var(--green-dark);}
+.quote-item-remove{background:none; border:1px solid var(--line); border-radius:2px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; color:var(--steel); cursor:pointer; flex-shrink:0; transition:border-color .15s, color .15s;}
+.quote-item-remove:hover{border-color:#c0392b; color:#c0392b;}
+.quote-item-remove svg{width:14px; height:14px; stroke:currentColor;}
+.quote-contact-form{display:grid; grid-template-columns:1fr 1fr; gap:16px 20px;}
+.qf-row{display:flex; flex-direction:column; gap:6px;}
+.qf-row:has(textarea){grid-column:1 / -1;}
+.qf-row label{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--steel);}
+.qf-row input, .qf-row textarea{font-family:'IBM Plex Sans',sans-serif; font-size:14px; color:var(--ink); border:1px solid var(--line); border-radius:2px; padding:10px 12px; background:var(--paper); resize:vertical;}
+.qf-row input:focus, .qf-row textarea:focus{outline:2px solid var(--green); outline-offset:-1px;}
+.qf-hint{grid-column:1 / -1; font-size:12.5px; color:var(--steel); margin-top:-6px;}
+.quote-contact-form .btn{grid-column:1 / -1; justify-self:start; margin-top:4px;}
+.quote-status{grid-column:1 / -1; font-size:13.5px; padding:10px 14px; border-radius:2px;}
+.quote-status.success{background:rgba(28,122,65,0.1); color:var(--green-dark);}
+.quote-status.error{background:rgba(192,57,43,0.1); color:#c0392b;}
+@media (max-width:600px){
+  .quote-contact-form{grid-template-columns:1fr;}
+  .qf-row:has(textarea){grid-column:1;}
+  .qf-hint, .quote-status{grid-column:1;}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
 </head>
@@ -618,6 +648,20 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <a href="tape-dispenser.html">Tape Dispenser</a>
           </div>
         </li>
+        <li class="mega-cat">
+          <div class="mega-cat-row">
+            <a href="caster-wheels.html" class="mega-cat-link">Caster Wheels</a>
+            <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Caster Wheels items">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="mega-sub">
+            <a href="caster-wheels.html#swivel-casters">Swivel Casters</a>
+            <a href="caster-wheels.html#rigid-casters">Rigid Casters</a>
+            <a href="caster-wheels.html#heavy-duty-casters">Heavy-Duty Casters</a>
+            <a href="caster-wheels.html#light-duty-casters">Light-Duty Casters</a>
+          </div>
+        </li>
           </ul>
           <div class="mega-cta"><a href="products.html">View Full Catalog &rarr;</a></div>
         </div>
@@ -625,6 +669,11 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <a href="brands.html">Brands</a>
       <a href="who-we-are.html">Who We Are</a>
       <a href="index.html#contact">Contact</a>
+      <a href="request-quote.html" class="quote-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M9 2h6a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1V4a2 2 0 0 1 2-2z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span class="txt">Request a Quote</span>
+        <span class="quote-badge" id="quoteCount" hidden>0</span>
+      </a>
       <a href="tel:" class="call-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg>
         <span class="txt">[Mobile/Viber number]</span>
@@ -642,7 +691,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <p>GLMI goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
       <div class="hero-ctas">
         <a href="products.html" class="btn btn-primary">Browse Products</a>
-        <a href="#contact" class="btn btn-ghost">Request a Quote</a>
+        <a href="request-quote.html" class="btn btn-ghost">Request a Quote</a>
       </div>
     </div>
     <div class="hero-plate">
@@ -778,11 +827,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <a href="gloves.html" class="plate-card" data-reveal data-reveal-delay="300">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Safety &amp; PPE</span>
-          </div>
+          <img class="thumb-photo" src="images/Products/assorted gloves.png" alt="Safety &amp; PPE" loading="lazy">
         </div>
           <div class="plate-body">
             <h4>Safety &amp; PPE</h4>
@@ -892,7 +937,190 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
   </div>
 </footer>
 <script>
+// ===== EmailJS credentials (Request a Quote page) =====
+// Fill these in from your EmailJS account (dashboard.emailjs.com):
+// Public Key: Account -> General. Service ID: Email Services -> your
+// connected Gmail. Template ID: Email Templates -> the template you make
+// for this form. Until these are real values, the quote form shows a
+// friendly "not set up yet" message instead of silently failing.
+const QUOTE_EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+const QUOTE_EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const QUOTE_EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const QUOTE_EMAIL_TO = 'jrtchan18@gmail.com';
+
+// ===== Quote cart (localStorage) =====
+// Shared across every page (product pages add to it, the nav badge reads
+// it, request-quote.html renders and submits it). Item shape:
+// { url: 'cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+const QUOTE_CART_KEY = 'glmiQuoteCart';
+
+function getQuoteCart() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(QUOTE_CART_KEY));
+    return Array.isArray(raw) ? raw : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveQuoteCart(cart) {
+  localStorage.setItem(QUOTE_CART_KEY, JSON.stringify(cart));
+  updateQuoteBadge();
+}
+
+function addToQuoteCart(item) {
+  const cart = getQuoteCart();
+  const existing = cart.find((i) => i.url === item.url);
+  if (existing) {
+    existing.qty += item.qty;
+  } else {
+    cart.push(item);
+  }
+  saveQuoteCart(cart);
+}
+
+function removeFromQuoteCart(url) {
+  saveQuoteCart(getQuoteCart().filter((i) => i.url !== url));
+}
+
+function updateQuoteBadge() {
+  const badge = document.getElementById('quoteCount');
+  if (!badge) return;
+  const count = getQuoteCart().reduce((sum, i) => sum + i.qty, 0);
+  badge.textContent = String(count);
+  badge.hidden = count === 0;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  updateQuoteBadge();
+
+  // "Add to Quote" buttons on product pages — reads the page's own
+  // quantity stepper, adds/merges into the cart, gives brief visual
+  // confirmation. Never navigates (type="button").
+  document.querySelectorAll('.add-to-quote').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const qtyInput = btn.closest('.inquire-box')?.querySelector('.qty-stepper input');
+      const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
+      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty });
+      const label = btn.querySelector('.btn-txt');
+      const original = label ? label.textContent : btn.textContent;
+      if (label) label.textContent = 'Added ✓'; else btn.textContent = 'Added ✓';
+      btn.classList.add('added');
+      setTimeout(() => {
+        if (label) label.textContent = original; else btn.textContent = original;
+        btn.classList.remove('added');
+      }, 1600);
+    });
+  });
+
+  // Request a Quote page — only runs where #quoteItems exists.
+  const quoteItemsEl = document.getElementById('quoteItems');
+  if (quoteItemsEl) {
+    const emptyState = document.getElementById('quoteEmptyState');
+    const formWrap = document.getElementById('quoteForm');
+    const form = document.getElementById('quoteContactForm');
+    const statusEl = document.getElementById('quoteStatus');
+    const submitBtn = document.getElementById('quoteSubmitBtn');
+
+    function showStatus(msg, isError) {
+      statusEl.textContent = msg;
+      statusEl.hidden = false;
+      statusEl.classList.toggle('error', isError);
+      statusEl.classList.toggle('success', !isError);
+    }
+
+    function renderQuoteItems() {
+      const cart = getQuoteCart();
+      if (!cart.length) {
+        emptyState.hidden = false;
+        formWrap.hidden = true;
+        return;
+      }
+      emptyState.hidden = true;
+      formWrap.hidden = false;
+      quoteItemsEl.innerHTML = cart.map((item) => `
+        <div class="quote-item" data-url="${item.url}">
+          <a href="${item.url}" class="quote-item-name">${item.name}</a>
+          <div class="qty-stepper">
+            <button type="button" class="qty-minus" aria-label="Decrease quantity">&minus;</button>
+            <input type="text" value="${item.qty}" inputmode="numeric" aria-label="Quantity">
+            <button type="button" class="qty-plus" aria-label="Increase quantity">+</button>
+          </div>
+          <button type="button" class="quote-item-remove" aria-label="Remove ${item.name}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `).join('');
+
+      quoteItemsEl.querySelectorAll('.quote-item').forEach((row) => {
+        const url = row.dataset.url;
+        row.querySelector('.qty-minus').addEventListener('click', () => {
+          const cart2 = getQuoteCart();
+          const item = cart2.find((i) => i.url === url);
+          if (item) { item.qty = Math.max(1, item.qty - 1); saveQuoteCart(cart2); renderQuoteItems(); }
+        });
+        row.querySelector('.qty-plus').addEventListener('click', () => {
+          const cart2 = getQuoteCart();
+          const item = cart2.find((i) => i.url === url);
+          if (item) { item.qty += 1; saveQuoteCart(cart2); renderQuoteItems(); }
+        });
+        row.querySelector('.quote-item-remove').addEventListener('click', () => {
+          removeFromQuoteCart(url);
+          renderQuoteItems();
+        });
+      });
+    }
+    renderQuoteItems();
+
+    if (window.emailjs) {
+      emailjs.init({ publicKey: QUOTE_EMAILJS_PUBLIC_KEY });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('qfName').value.trim();
+      const phone = document.getElementById('qfPhone').value.trim();
+      const email = document.getElementById('qfEmail').value.trim();
+      const cart = getQuoteCart();
+      if (!name) { showStatus('Please enter your name.', true); return; }
+      if (!phone && !email) { showStatus('Please provide a phone number or email so we can reach you.', true); return; }
+      if (!cart.length) { showStatus('Your quote list is empty.', true); return; }
+      if (!window.emailjs || QUOTE_EMAILJS_SERVICE_ID.startsWith('YOUR_')) {
+        showStatus('The quote form isn’t fully set up yet — please call or email us directly for now.', true);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const itemsList = cart.map((i) => `- ${i.name} (x${i.qty})`).join('\n');
+      const params = {
+        to_email: QUOTE_EMAIL_TO,
+        from_name: name,
+        company: document.getElementById('qfCompany').value.trim(),
+        phone: phone,
+        reply_to: email,
+        notes: document.getElementById('qfNotes').value.trim(),
+        items_list: itemsList,
+      };
+
+      emailjs.send(QUOTE_EMAILJS_SERVICE_ID, QUOTE_EMAILJS_TEMPLATE_ID, params)
+        .then(() => {
+          showStatus("Thanks — your quote request has been sent. We'll get back to you shortly.", false);
+          saveQuoteCart([]);
+          form.reset();
+          renderQuoteItems();
+        })
+        .catch(() => {
+          showStatus('Something went wrong sending your request. Please call or email us directly.', true);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Quote Request';
+        });
+    });
+  }
+
   // Homepage scroll-reveal (anime.js) — elements marked [data-reveal] fade
   // + slide up as they enter the viewport. [data-reveal-delay] (ms) staggers
   // items within a grid (set per-element in generate.py). Not used on the

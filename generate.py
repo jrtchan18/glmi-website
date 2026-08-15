@@ -37,6 +37,8 @@ ICONS = {
   "packaging": '<rect x="3" y="7" width="18" height="13" rx="1"/><path d="M3 12h18M9 7V5a3 3 0 0 1 6 0v2"/>',
   "tag": '<path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/>',
   "brand": '<path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
+  "quote": '<path d="M9 2h6a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h1V4a2 2 0 0 1 2-2z"/><path d="M9 12l2 2 4-4"/>',
+  "remove": '<path d="M18 6 6 18M6 6l12 12"/>',
 }
 
 def slugify(text):
@@ -230,6 +232,15 @@ CATEGORIES = [
          ("Rubber Bands", "Rubber bands for general bundling and handling use.", "rubber-bands.html"),
          ("Tape Dispenser", "Tape dispensers for fast, consistent taping in packing operations.", "tape-dispenser.html"),
        ]),
+  dict(slug="caster-wheels", title="Caster Wheels", sec="SEC.15", group="Bearings", icon="bearing",
+       desc="Caster wheels for material handling equipment, furniture, and industrial mobility.",
+       photo=("Assorted Caster Wheels — Sample Photo", "images/Products/caster wheels.png"),
+       items=[
+         ("Swivel Casters", "Swivel-mount casters for maneuverable equipment and carts."),
+         ("Rigid Casters", "Fixed-direction casters for straight-line load movement."),
+         ("Heavy-Duty Casters", "Reinforced casters for heavy industrial loads."),
+         ("Light-Duty Casters", "Casters for furniture and light equipment."),
+       ]),
 ]
 
 by_slug = {c["slug"]: c for c in CATEGORIES}
@@ -359,6 +370,11 @@ def header(active=None, depth=""):
       <a href="{depth}brands.html"{' aria-current="page"' if active=="brands" else ""}>Brands</a>
       <a href="{depth}who-we-are.html"{' aria-current="page"' if active=="about" else ""}>Who We Are</a>
       <a href="{depth}index.html#contact">Contact</a>
+      <a href="{depth}request-quote.html" class="quote-link"{' aria-current="page"' if active=="quote" else ""}>
+        {icon("quote", cls="")}
+        <span class="txt">Request a Quote</span>
+        <span class="quote-badge" id="quoteCount" hidden>0</span>
+      </a>
       <a href="tel:{PHONE}" class="call-btn">
         {icon("tag", cls="")}
         <span class="txt">{PHONE_DISPLAY}</span>
@@ -405,6 +421,11 @@ def head(title, desc, extra_head=""):
 # Loaded only on the homepage — scroll-reveal animations (see site.js) use
 # this. Other pages don't need it, so don't add this to head() globally.
 ANIME_JS_TAG = '<script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>\n'
+
+# Loaded only on request-quote.html — sends the quote request email
+# client-side (no backend). Credentials (public key / service ID / template
+# ID) live as plain constants at the top of site.js, not here.
+EMAILJS_TAG = '<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>\n'
 
 def mini_cta(cat_title=None, heading=None, sub=None):
     heading = heading or f"Need pricing for {cat_title}?"
@@ -517,7 +538,7 @@ az_categories.insert(0, welding_cat)
 category_cards = "\n        ".join(
     f"""<a href="{c['slug']}.html" class="plate-card">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-          {thumb(c['title'], c['icon'])}
+          {thumb(c['title'], c['icon'], img=(c['photo'][1] if c.get('photo') else None))}
           <div class="plate-body">
             <h4>{c['title']}</h4>
             <p>{c['desc']}</p>
@@ -570,7 +591,7 @@ group_teasers = [
 teaser_cards = "\n        ".join(
     f"""<a href="{slug}.html" class="plate-card" data-reveal data-reveal-delay="{i * 60}">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-          {thumb(name, ic)}
+          {thumb(name, ic, img=(by_slug[slug]['photo'][1] if by_slug[slug].get('photo') else None))}
           <div class="plate-body">
             <h4>{name}</h4>
             <p>{desc}</p>
@@ -597,7 +618,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
       <p>{COMPANY} goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
       <div class="hero-ctas">
         <a href="products.html" class="btn btn-primary">Browse Products</a>
-        <a href="#contact" class="btn btn-ghost">Request a Quote</a>
+        <a href="request-quote.html" class="btn btn-ghost">Request a Quote</a>
       </div>
     </div>
     <div class="hero-plate">
@@ -839,8 +860,10 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
             </div>
           </div>
           <div class="ctas">
-            <a href="tel:{PHONE}" class="btn btn-primary">Call to Inquire</a>
-            <a href="mailto:{EMAIL}?subject=Inquiry: MIG Wire ER70S-6" class="btn btn-ghost" style="color:var(--ink);border-color:var(--steel);">Email Inquiry</a>
+            <button type="button" class="btn btn-primary add-to-quote" data-url="mig-wire-er70s-6.html" data-name="MIG Welding Wire — ER70S-6">
+              {icon("quote", cls="")}
+              <span class="btn-txt">Add to Quote</span>
+            </button>
           </div>
         </div>
       </div>
@@ -950,8 +973,10 @@ def product_page(cat, name, desc, gallery_items, slug):
             </div>
           </div>
           <div class="ctas">
-            <a href="tel:{PHONE}" class="btn btn-primary">Call to Inquire</a>
-            <a href="mailto:{EMAIL}?subject=Inquiry: {name}" class="btn btn-ghost" style="color:var(--ink);border-color:var(--steel);">Email Inquiry</a>
+            <button type="button" class="btn btn-primary add-to-quote" data-url="{slug}" data-name="{name}">
+              {icon("quote", cls="")}
+              <span class="btn-txt">Add to Quote</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1130,3 +1155,81 @@ with open(os.path.join(OUT, "who-we-are.html"), "w") as f:
     f.write(about_page)
 
 print("Generated who-we-are.html")
+
+# =========================================================
+# 7. Generate the Request a Quote page
+# =========================================================
+# Item list, quantities, and the contact form are all rendered client-side
+# from the localStorage cart (see the "Quote cart" section of site.js) —
+# Python has no way to know what's in a visitor's browser at build time.
+# This is just the static shell + empty containers for that JS to fill in.
+quote_page = head("Request a Quote", f"Review your requested items and send {COMPANY} a quote request.",
+                   extra_head=EMAILJS_TAG) + "\n" + header(active="quote") + f"""
+
+<div class="breadcrumb">
+  <div class="wrap"><a href="index.html">Home</a><span class="sep">/</span><span class="current">Request a Quote</span></div>
+</div>
+
+<section class="cat-hero" style="padding:44px 0 52px;">
+  <div class="wrap">
+    <span class="group-code mono">Quote Request</span>
+    <h1 style="margin-top:8px;">Request a Quote</h1>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">Review the items you've added, tell us how to reach you, and send your request &mdash; we'll get back with pricing and availability.</p>
+  </div>
+</section>
+
+<main>
+  <section>
+    <div class="wrap" style="max-width:760px;">
+
+      <div id="quoteEmptyState" hidden style="text-align:center;padding:32px 0 48px;">
+        <p style="color:var(--steel);font-size:15px;margin-bottom:20px;">You haven't added any items to your quote yet.</p>
+        <a href="products.html" class="btn btn-primary" style="display:inline-flex;">Browse Products</a>
+      </div>
+
+      <div id="quoteForm">
+        <div class="pd-block" style="margin-top:0;">
+          <h2>Your Items</h2>
+          <div id="quoteItems" class="quote-items"></div>
+        </div>
+
+        <div class="pd-block">
+          <h2>Your Details</h2>
+          <form id="quoteContactForm" class="quote-contact-form">
+            <div class="qf-row">
+              <label for="qfName">Full Name*</label>
+              <input type="text" id="qfName" name="name" required>
+            </div>
+            <div class="qf-row">
+              <label for="qfCompany">Company</label>
+              <input type="text" id="qfCompany" name="company">
+            </div>
+            <div class="qf-row">
+              <label for="qfPhone">Phone / Viber</label>
+              <input type="tel" id="qfPhone" name="phone">
+            </div>
+            <div class="qf-row">
+              <label for="qfEmail">Email</label>
+              <input type="email" id="qfEmail" name="email">
+            </div>
+            <div class="qf-row">
+              <label for="qfNotes">Additional Notes</label>
+              <textarea id="qfNotes" name="notes" rows="3"></textarea>
+            </div>
+            <p class="qf-hint">Please provide a phone number or email so we can reach you.</p>
+            <button type="submit" class="btn btn-primary" id="quoteSubmitBtn">Send Quote Request</button>
+            <p id="quoteStatus" class="quote-status" hidden></p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+""" + footer() + "\n</body>\n</html>"
+
+with open(os.path.join(OUT, "request-quote.html"), "w") as f:
+    f.write(quote_page)
+
+print("Generated request-quote.html")

@@ -182,6 +182,15 @@ placeholders.
 **Brand logos are the immediate next step** — the client is uploading brand
 name/logo images to add to `brands.html`.
 
+A category with a real photo (`photo=(label, path)` on its `CATEGORIES`
+entry — currently Gloves and Caster Wheels) shows that photo **everywhere
+the category is represented as a thumbnail**: its own category-page gallery
+(first slide), its card on `products.html`, and its card on the homepage
+group-teaser section if that category happens to be one of the 7 shown
+there. That's `thumb(..., img=c['photo'][1] if c.get('photo') else None)` —
+follow that pattern for the next category that gets a real photo, don't
+just wire it into the one gallery.
+
 ## Business facts (real, from the client)
 
 - Brand name: **GLMI** (`COMPANY` in `generate.py`) — rebranded (2026) from
@@ -216,8 +225,62 @@ name/logo images to add to `brands.html`.
   best/competitive prices — this is woven into hero copy and the
   "Why GLMI" section.
 
+## Request a Quote (client-side cart + EmailJS)
+
+Product pages no longer have "Call to Inquire"/"Email Inquiry" — they have
+a single **Add to Quote** button. This is a real feature, not decoration:
+
+- **Cart** lives in `localStorage` (`glmiQuoteCart`, key constant
+  `QUOTE_CART_KEY` in `site.js`), shape `[{url, name, qty}]`. Shared
+  sitewide — every product page can add to it, the nav badge
+  (`#quoteCount`) reads it on every page load, `request-quote.html` renders
+  and edits it. No backend, no cookies, per-browser only (same limitation
+  as any localStorage cart — clearing browser data empties it).
+- **"Add to Quote"** buttons (`.add-to-quote`, in `product_page()` and the
+  hardcoded MIG Wire page) read the page's own quantity stepper, merge into
+  the cart by `url`, give a 1.6s "Added ✓" confirmation. They never
+  navigate — always `type="button"`.
+- **`request-quote.html`** is a static shell (`generate.py` section "7")
+  with empty containers (`#quoteItems`, `#quoteEmptyState`, `#quoteForm`) —
+  Python can't know a visitor's cart contents at build time, so all
+  rendering (item rows, qty +/-, remove, empty state) happens client-side
+  in `site.js`, gated on `#quoteItems` existing (so this code is a no-op on
+  every other page).
+- **Sending the email is EmailJS** (client-side, no backend) — chosen over
+  a plain `mailto:` link so it works reliably on mobile/webmail users with
+  no configured mail app, not just desktop. Credentials are placeholder
+  constants at the top of `site.js`: `QUOTE_EMAILJS_PUBLIC_KEY`,
+  `QUOTE_EMAILJS_SERVICE_ID`, `QUOTE_EMAILJS_TEMPLATE_ID` (all
+  `'YOUR_...'` until real values are filled in), plus `QUOTE_EMAIL_TO`
+  (`jrtchan18@gmail.com`, already real). The submit handler checks for the
+  placeholder prefix and shows a friendly "not set up yet, call or email us
+  directly" message instead of silently failing or throwing — **don't
+  remove that check**, it's the difference between a graceful fallback and
+  a broken form for site visitors if the credentials are ever blank/wrong.
+  The EmailJS template must accept these params (sent from `site.js`):
+  `to_email`, `from_name`, `company`, `phone`, `reply_to`, `notes`,
+  `items_list` (a newline-joined "- Name (xQty)" list).
+  `EMAILJS_TAG` in `generate.py` loads the EmailJS CDN script, passed via
+  `head()`'s `extra_head` only for `request-quote.html` — same pattern as
+  `ANIME_JS_TAG` for the homepage, don't load it globally.
+- The homepage hero's "Request a Quote" button now links to
+  `request-quote.html` (used to scroll to `#contact`) — that's intentional,
+  don't revert it; the general contact section/CTAs (Call Now, Email Us,
+  the header call button, `mini_cta()`) are untouched and still use
+  `tel:`/`mailto:` since those aren't tied to a specific item list.
+
 ## Still pending / open TODOs
 
+- **EmailJS not configured yet** — `request-quote.html` is fully built and
+  works end-to-end (cart, item editing, form, validation), but sending
+  actually requires a real EmailJS account: create one at
+  dashboard.emailjs.com (free tier, ~200 emails/month), connect it to
+  jrtchan18@gmail.com, create a template with the params listed above, and
+  fill the 3 real credentials into `site.js`. Until then the form shows a
+  graceful "not set up yet" message rather than failing silently.
+- Caster Wheels items list (Swivel/Rigid/Heavy-Duty/Light-Duty Casters) is
+  a generic placeholder — ask the client for their actual caster wheel
+  product list, same as every other category's real item list
 - Real product photos (client is sourcing these)
 - Real product/item list with specs, beyond what's in `generate.py`'s
   `CATEGORIES` list

@@ -1,4 +1,187 @@
+// ===== EmailJS credentials (Request a Quote page) =====
+// Fill these in from your EmailJS account (dashboard.emailjs.com):
+// Public Key: Account -> General. Service ID: Email Services -> your
+// connected Gmail. Template ID: Email Templates -> the template you make
+// for this form. Until these are real values, the quote form shows a
+// friendly "not set up yet" message instead of silently failing.
+const QUOTE_EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+const QUOTE_EMAILJS_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const QUOTE_EMAILJS_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const QUOTE_EMAIL_TO = 'jrtchan18@gmail.com';
+
+// ===== Quote cart (localStorage) =====
+// Shared across every page (product pages add to it, the nav badge reads
+// it, request-quote.html renders and submits it). Item shape:
+// { url: 'cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+const QUOTE_CART_KEY = 'glmiQuoteCart';
+
+function getQuoteCart() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(QUOTE_CART_KEY));
+    return Array.isArray(raw) ? raw : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveQuoteCart(cart) {
+  localStorage.setItem(QUOTE_CART_KEY, JSON.stringify(cart));
+  updateQuoteBadge();
+}
+
+function addToQuoteCart(item) {
+  const cart = getQuoteCart();
+  const existing = cart.find((i) => i.url === item.url);
+  if (existing) {
+    existing.qty += item.qty;
+  } else {
+    cart.push(item);
+  }
+  saveQuoteCart(cart);
+}
+
+function removeFromQuoteCart(url) {
+  saveQuoteCart(getQuoteCart().filter((i) => i.url !== url));
+}
+
+function updateQuoteBadge() {
+  const badge = document.getElementById('quoteCount');
+  if (!badge) return;
+  const count = getQuoteCart().reduce((sum, i) => sum + i.qty, 0);
+  badge.textContent = String(count);
+  badge.hidden = count === 0;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  updateQuoteBadge();
+
+  // "Add to Quote" buttons on product pages — reads the page's own
+  // quantity stepper, adds/merges into the cart, gives brief visual
+  // confirmation. Never navigates (type="button").
+  document.querySelectorAll('.add-to-quote').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const qtyInput = btn.closest('.inquire-box')?.querySelector('.qty-stepper input');
+      const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
+      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty });
+      const label = btn.querySelector('.btn-txt');
+      const original = label ? label.textContent : btn.textContent;
+      if (label) label.textContent = 'Added ✓'; else btn.textContent = 'Added ✓';
+      btn.classList.add('added');
+      setTimeout(() => {
+        if (label) label.textContent = original; else btn.textContent = original;
+        btn.classList.remove('added');
+      }, 1600);
+    });
+  });
+
+  // Request a Quote page — only runs where #quoteItems exists.
+  const quoteItemsEl = document.getElementById('quoteItems');
+  if (quoteItemsEl) {
+    const emptyState = document.getElementById('quoteEmptyState');
+    const formWrap = document.getElementById('quoteForm');
+    const form = document.getElementById('quoteContactForm');
+    const statusEl = document.getElementById('quoteStatus');
+    const submitBtn = document.getElementById('quoteSubmitBtn');
+
+    function showStatus(msg, isError) {
+      statusEl.textContent = msg;
+      statusEl.hidden = false;
+      statusEl.classList.toggle('error', isError);
+      statusEl.classList.toggle('success', !isError);
+    }
+
+    function renderQuoteItems() {
+      const cart = getQuoteCart();
+      if (!cart.length) {
+        emptyState.hidden = false;
+        formWrap.hidden = true;
+        return;
+      }
+      emptyState.hidden = true;
+      formWrap.hidden = false;
+      quoteItemsEl.innerHTML = cart.map((item) => `
+        <div class="quote-item" data-url="${item.url}">
+          <a href="${item.url}" class="quote-item-name">${item.name}</a>
+          <div class="qty-stepper">
+            <button type="button" class="qty-minus" aria-label="Decrease quantity">&minus;</button>
+            <input type="text" value="${item.qty}" inputmode="numeric" aria-label="Quantity">
+            <button type="button" class="qty-plus" aria-label="Increase quantity">+</button>
+          </div>
+          <button type="button" class="quote-item-remove" aria-label="Remove ${item.name}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `).join('');
+
+      quoteItemsEl.querySelectorAll('.quote-item').forEach((row) => {
+        const url = row.dataset.url;
+        row.querySelector('.qty-minus').addEventListener('click', () => {
+          const cart2 = getQuoteCart();
+          const item = cart2.find((i) => i.url === url);
+          if (item) { item.qty = Math.max(1, item.qty - 1); saveQuoteCart(cart2); renderQuoteItems(); }
+        });
+        row.querySelector('.qty-plus').addEventListener('click', () => {
+          const cart2 = getQuoteCart();
+          const item = cart2.find((i) => i.url === url);
+          if (item) { item.qty += 1; saveQuoteCart(cart2); renderQuoteItems(); }
+        });
+        row.querySelector('.quote-item-remove').addEventListener('click', () => {
+          removeFromQuoteCart(url);
+          renderQuoteItems();
+        });
+      });
+    }
+    renderQuoteItems();
+
+    if (window.emailjs) {
+      emailjs.init({ publicKey: QUOTE_EMAILJS_PUBLIC_KEY });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('qfName').value.trim();
+      const phone = document.getElementById('qfPhone').value.trim();
+      const email = document.getElementById('qfEmail').value.trim();
+      const cart = getQuoteCart();
+      if (!name) { showStatus('Please enter your name.', true); return; }
+      if (!phone && !email) { showStatus('Please provide a phone number or email so we can reach you.', true); return; }
+      if (!cart.length) { showStatus('Your quote list is empty.', true); return; }
+      if (!window.emailjs || QUOTE_EMAILJS_SERVICE_ID.startsWith('YOUR_')) {
+        showStatus('The quote form isn’t fully set up yet — please call or email us directly for now.', true);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const itemsList = cart.map((i) => `- ${i.name} (x${i.qty})`).join('\n');
+      const params = {
+        to_email: QUOTE_EMAIL_TO,
+        from_name: name,
+        company: document.getElementById('qfCompany').value.trim(),
+        phone: phone,
+        reply_to: email,
+        notes: document.getElementById('qfNotes').value.trim(),
+        items_list: itemsList,
+      };
+
+      emailjs.send(QUOTE_EMAILJS_SERVICE_ID, QUOTE_EMAILJS_TEMPLATE_ID, params)
+        .then(() => {
+          showStatus("Thanks — your quote request has been sent. We'll get back to you shortly.", false);
+          saveQuoteCart([]);
+          form.reset();
+          renderQuoteItems();
+        })
+        .catch(() => {
+          showStatus('Something went wrong sending your request. Please call or email us directly.', true);
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Quote Request';
+        });
+    });
+  }
+
   // Homepage scroll-reveal (anime.js) — elements marked [data-reveal] fade
   // + slide up as they enter the viewport. [data-reveal-delay] (ms) staggers
   // items within a grid (set per-element in generate.py). Not used on the
