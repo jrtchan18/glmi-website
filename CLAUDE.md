@@ -153,6 +153,14 @@ artifact, not a site bug, and doesn't affect real visitors.)
   cards — `.why-card`/`.mega-menu`/`.mega-sub` do use a subtle shadow, see
   their rules). Icon badges (`.icon-badge`) are circular gradient, alternating
   between the green accent and the steel tone (`.icon-badge.alt`).
+- **Logo mark**: `LOGO_MARK` in `generate.py` (right above `header()`) — a
+  rounded-square green-gradient badge with a serif "G" monogram, sits to the
+  left of the "GLMI" wordmark in the header on every page. This is a
+  code-built placeholder, not a professionally designed logo — swap the
+  `<svg>` markup in that one constant for a real logo whenever the client
+  has one; nothing else needs to change since every page pulls from
+  `header()`. `.logo` is now a row (`.logo-mark` + `.logo-text`), not a
+  column — don't collapse that back to just text.
 
 ## Images — currently all placeholders
 
@@ -190,9 +198,14 @@ name/logo images to add to `brands.html`.
   number and the grandlexther2012@gmail.com inbox were intentionally
   removed as part of the rebrand — waiting on the client for new
   GLMI-branded contact details to fill back in.
-- Content emphasis the client asked for: top-quality materials/equipment,
+- **Service is the primary USP** (client's own framing, 2026): GLMI's
+  differentiator is responsive, dependable, customer-focused service, not
+  just materials — the hero copy leads with this now ("Top-quality
+  materials. Service you can trust."). Keep future homepage/marketing copy
+  tilted toward service, not just product breadth/pricing, unless the
+  client says otherwise. Content emphasis: top-quality materials/equipment,
   trusted industrial supplier, trusted brands, exceptional service,
-  best/competitive prices — this is already woven into hero copy and the
+  best/competitive prices — this is woven into hero copy and the
   "Why GLMI" section.
 
 ## Still pending / open TODOs

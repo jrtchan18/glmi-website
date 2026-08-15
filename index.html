@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GLMI | Industrial Supplies Trading | GLMI</title>
-<meta name="description" content="GLMI supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.">
+<meta name="description" content="GLMI supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers — backed by responsive, dependable service.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -46,7 +46,9 @@ img{max-width:100%;display:block;}
 /* ===== Header ===== */
 header{position:sticky; top:0; z-index:50; background:var(--ink); color:var(--white); border-bottom:3px solid var(--green);}
 .header-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1180px; margin:0 auto; gap:20px;}
-.logo{display:flex; flex-direction:column; line-height:1.1;}
+.logo{display:flex; align-items:center; gap:10px;}
+.logo-mark{flex-shrink:0;}
+.logo-text{display:flex; flex-direction:column; line-height:1.1;}
 .logo .name{font-family:'Playfair Display', serif; font-size:23px; font-weight:700; letter-spacing:0.01em;}
 .logo .name span{color:var(--green);}
 .logo .tagline{font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.14em; color:var(--steel-light); text-transform:uppercase; margin-top:3px;}
@@ -380,8 +382,20 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 <header>
   <div class="header-inner">
     <a href="index.html" class="logo">
-      <span class="name">GL<span>MI</span></span>
-      <span class="tagline">Wholesaler &middot; Retailer</span>
+      <svg class="logo-mark" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+        <defs>
+          <linearGradient id="logoMarkGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1C7A41"/>
+            <stop offset="1" stop-color="#125C2F"/>
+          </linearGradient>
+        </defs>
+        <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
+        <text x="20" y="27" font-family="'Playfair Display', serif" font-size="21" font-weight="700" fill="#FAF8F2" text-anchor="middle">G</text>
+      </svg>
+      <span class="logo-text">
+        <span class="name">GL<span>MI</span></span>
+        <span class="tagline">Wholesaler &middot; Retailer</span>
+      </span>
     </a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">MENU</button>
     <nav id="mainNav">
@@ -628,8 +642,8 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
   <div class="wrap hero-inner" data-reveal>
     <div>
       <span class="eyebrow">Wholesaler &middot; Retailer</span>
-      <h1>Top-quality materials. <em>Trusted brands.</em></h1>
-      <p>Wholesaler and Retailer of Quality Industrial and Construction Materials. A trusted industrial supplier for contractors and industrial buyers &mdash; backed by exceptional service and competitive prices.</p>
+      <h1>Top-quality materials. <em>Service you can trust.</em></h1>
+      <p>GLMI goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
       <div class="hero-ctas">
         <a href="products.html" class="btn btn-primary">Browse Products</a>
         <a href="#contact" class="btn btn-ghost">Request a Quote</a>

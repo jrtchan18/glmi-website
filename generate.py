@@ -316,12 +316,32 @@ def nav(active=None):
         out.append(f'<a href="{href}"{cur}>{label}</a>')
     return "\n      ".join(out)
 
+# Logo mark — a badge with a stylized "G" monogram, echoing the icon-badge
+# gradient treatment already used in the "Why GLMI" cards elsewhere on the
+# site. Placeholder-quality (built in code, not by a graphic designer) —
+# swap for a professionally designed mark whenever the client has one;
+# everything referencing it (header, this constant) can stay as-is, just
+# replace the <svg>...</svg> markup here.
+LOGO_MARK = """<svg class="logo-mark" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true">
+        <defs>
+          <linearGradient id="logoMarkGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1C7A41"/>
+            <stop offset="1" stop-color="#125C2F"/>
+          </linearGradient>
+        </defs>
+        <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
+        <text x="20" y="27" font-family="'Playfair Display', serif" font-size="21" font-weight="700" fill="#FAF8F2" text-anchor="middle">G</text>
+      </svg>"""
+
 def header(active=None, depth=""):
     return f"""<header>
   <div class="header-inner">
     <a href="{depth}index.html" class="logo">
-      <span class="name">GL<span>MI</span></span>
-      <span class="tagline">Wholesaler &middot; Retailer</span>
+      {LOGO_MARK}
+      <span class="logo-text">
+        <span class="name">GL<span>MI</span></span>
+        <span class="tagline">Wholesaler &middot; Retailer</span>
+      </span>
     </a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">MENU</button>
     <nav id="mainNav">
@@ -573,7 +593,7 @@ homepage_brand_tiles = "\n        ".join(
 )
 
 index_page = head(f"{COMPANY} | Industrial Supplies Trading",
-                   f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers.",
+                   f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers — backed by responsive, dependable service.",
                    extra_head=ANIME_JS_TAG) + "\n" + header() + f"""
 
 <a id="top"></a>
@@ -581,8 +601,8 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
   <div class="wrap hero-inner" data-reveal>
     <div>
       <span class="eyebrow">Wholesaler &middot; Retailer</span>
-      <h1>Top-quality materials. <em>Trusted brands.</em></h1>
-      <p>{TAGLINE}. A trusted industrial supplier for contractors and industrial buyers &mdash; backed by exceptional service and competitive prices.</p>
+      <h1>Top-quality materials. <em>Service you can trust.</em></h1>
+      <p>{COMPANY} goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
       <div class="hero-ctas">
         <a href="products.html" class="btn btn-primary">Browse Products</a>
         <a href="#contact" class="btn btn-ghost">Request a Quote</a>
