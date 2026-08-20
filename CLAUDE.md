@@ -50,7 +50,7 @@ generated HTML (resolve every `href`/`src` relative to its own file, ignoring
 `<script>`/`<style>` blocks — the inlined `site.js` contains a `${item.url}`
 template literal that looks like a broken link but isn't).
 
-- `index.html` — homepage: hero (**full-width banner slideshow** on white,
+- `index.html` — homepage: hero (**banner slideshow** on white,
   CTAs centered below it — see "Hero slideshow") → "Why GLMI" (4 trust pillars) →
   product groups teaser → brands teaser → stats band → Who We Are teaser
   (links out to `who-we-are.html`) → Contact
@@ -208,7 +208,7 @@ artifact, not a site bug, and doesn't affect real visitors.)
 
 ## Hero slideshow
 
-The homepage hero is a **full-width banner slideshow on a white background**,
+The homepage hero is a **banner slideshow on a white background**,
 modeled on yalehardwareph.com's hero. It has been through two earlier
 versions — a green `.hero-plate` category box, then a single cover photo in a
 right-hand column — **don't reinstate either.** The hero section is white
@@ -230,15 +230,29 @@ right-hand column — **don't reinstate either.** The hero section is white
   (`generate.py`) restates each banner's message in words, and the section
   carries a visually-hidden `<h1>` (`.sr-only` in `styles.css`) so the
   homepage still has a real heading. If you edit the banners, edit these too.
+- **Sizing**: the slideshow sits inside a `.wrap` (max-width 1180px), *not*
+  full bleed, so white shows around it — matching Yale's proportions. It was
+  briefly full-width; don't put it back.
 - **Markup reuses the existing `.carousel` structure and the `site.js`
   carousel controller** (arrows, dots, touch swipe) rather than duplicating
   it, with a `.hero-carousel` class carrying the hero-specific styling
-  (16:9 slides, white ground, overlaid dots, no border). Autoplay is opt-in
-  per carousel via `data-autoplay="6000"` — the category galleries omit the
-  attribute and so behave exactly as before. Autoplay pauses on hover,
-  on keyboard focus, and when the tab is backgrounded, restarts after any
-  manual navigation, and is skipped entirely under
-  `prefers-reduced-motion`.
+  (16:9 slides, white ground, overlaid dots). Two behaviors are **opt-in per
+  carousel via attributes**, so the category galleries — which set neither —
+  behave exactly as they always have:
+  - `data-autoplay="6000"` — advances every 6s. Pauses on hover, on keyboard
+    focus, and when the tab is backgrounded; restarts after any manual
+    navigation; skipped entirely under `prefers-reduced-motion`.
+  - `data-loop` — **seamless wrap-around.** Without it the track visibly
+    rewinds from the last slide all the way back to the first. With it,
+    `site.js` clones the first slide onto the end and the last onto the
+    front (both `aria-hidden`, and excluded from the dot count), so stepping
+    past either edge keeps moving in the *same* direction into a clone, then
+    silently snaps to the real slide once the animation ends. Snapping is
+    driven by `transitionend` **plus a 600ms `setTimeout` fallback** — a
+    backgrounded tab suspends CSS transitions, so a missed `transitionend`
+    would strand the track on a clone and make the next move rewind. That
+    timer is deliberate defensive code, same spirit as the reveal-animation
+    safety net; don't delete it.
 - **Arrows are hidden below 860px** — at phone widths they sat directly on
   top of the baked-in headline. Swipe and the dots still work there.
 - **Known limitation:** because the copy is part of the image, it does not

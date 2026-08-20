@@ -675,17 +675,19 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
 <a id="top"></a>
 <section class="hero">
   <h1 class="sr-only">{COMPANY} &mdash; wholesaler and retailer of quality industrial and construction materials, serving contractors and industrial buyers since {ESTABLISHED_YEAR}</h1>
-  <div class="carousel hero-carousel" data-autoplay="6000" aria-roledescription="carousel" aria-label="{COMPANY} highlights">
-    <div class="carousel-track">
+  <div class="wrap">
+    <div class="carousel hero-carousel" data-autoplay="6000" data-loop aria-roledescription="carousel" aria-label="{COMPANY} highlights">
+      <div class="carousel-track">
         {hero_slides_html}
+      </div>
+      <button class="carousel-btn prev" type="button" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="carousel-btn next" type="button" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+      <div class="carousel-dots"></div>
     </div>
-    <button class="carousel-btn prev" type="button" aria-label="Previous slide">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <button class="carousel-btn next" type="button" aria-label="Next slide">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
-    <div class="carousel-dots"></div>
   </div>
   <div class="wrap hero-ctas">
     <a href="products.html" class="btn btn-primary">Browse Products</a>

@@ -108,14 +108,15 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
    the homepage <h1>, whose text is baked into the hero artwork. */
 .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
 
-/* ===== Hero — full-width banner slideshow (2026) =====
+/* ===== Hero — banner slideshow (2026) =====
    White ground, not the old dark-green block: the client's banner artwork
    carries its own background and headline copy, so this section is just a
-   frame for it. Reuses the .carousel markup and JS controller (arrows, dots,
-   touch swipe) with hero-specific styling layered on top — see .hero-carousel
-   overrides below. */
-.hero{position:relative; background:var(--paper); padding:0 0 44px;}
-.hero-carousel{border:none; border-radius:0; background:var(--paper); border-bottom:3px solid var(--green);}
+   frame for it. The slideshow sits inside .wrap rather than running full
+   bleed, so white shows around it (modeled on yalehardwareph.com). Reuses the
+   .carousel markup and JS controller (arrows, dots, touch swipe, and here
+   also autoplay + seamless looping) with hero styling layered on top. */
+.hero{position:relative; background:var(--paper); padding:36px 0 44px;}
+.hero-carousel{border:1px solid var(--line); border-radius:3px; background:var(--paper);}
 .hero-carousel .carousel-slide{aspect-ratio:16/9; display:block; gap:0;}
 .hero-carousel .carousel-slide::before{display:none;}
 .hero-carousel .carousel-slide img{width:100%; height:100%; object-fit:cover; display:block;}
@@ -258,6 +259,7 @@ footer{background:var(--ink); color:#AEBCB2; padding:36px 0;}
      both still work, so nothing is lost. */
   .hero-carousel .carousel-btn{display:none;}
   .hero-carousel .carousel-dots{bottom:8px;}
+  .hero{padding:18px 0 32px;}
   .mini-cta{flex-direction:column; align-items:flex-start;}
 
   /* Products mega-menu becomes a tap-to-expand accordion — no hover on touch */
@@ -1185,7 +1187,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = carousel.querySelector('.carousel-btn.prev');
     const nextBtn = carousel.querySelector('.carousel-btn.next');
     const dotsWrap = carousel.querySelector('.carousel-dots');
-    let index = 0;
+    const count = slides.length;
+
+    // Optional seamless looping, opted into with
+    // <div class="carousel" data-loop> — currently only the homepage hero.
+    // Without it a carousel rewinds visibly from the last slide back to the
+    // first; with it, stepping past either end keeps moving in the SAME
+    // direction into a cloned copy of the opposite slide, then silently snaps
+    // to the real one once the animation finishes. The clones are decorative
+    // duplicates, so they're hidden from assistive tech.
+    const loop = carousel.hasAttribute('data-loop') && count > 1;
+    if (loop) {
+      const head = slides[0].cloneNode(true);
+      const tail = slides[count - 1].cloneNode(true);
+      [head, tail].forEach(c => {
+        c.setAttribute('aria-hidden', 'true');
+        c.removeAttribute('id');
+        c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+      });
+      track.appendChild(head);
+      track.insertBefore(tail, slides[0]);
+    }
+
+    let index = 0;              // real slide index — drives the dots
+    let pos = loop ? 1 : 0;     // track offset, including the leading clone
 
     slides.forEach((_, i) => {
       const dot = document.createElement('button');
@@ -1197,11 +1222,58 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const dots = Array.from(dotsWrap.children);
 
-    function goTo(i) {
-      index = (i + slides.length) % slides.length;
-      track.style.transform = `translateX(-${index * 100}%)`;
+    function render(animate) {
+      track.style.transition = animate ? '' : 'none';
+      track.style.transform = `translateX(-${pos * 100}%)`;
+      if (!animate) {
+        void track.offsetWidth;   // flush the jump before re-enabling easing
+        track.style.transition = '';
+      }
       dots.forEach((d, di) => d.classList.toggle('active', di === index));
     }
+
+    // Once a wrap animation finishes we're parked on a clone; jump (without
+    // animating) to the identical real slide so the next move continues
+    // normally instead of rewinding across the whole track.
+    let snapTimer = null;
+    function snapIfOnClone() {
+      if (!loop) return;
+      if (pos === 0)              { pos = count; render(false); }   // leading clone  -> real last
+      else if (pos === count + 1) { pos = 1;     render(false); }   // trailing clone -> real first
+    }
+
+    function goTo(i) {
+      if (loop) {
+        // i of -1 or count means "step past the edge" — land on a clone so the
+        // motion continues in the same direction, then snap back.
+        if (i < 0)           { index = count - 1; pos = 0; }
+        else if (i >= count) { index = 0;         pos = count + 1; }
+        else                 { index = i;         pos = i + 1; }
+      } else {
+        index = (i + count) % count;
+        pos = index;
+      }
+      render(true);
+
+      if (loop && (pos === 0 || pos === count + 1)) {
+        clearTimeout(snapTimer);
+        // transitionend below normally handles the snap. This timer is the
+        // safety net for when it never fires — backgrounding a tab suspends
+        // CSS transitions, and a missed event would strand the track on a
+        // clone. Deliberate belt-and-braces; don't remove it.
+        snapTimer = setTimeout(snapIfOnClone, 600);
+      }
+    }
+
+    if (loop) {
+      track.addEventListener('transitionend', e => {
+        if (e.target !== track || e.propertyName !== 'transform') return;
+        clearTimeout(snapTimer);
+        snapIfOnClone();
+      });
+    }
+
+    render(false);
 
     // Optional autoplay, opted into per-carousel with
     // <div class="carousel" data-autoplay="6000"> — currently only the
@@ -1214,7 +1286,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (timer) { clearInterval(timer); timer = null; }
     }
     function startAuto() {
-      if (!autoplayMs || reduceMotion || slides.length < 2) return;
+      if (!autoplayMs || reduceMotion || count < 2) return;
       stopAuto();
       timer = setInterval(() => goTo(index + 1), autoplayMs);
     }
