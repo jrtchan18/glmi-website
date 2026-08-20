@@ -12,13 +12,27 @@ const QUOTE_EMAIL_TO = 'jrtchan18@gmail.com';
 // ===== Quote cart (localStorage) =====
 // Shared across every page (product pages add to it, the nav badge reads
 // it, request-quote.html renders and submits it). Item shape:
-// { url: 'cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+// { url: 'items/cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+//
+// `url` is always stored site-root-relative ("items/x.html"), never relative
+// to the page that did the adding — request-quote.html sits at the root and
+// renders these straight into hrefs, so a "../"-prefixed value would break
+// there. The add-to-quote buttons emit the root-relative form directly.
 const QUOTE_CART_KEY = 'glmiQuoteCart';
+
+// Product pages used to live at the repo root, so carts saved before that
+// move hold bare filenames ("cotton-gloves.html") that now 404. Rewrite those
+// on read. Safe to delete once no visitor could still be holding an old cart.
+function normalizeCartUrl(url) {
+  if (typeof url !== 'string' || url.includes('/')) return url;
+  return 'items/' + url;
+}
 
 function getQuoteCart() {
   try {
     const raw = JSON.parse(localStorage.getItem(QUOTE_CART_KEY));
-    return Array.isArray(raw) ? raw : [];
+    if (!Array.isArray(raw)) return [];
+    return raw.map((i) => ({ ...i, url: normalizeCartUrl(i.url) }));
   } catch (e) {
     return [];
   }
@@ -303,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dot.className = 'dot' + (i === 0 ? ' active' : '');
       dot.type = 'button';
       dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-      dot.addEventListener('click', () => goTo(i));
+      dot.addEventListener('click', () => goToManual(i));
       dotsWrap.appendChild(dot);
     });
     const dots = Array.from(dotsWrap.children);
@@ -313,16 +327,48 @@ document.addEventListener('DOMContentLoaded', () => {
       track.style.transform = `translateX(-${index * 100}%)`;
       dots.forEach((d, di) => d.classList.toggle('active', di === index));
     }
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo(index - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo(index + 1));
+
+    // Optional autoplay, opted into per-carousel with
+    // <div class="carousel" data-autoplay="6000"> — currently only the
+    // homepage hero. Carousels without the attribute behave exactly as before.
+    const autoplayMs = parseInt(carousel.dataset.autoplay || '0', 10);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timer = null;
+
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function startAuto() {
+      if (!autoplayMs || reduceMotion || slides.length < 2) return;
+      stopAuto();
+      timer = setInterval(() => goTo(index + 1), autoplayMs);
+    }
+    // Manual navigation restarts the clock, so a slide the visitor just picked
+    // doesn't get yanked away a fraction of a second later.
+    function goToManual(i) { goTo(i); startAuto(); }
+
+    // Pause while the visitor is reading (hover / keyboard focus) or when the
+    // tab is in the background.
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goToManual(index - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToManual(index + 1));
 
     let startX = 0;
     track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
     track.addEventListener('touchend', e => {
       const diff = e.changedTouches[0].clientX - startX;
-      if (diff > 40) goTo(index - 1);
-      else if (diff < -40) goTo(index + 1);
+      if (diff > 40) goToManual(index - 1);
+      else if (diff < -40) goToManual(index + 1);
     }, { passive: true });
+
+    startAuto();
   });
 
   // Product image gallery (main + thumbnail strip)

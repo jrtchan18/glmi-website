@@ -4,6 +4,35 @@ import datetime
 
 OUT = os.path.dirname(os.path.abspath(__file__))
 
+# ---- Output layout ----
+# Root holds only the 5 top-level pages (index, products, brands, who-we-are,
+# request-quote); the 15 category pages and 48 per-item product pages live in
+# subfolders so the repo root stays readable.
+#
+# Because pages now sit at different depths, EVERY generated link has to be
+# depth-aware. The convention: each page-building call passes a `depth` prefix
+# ("" for root pages, "../" for anything in a subfolder) into header(),
+# footer(), thumb(), carousel(), and the href helpers below. If you add a new
+# page, pass the right depth — a missing one produces links that work from
+# root and 404 from a subfolder, which is easy to miss when spot-checking.
+CAT_DIR = "categories"
+ITEM_DIR = "items"
+
+for _d in (CAT_DIR, ITEM_DIR):
+    os.makedirs(os.path.join(OUT, _d), exist_ok=True)
+
+def cat_href(cat_slug, depth=""):
+    """Link to a category page from a page at `depth`."""
+    return f"{depth}{CAT_DIR}/{cat_slug}.html"
+
+def item_page_href(filename, depth=""):
+    """Link to a per-item product page from a page at `depth`."""
+    return f"{depth}{ITEM_DIR}/{filename}"
+
+def asset(path, depth=""):
+    """Link to a static asset (images/...) from a page at `depth`."""
+    return f"{depth}{path}"
+
 COMPANY = "GLMI"
 # Contact details are placeholders — real numbers/email not finalized yet.
 # PHONE/EMAIL (used in tel:/mailto: hrefs) are intentionally blank so the
@@ -47,13 +76,14 @@ def slugify(text):
 def icon(name, size=30, cls=""):
     return f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="{cls}">{ICONS[name]}</svg>'
 
-def thumb(label, icon_key, size=32, img=None, logo=False):
+def thumb(label, icon_key, size=32, img=None, logo=False, depth=""):
     """Photo thumbnail with hover-zoom built in via CSS. Pass img (a file path) to use a real photo
-    instead of the SVG placeholder; set logo=True for brand logos (white backing, contain-fit)."""
+    instead of the SVG placeholder; set logo=True for brand logos (white backing, contain-fit).
+    `depth` prefixes the image path for pages in subfolders (see "Output layout" up top)."""
     if img:
         cls = "thumb logo-thumb" if logo else "thumb"
         return f"""<div class="{cls}">
-          <img class="thumb-photo" src="{img}" alt="{label}" loading="lazy">
+          <img class="thumb-photo" src="{asset(img, depth)}" alt="{label}" loading="lazy">
         </div>"""
     return f"""<div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -71,15 +101,16 @@ def thumb_visual(label, icon_key, size=32, show_label=True):
             {label_html}
           </div>"""
 
-def carousel(slides):
+def carousel(slides, depth=""):
     """slides: list of (label, icon_key) or (label, icon_key, img). Renders a prev/next + dots carousel.
-    Pass img (a file path) on a slide to show a real photo instead of the SVG placeholder."""
+    Pass img (a file path) on a slide to show a real photo instead of the SVG placeholder.
+    `depth` prefixes image paths for pages in subfolders (see "Output layout" up top)."""
     def render_slide(slide):
         lbl, ic = slide[0], slide[1]
         img = slide[2] if len(slide) > 2 else None
         if img:
             return f"""<div class="carousel-slide has-photo">
-          <img class="cs-photo" src="{img}" alt="{lbl}" loading="lazy">
+          <img class="cs-photo" src="{asset(img, depth)}" alt="{lbl}" loading="lazy">
         </div>"""
         return f"""<div class="carousel-slide">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -274,28 +305,32 @@ BRANDS = [
 BRANDS_BY_NAME = {b[0]: b for b in BRANDS}
 HOMEPAGE_BRAND_NAMES = ["Sumotech", "G-Weld", "Grand Sumoweld", "ABC", "Yanase", "Boysen"]
 
-def brand_item_html(name, icon_key, img, reveal_delay=None):
+def brand_item_html(name, icon_key, img, reveal_delay=None, depth=""):
     if img:
-        inner = f'<img class="brand-logo" src="{img}" alt="{name}">'
+        inner = f'<img class="brand-logo" src="{asset(img, depth)}" alt="{name}">'
     else:
         inner = f'<div class="brand-placeholder">{icon(icon_key, size=26)}<span>{name}</span></div>'
     attrs = f' data-reveal data-reveal-delay="{reveal_delay}"' if reveal_delay is not None else ''
     return f'<div class="brand-tile"{attrs}>{inner}</div>'
 
 # ---- Nav "Products" mega-menu: hover a category, see the items under it ----
-def item_href(cat, item):
+def item_href(cat, item, depth=""):
+    """Link to an item: its own product page if it has one, else the anchor on
+    its category page."""
     name, link = item[0], (item[2] if len(item) == 3 else None)
-    return link if link else f'{cat["slug"]}.html#{slugify(name)}'
+    if link:
+        return item_page_href(link, depth)
+    return f'{cat_href(cat["slug"], depth)}#{slugify(name)}'
 
-def mega_menu_html():
+def mega_menu_html(depth=""):
     rows = []
     for cat in CATEGORIES:
         sub_links = "\n            ".join(
-            f'<a href="{item_href(cat, item)}">{item[0]}</a>' for item in cat["items"]
-        ) or f'<a href="{cat["slug"]}.html">View {cat["title"]}</a>'
+            f'<a href="{item_href(cat, item, depth)}">{item[0]}</a>' for item in cat["items"]
+        ) or f'<a href="{cat_href(cat["slug"], depth)}">View {cat["title"]}</a>'
         rows.append(f"""<li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="{cat['slug']}.html" class="mega-cat-link">{cat['title']}</a>
+            <a href="{cat_href(cat['slug'], depth)}" class="mega-cat-link">{cat['title']}</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show {cat['title']} items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
@@ -306,23 +341,15 @@ def mega_menu_html():
         </li>""")
     return "\n        ".join(rows)
 
-MEGA_MENU_HTML = mega_menu_html()
+# The menu is identical at every depth apart from its link prefixes, and it's
+# inlined into all 68 pages — so build it once per distinct depth and reuse.
+# (Was a single MEGA_MENU_HTML constant before pages moved into subfolders.)
+_MEGA_MENU_CACHE = {}
 
-def nav(active=None):
-    links = [("products", "Products"), ("brands", "Brands"), ("about", "Who We Are"), ("contact", "Contact")]
-    out = []
-    for slug, label in links:
-        cur = ' aria-current="page"' if active == slug else ""
-        if slug == "products":
-            href = "products.html"
-        elif slug == "brands":
-            href = "brands.html"
-        elif slug == "about":
-            href = "who-we-are.html"
-        else:
-            href = f"index.html#{slug}"
-        out.append(f'<a href="{href}"{cur}>{label}</a>')
-    return "\n      ".join(out)
+def mega_menu(depth=""):
+    if depth not in _MEGA_MENU_CACHE:
+        _MEGA_MENU_CACHE[depth] = mega_menu_html(depth)
+    return _MEGA_MENU_CACHE[depth]
 
 # Logo mark — a badge with a stylized "G" monogram, echoing the icon-badge
 # gradient treatment already used in the "Why GLMI" cards elsewhere on the
@@ -362,7 +389,7 @@ def header(active=None, depth=""):
         </div>
         <div class="mega-menu">
           <ul class="mega-cats">
-            {MEGA_MENU_HTML}
+            {mega_menu(depth)}
           </ul>
           <div class="mega-cta"><a href="{depth}products.html">View Full Catalog &rarr;</a></div>
         </div>
@@ -446,16 +473,17 @@ def mini_cta(cat_title=None, heading=None, sub=None):
 # =========================================================
 for idx, cat in enumerate(CATEGORIES):
     slug = cat["slug"]
+    depth = "../"  # category pages live in categories/
     prev_cat = CATEGORIES[idx - 1] if idx > 0 else CATEGORIES[-1]
     next_cat = CATEGORIES[idx + 1] if idx < len(CATEGORIES) - 1 else CATEGORIES[0]
 
     item_cards = "\n          ".join(
-        (f"""<a href="{link}" id="{slugify(name)}" class="item-card">
-            {thumb(name, cat["icon"], size=30)}
+        (f"""<a href="{item_page_href(link, depth)}" id="{slugify(name)}" class="item-card">
+            {thumb(name, cat["icon"], size=30, depth=depth)}
             <div class="item-body"><h4>{name}</h4></div>
           </a>""" if link else
          f"""<div id="{slugify(name)}" class="item-card">
-            {thumb(name, cat["icon"], size=30)}
+            {thumb(name, cat["icon"], size=30, depth=depth)}
             <div class="item-body"><h4>{name}</h4></div>
           </div>""")
         for item in cat["items"]
@@ -466,13 +494,13 @@ for idx, cat in enumerate(CATEGORIES):
     if cat.get("photo"):
         photo_label, photo_img = cat["photo"]
         gallery_slides = [(photo_label, cat["icon"], photo_img)] + gallery_slides
-    gallery_html = carousel(gallery_slides)
+    gallery_html = carousel(gallery_slides, depth=depth)
 
-    page = head(cat["title"], cat["desc"]) + "\n" + header(active="products") + f"""
+    page = head(cat["title"], cat["desc"]) + "\n" + header(active="products", depth=depth) + f"""
 
 <div class="breadcrumb">
   <div class="wrap">
-    <a href="index.html">Home</a><span class="sep">/</span><a href="products.html">Products</a><span class="sep">/</span><span class="current">{cat['title']}</span>
+    <a href="{depth}index.html">Home</a><span class="sep">/</span><a href="{depth}products.html">Products</a><span class="sep">/</span><span class="current">{cat['title']}</span>
   </div>
 </div>
 
@@ -514,16 +542,16 @@ for idx, cat in enumerate(CATEGORIES):
       </div>
 
       <div class="cat-pagination">
-        <a href="{prev_cat['slug']}.html"><span class="dir">&larr; Previous</span>{prev_cat['title']}</a>
-        <a href="{next_cat['slug']}.html" class="next"><span class="dir">Next &rarr;</span>{next_cat['title']}</a>
+        <a href="{cat_href(prev_cat['slug'], depth)}"><span class="dir">&larr; Previous</span>{prev_cat['title']}</a>
+        <a href="{cat_href(next_cat['slug'], depth)}" class="next"><span class="dir">Next &rarr;</span>{next_cat['title']}</a>
       </div>
     </div>
   </section>
 </main>
 
-""" + footer() + "\n</body>\n</html>"
+""" + footer(depth=depth) + "\n</body>\n</html>"
 
-    with open(os.path.join(OUT, f"{slug}.html"), "w") as f:
+    with open(os.path.join(OUT, CAT_DIR, f"{slug}.html"), "w") as f:
         f.write(page)
 
 # =========================================================
@@ -536,7 +564,7 @@ az_categories.remove(welding_cat)
 az_categories.insert(0, welding_cat)
 
 category_cards = "\n        ".join(
-    f"""<a href="{c['slug']}.html" class="plate-card">
+    f"""<a href="{cat_href(c['slug'])}" class="plate-card">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           {thumb(c['title'], c['icon'], img=(c['photo'][1] if c.get('photo') else None))}
           <div class="plate-body">
@@ -557,7 +585,7 @@ products_page = head("Products", "Full product catalog — welding materials, ab
   <div class="wrap">
     <span class="group-code mono">Full Catalog</span>
     <h1 style="margin-top:8px;">All Product Categories</h1>
-    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">14 categories, A&ndash;Z. Select a category to view items, or contact us directly with your requirements.</p>
+    <p style="color:#C7D3C9;font-size:15px;margin-top:8px;max-width:560px;">{len(CATEGORIES)} categories, A&ndash;Z. Select a category to view items, or contact us directly with your requirements.</p>
   </div>
 </section>
 
@@ -589,7 +617,7 @@ group_teasers = [
     ("packaging-materials", "packaging", "Packaging Materials", "Tape, stretch film, plastic &amp; metal straps."),
 ]
 teaser_cards = "\n        ".join(
-    f"""<a href="{slug}.html" class="plate-card" data-reveal data-reveal-delay="{i * 60}">
+    f"""<a href="{cat_href(slug)}" class="plate-card" data-reveal data-reveal-delay="{i * 60}">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           {thumb(name, ic, img=(by_slug[slug]['photo'][1] if by_slug[slug].get('photo') else None))}
           <div class="plate-body">
@@ -605,29 +633,63 @@ homepage_brand_tiles = "\n        ".join(
     for i, name in enumerate(HOMEPAGE_BRAND_NAMES)
 )
 
+# ---- Homepage hero slideshow ----
+# Client-supplied banner artwork (images/Hero Photos/*.png, kept as the
+# untouched originals; the page loads the compressed images/hero/*.jpg).
+# The headline/body copy is BAKED INTO each image, which is why the hero has
+# no HTML headline of its own anymore — it would duplicate what's already
+# drawn. That also means search engines and screen readers can't read any of
+# it, so the alt text below carries the same message in text form and the
+# section keeps a visually-hidden <h1>. Keep both in sync if the artwork
+# changes.
+HERO_SLIDES = [
+    ("images/hero/hero-1.jpg",
+     "Trusted wholesaler and retailer since 2003 — top-quality materials, service you can trust. "
+     "MIG welding wire spools, assorted work gloves, abrasive discs and belts, caster wheels and a fiber drum."),
+    ("images/hero/hero-2.jpg",
+     "Top-notch welding and safety equipment — weld stronger, work safer. "
+     "Grand Sumoweld MIG wires paired with Sumotech safety gloves in leather, nitrile and cotton."),
+    ("images/hero/hero-3.jpg",
+     "Quality materials with exceptional service — your industrial supply partner. "
+     "Cordless power drills, structural steel bar and angle, bearings, sanding belts, flap discs and MIG wire."),
+    ("images/hero/hero-4.jpg",
+     "Serving our partners since 2003 — a supplier contractors have trusted for over 23 years. "
+     "Phelps Dodge electrical wire, Davies paints, threaded rod, steel sheets and tubing, and fiberglass ladders."),
+    ("images/hero/hero-5.jpg",
+     "Brands we carry — trusted brands, exceptional service. "
+     "G-Weld, Sumotech, Grand Sumoweld, Yanase, Mitutoyo, Phelps Dodge, Boysen, Davies, Nation, ABC, Makita and Bosch."),
+]
+
+hero_slides_html = "\n        ".join(
+    f"""<div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide {i + 1} of {len(HERO_SLIDES)}">
+          <img src="{asset(src)}" alt="{alt}" width="1600" height="900"
+               {'fetchpriority="high"' if i == 0 else 'loading="lazy"'}>
+        </div>"""
+    for i, (src, alt) in enumerate(HERO_SLIDES)
+)
+
 index_page = head(f"{COMPANY} | Industrial Supplies Trading",
                    f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers — backed by responsive, dependable service.",
                    extra_head=ANIME_JS_TAG) + "\n" + header() + f"""
 
 <a id="top"></a>
 <section class="hero">
-  <div class="wrap hero-inner" data-reveal>
-    <div>
-      <span class="eyebrow">Wholesaler &middot; Retailer</span>
-      <h1>Top-quality materials. <em>Service you can trust.</em></h1>
-      <p>{COMPANY} goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
-      <div class="hero-ctas">
-        <a href="products.html" class="btn btn-primary">Browse Products</a>
-        <a href="request-quote.html" class="btn btn-ghost">Request a Quote</a>
-      </div>
+  <h1 class="sr-only">{COMPANY} &mdash; wholesaler and retailer of quality industrial and construction materials, serving contractors and industrial buyers since {ESTABLISHED_YEAR}</h1>
+  <div class="carousel hero-carousel" data-autoplay="6000" aria-roledescription="carousel" aria-label="{COMPANY} highlights">
+    <div class="carousel-track">
+        {hero_slides_html}
     </div>
-    <div class="hero-plate">
-      <span class="plate-tag">14 Categories</span>
-      <div class="cell">{icon("welding", cls="")}<span class="label">Welding &amp; Metal Work</span></div>
-      <div class="cell">{icon("bearing", cls="")}<span class="label">Bearings</span></div>
-      <div class="cell">{icon("drill", cls="")}<span class="label">Tools &amp; Equipment</span></div>
-      <div class="cell">{icon("safety", cls="")}<span class="label">Safety &amp; PPE</span></div>
-    </div>
+    <button class="carousel-btn prev" type="button" aria-label="Previous slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="carousel-btn next" type="button" aria-label="Next slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <div class="carousel-dots"></div>
+  </div>
+  <div class="wrap hero-ctas">
+    <a href="products.html" class="btn btn-primary">Browse Products</a>
+    <a href="request-quote.html" class="btn btn-ghost hero-ghost">Request a Quote</a>
   </div>
 </section>
 
@@ -806,20 +868,23 @@ pack_html = "\n        ".join(
     f"<tr><td>{d}</td><td>{p}</td><td>{n}</td></tr>" for d, p, n in pack_rows
 )
 
+MIG_SLUG = "mig-wire-er70s-6.html"
+mig_depth = "../"  # this is an item page — lives in items/
+
 related_items = [c for c in CATEGORIES if c["group"] == "Welding & Metal Work" and c["slug"] != "welding-materials"]
 related_html = "\n        ".join(
-    f"""<a href="{c['slug']}.html" class="plate-card">
+    f"""<a href="{cat_href(c['slug'], mig_depth)}" class="plate-card">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-          {thumb(c['title'], c['icon'])}
+          {thumb(c['title'], c['icon'], depth=mig_depth)}
           <div class="plate-body"><h4>{c['title']}</h4><span class="go">View &rarr;</span></div>
         </a>""" for c in related_items
 )
 
-mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, copper coated, multiple diameters, for CO2 and Argon-CO2 shielded welding.") + "\n" + header(active="products") + f"""
+mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, copper coated, multiple diameters, for CO2 and Argon-CO2 shielded welding.") + "\n" + header(active="products", depth=mig_depth) + f"""
 
 <div class="breadcrumb">
   <div class="wrap">
-    <a href="index.html">Home</a><span class="sep">/</span><a href="products.html">Products</a><span class="sep">/</span><a href="welding-materials.html">Welding Materials</a><span class="sep">/</span><span class="current">MIG Wire ER70S-6</span>
+    <a href="{mig_depth}index.html">Home</a><span class="sep">/</span><a href="{mig_depth}products.html">Products</a><span class="sep">/</span><a href="{cat_href('welding-materials', mig_depth)}">Welding Materials</a><span class="sep">/</span><span class="current">MIG Wire ER70S-6</span>
   </div>
 </div>
 
@@ -860,7 +925,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
             </div>
           </div>
           <div class="ctas">
-            <button type="button" class="btn btn-primary add-to-quote" data-url="mig-wire-er70s-6.html" data-name="MIG Welding Wire — ER70S-6">
+            <button type="button" class="btn btn-primary add-to-quote" data-url="{ITEM_DIR}/{MIG_SLUG}" data-name="MIG Welding Wire — ER70S-6">
               {icon("quote", cls="")}
               <span class="btn-txt">Add to Quote</span>
             </button>
@@ -914,34 +979,35 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
   </section>
 </main>
 
-""" + footer() + "\n</body>\n</html>"
+""" + footer(depth=mig_depth) + "\n</body>\n</html>"
 
-with open(os.path.join(OUT, "mig-wire-er70s-6.html"), "w") as f:
+with open(os.path.join(OUT, ITEM_DIR, MIG_SLUG), "w") as f:
     f.write(mig_page)
 
-print("Generated product page: mig-wire-er70s-6.html")
+print(f"Generated product page: {ITEM_DIR}/{MIG_SLUG}")
 
 # =========================================================
 # 4b. Generate simple product pages (description + photos only, no spec/
 # packaging tables) — for items whose CATEGORIES entry has a page link.
 # =========================================================
 def product_page(cat, name, desc, gallery_items, slug):
+    depth = "../"  # product pages live in items/
     gallery_thumbs_html = "\n          ".join(
         gthumb(lbl, ic, active=(i == 0)) for i, (lbl, ic) in enumerate(gallery_items)
     )
     related = [it for it in cat["items"] if it[0] != name and len(it) == 3 and it[2]]
     related_html = "\n        ".join(
-        f"""<a href="{it[2]}" class="plate-card">
+        f"""<a href="{item_page_href(it[2], depth)}" class="plate-card">
             <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-            {thumb(it[0], cat["icon"])}
+            {thumb(it[0], cat["icon"], depth=depth)}
             <div class="plate-body"><h4>{it[0]}</h4><span class="go">View &rarr;</span></div>
           </a>""" for it in related
     )
-    page = head(name, desc) + "\n" + header(active="products") + f"""
+    page = head(name, desc) + "\n" + header(active="products", depth=depth) + f"""
 
 <div class="breadcrumb">
   <div class="wrap">
-    <a href="index.html">Home</a><span class="sep">/</span><a href="products.html">Products</a><span class="sep">/</span><a href="{cat['slug']}.html">{cat['title']}</a><span class="sep">/</span><span class="current">{name}</span>
+    <a href="{depth}index.html">Home</a><span class="sep">/</span><a href="{depth}products.html">Products</a><span class="sep">/</span><a href="{cat_href(cat['slug'], depth)}">{cat['title']}</a><span class="sep">/</span><span class="current">{name}</span>
   </div>
 </div>
 
@@ -973,7 +1039,7 @@ def product_page(cat, name, desc, gallery_items, slug):
             </div>
           </div>
           <div class="ctas">
-            <button type="button" class="btn btn-primary add-to-quote" data-url="{slug}" data-name="{name}">
+            <button type="button" class="btn btn-primary add-to-quote" data-url="{ITEM_DIR}/{slug}" data-name="{name}">
               {icon("quote", cls="")}
               <span class="btn-txt">Add to Quote</span>
             </button>
@@ -997,9 +1063,9 @@ def product_page(cat, name, desc, gallery_items, slug):
   </section>
 </main>
 
-""" + footer() + "\n</body>\n</html>"
+""" + footer(depth=depth) + "\n</body>\n</html>"
 
-    with open(os.path.join(OUT, slug), "w") as f:
+    with open(os.path.join(OUT, ITEM_DIR, slug), "w") as f:
         f.write(page)
 
 gloves_cat = by_slug["gloves"]

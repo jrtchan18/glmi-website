@@ -25,12 +25,38 @@ directly going forward.)
 
 ## Site structure
 
-- `index.html` — homepage: hero → "Why GLMI" (4 trust pillars) →
+**Folder layout (2026)** — pages are split across three levels so the repo
+root stays readable:
+
+```
+/                      index.html, products.html, brands.html,
+                       who-we-are.html, request-quote.html   (5 only)
+/categories/           15 category pages
+/items/                48 per-item product pages
+/images/               real photos + brand logos
+```
+
+Because pages sit at different depths, **every generated link is depth-aware**.
+The convention: each page passes a `depth` prefix — `""` for the 5 root pages,
+`"../"` for anything in `categories/` or `items/` — into `header()`, `footer()`,
+`thumb()`, `carousel()`, `brand_item_html()`, and the href helpers
+`cat_href()` / `item_page_href()` / `asset()` (all defined at the top of
+`generate.py` under "Output layout"). **Never hardcode a bare `foo.html` link
+in generated markup** — it will work from root and 404 from a subfolder, which
+is easy to miss when spot-checking one page. Use the helpers.
+
+If you add pages or move things, re-verify with a link check across all
+generated HTML (resolve every `href`/`src` relative to its own file, ignoring
+`<script>`/`<style>` blocks — the inlined `site.js` contains a `${item.url}`
+template literal that looks like a broken link but isn't).
+
+- `index.html` — homepage: hero (**full-width banner slideshow** on white,
+  CTAs centered below it — see "Hero slideshow") → "Why GLMI" (4 trust pillars) →
   product groups teaser → brands teaser → stats band → Who We Are teaser
   (links out to `who-we-are.html`) → Contact
 - `who-we-are.html` — dedicated About page: story/history, established-year +
   years-in-business + location stat plate, "What We Stand For" pillars, CTA
-- `products.html` — hub listing all 14 categories as one flat A&ndash;Z grid
+- `products.html` — hub listing all 15 categories as one flat A&ndash;Z grid
   (modeled on wyler.com.ph/products/), Welding Materials pinned first
   regardless of alphabetical order, everything else sorted by title. **No
   group sections** — that was deliberately removed (2026); `GROUP_ORDER`
@@ -51,24 +77,29 @@ directly going forward.)
   G-Weld, Grand Sumoweld, ABC, Yanase, Boysen) — in that exact order, with a
   "View All Brands" link to the full wall. To change which brands appear on
   the homepage, edit `HOMEPAGE_BRAND_NAMES`, not `BRANDS` itself.
-- 14 category pages (`welding-materials.html`, `abrasives.html`, `bearings.html`,
-  etc.) — each has a photo gallery carousel + item cards. Item cards are
+- 15 category pages in `categories/` (`categories/welding-materials.html`,
+  `categories/abrasives.html`, etc.) — each has a photo gallery carousel +
+  item cards. The visible category count on `products.html` is derived from
+  `len(CATEGORIES)`, not hardcoded, so adding a category updates it
+  automatically. Item cards are
   intentionally minimal: picture + name only, no description text — the
   item's own product page (if it has one) or the category page itself
   carries the detail, so the card doesn't need to repeat it
-- `mig-wire-er70s-6.html` — single-*product* detail page with real specs from
-  the client (image gallery, quick facts, inquiry box, spec table, packaging
+- `items/mig-wire-er70s-6.html` — single-*product* detail page with real specs
+  from the client (image gallery, quick facts, inquiry box, spec table, packaging
   table, related products). Built by hand in the "4. Generate a single-product
   page" section of `generate.py` — this level of detail needs real per-product
   data, so don't replicate the spec/packaging tables for other items without it.
-- Per-item product pages, one per item (gallery + quick description +
+- Per-item product pages in `items/`, one per item (gallery + quick description +
   inquiry box + related items, no spec/packaging tables — we don't have real
   specs beyond MIG Wire), built by the generic `product_page()` helper
   (section "4b" in `generate.py`). Categories done so far: **Gloves** (7
   items), **Packaging Materials** (16 items), **Abrasives** (14 items),
   **Tubing & Structural Steel** (10 items) — see each category's `items`
   list in `CATEGORIES` for the exact filenames (3rd
-  tuple element). To add another category: give its `items` entries a 3rd
+  tuple element — stored bare, e.g. `cut-off-wheel.html`, with the `items/`
+  prefix added by `item_page_href()` at render time; don't put the folder in
+  the tuple). To add another category: give its `items` entries a 3rd
   tuple element (the page filename), then loop `product_page()` over them
   like the existing blocks do. Ask before assuming which category/items
   should get this treatment next.
@@ -76,11 +107,15 @@ directly going forward.)
 Nav is fixed to: **Who We Are, Products, Brands, Contact**.
 
 **Products mega-menu**: "Products" in the header opens a flyout listing all
-14 categories (flat, like Wyler's `/brands/` browse-categories menu); a
+15 categories (flat, like Wyler's `/brands/` browse-categories menu); a
 category opens a second flyout listing that category's items. Each item
 links to its own product page if its `CATEGORIES` entry has one (see
-Gloves), otherwise falls back to `{category}.html#{item-slug}`
-(`item_href()` in `generate.py`). Built from `CATEGORIES`/`MEGA_MENU_HTML`
+Gloves), otherwise falls back to `categories/{category}.html#{item-slug}`
+(`item_href(cat, item, depth)` in `generate.py`). Because the menu is inlined
+into all 68 pages at two different depths, it's built once per depth and
+cached by `mega_menu(depth)` — that replaced the old single
+`MEGA_MENU_HTML` constant, which produced root-relative links that broke
+once pages moved into subfolders. Built from `CATEGORIES`/`mega_menu()`
 in `generate.py` (`mega_menu_html()`), styled in `styles.css` under
 "Products mega-menu".
 
@@ -171,7 +206,52 @@ artifact, not a site bug, and doesn't affect real visitors.)
   `header()`. `.logo` is now a row (`.logo-mark` + `.logo-text`), not a
   column — don't collapse that back to just text.
 
-## Images — currently all placeholders
+## Hero slideshow
+
+The homepage hero is a **full-width banner slideshow on a white background**,
+modeled on yalehardwareph.com's hero. It has been through two earlier
+versions — a green `.hero-plate` category box, then a single cover photo in a
+right-hand column — **don't reinstate either.** The hero section is white
+(`--paper`), not the old dark-green block.
+
+- **Slides are client-supplied banner artwork** with the headline and body
+  copy **baked into the image**. That's why the hero has no HTML headline of
+  its own — it would duplicate what's already drawn. Sources are
+  `images/Hero Photos/1–5.png` (1920&times;1080, ~2.3&nbsp;MB each, kept as
+  untouched originals); the page loads `images/hero/hero-1…5.jpg`
+  (1600&times;900, ~270&nbsp;KB each — 11.3&nbsp;MB down to 1.3&nbsp;MB).
+  **If the client sends new banners, redo that compress step** — this is the
+  homepage hero and most visitors are on mobile data. Slide 1 is
+  `fetchpriority="high"`; slides 2–5 are `loading="lazy"`, so first paint
+  pulls only ~270&nbsp;KB.
+- **Because the copy is baked into pixels, search engines and screen readers
+  can't read any of it.** Two things compensate, and both must be kept in
+  sync with the artwork: the per-slide `alt` text in `HERO_SLIDES`
+  (`generate.py`) restates each banner's message in words, and the section
+  carries a visually-hidden `<h1>` (`.sr-only` in `styles.css`) so the
+  homepage still has a real heading. If you edit the banners, edit these too.
+- **Markup reuses the existing `.carousel` structure and the `site.js`
+  carousel controller** (arrows, dots, touch swipe) rather than duplicating
+  it, with a `.hero-carousel` class carrying the hero-specific styling
+  (16:9 slides, white ground, overlaid dots, no border). Autoplay is opt-in
+  per carousel via `data-autoplay="6000"` — the category galleries omit the
+  attribute and so behave exactly as before. Autoplay pauses on hover,
+  on keyboard focus, and when the tab is backgrounded, restarts after any
+  manual navigation, and is skipped entirely under
+  `prefers-reduced-motion`.
+- **Arrows are hidden below 860px** — at phone widths they sat directly on
+  top of the baked-in headline. Swipe and the dots still work there.
+- **Known limitation:** because the copy is part of the image, it does not
+  reflow, so it renders small on phones. The real fix is either
+  mobile-specific banner crops or moving the text out of the artwork into
+  HTML over a plain photo — worth raising with the client. Slide 4 also
+  hardcodes "Over 23 Years", which will go stale (everything else derives
+  from `ESTABLISHED_YEAR`).
+- The earlier single cover photo (`images/cover-photo.jpg`, trimmed from
+  `images/Cover Photo.png`) is no longer referenced by any page. Kept in the
+  repo in case it's wanted elsewhere; safe to delete otherwise.
+
+## Images — mostly placeholders
 
 Every product/category/brand image is a styled SVG placeholder tile labeled
 "SAMPLE IMAGE" (built by the `thumb()` / `carousel()` helpers in
@@ -237,6 +317,14 @@ a single **Add to Quote** button. This is a real feature, not decoration:
   (`#quoteCount`) reads it on every page load, `request-quote.html` renders
   and edits it. No backend, no cookies, per-browser only (same limitation
   as any localStorage cart — clearing browser data empties it).
+  **`url` is always stored site-root-relative** (`items/cut-off-wheel.html`),
+  never relative to the page that added it — `request-quote.html` sits at the
+  root and drops these straight into hrefs, so a `"../"`-prefixed value would
+  break there. The `data-url` on each Add to Quote button emits the
+  root-relative form directly (`{ITEM_DIR}/{slug}`). `normalizeCartUrl()` in
+  `site.js` rewrites pre-subfolder carts (bare `cut-off-wheel.html`) on read
+  so carts saved before the 2026 folder move don't 404; safe to delete once
+  no visitor could still be holding one.
 - **"Add to Quote"** buttons (`.add-to-quote`, in `product_page()` and the
   hardcoded MIG Wire page) read the page's own quantity stepper, merge into
   the cart by `url`, give a 1.6s "Added ✓" confirmation. They never

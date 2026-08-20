@@ -104,26 +104,35 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
   .mega-cat:hover .mega-sub{opacity:1; visibility:visible; pointer-events:auto;}
 }
 
-/* ===== Hero ===== */
-.hero{position:relative; background:var(--ink); color:var(--white); overflow:hidden; padding:76px 0 96px;}
-.hero::before{content:""; position:absolute; inset:0; background-image:linear-gradient(var(--steel) 1px, transparent 1px), linear-gradient(90deg, var(--steel) 1px, transparent 1px); background-size:38px 38px; opacity:0.14; mask-image:linear-gradient(to bottom, black, transparent 85%);}
-.hero-inner{position:relative; display:grid; grid-template-columns:1.15fr 0.85fr; gap:48px; align-items:center;}
-.eyebrow{font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--green); display:flex; align-items:center; gap:10px; margin-bottom:18px;}
-.eyebrow::before{content:"";width:26px;height:2px;background:var(--green);display:inline-block;}
-.hero h1{font-size:clamp(34px, 4.6vw, 54px); line-height:1.06; max-width:640px;}
-.hero h1 em{color:var(--green); font-style:normal;}
-.hero p{margin-top:20px; max-width:480px; color:#C7D3C9; font-size:16px;}
-.hero-ctas{display:flex; gap:14px; margin-top:32px; flex-wrap:wrap;}
+/* Visually hidden but readable by screen readers and search engines. Used for
+   the homepage <h1>, whose text is baked into the hero artwork. */
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+
+/* ===== Hero — full-width banner slideshow (2026) =====
+   White ground, not the old dark-green block: the client's banner artwork
+   carries its own background and headline copy, so this section is just a
+   frame for it. Reuses the .carousel markup and JS controller (arrows, dots,
+   touch swipe) with hero-specific styling layered on top — see .hero-carousel
+   overrides below. */
+.hero{position:relative; background:var(--paper); padding:0 0 44px;}
+.hero-carousel{border:none; border-radius:0; background:var(--paper); border-bottom:3px solid var(--green);}
+.hero-carousel .carousel-slide{aspect-ratio:16/9; display:block; gap:0;}
+.hero-carousel .carousel-slide::before{display:none;}
+.hero-carousel .carousel-slide img{width:100%; height:100%; object-fit:cover; display:block;}
+.hero-carousel .carousel-btn{width:44px; height:44px; background:rgba(255,255,255,0.88); border-color:rgba(22,36,29,0.18); color:var(--ink);}
+.hero-carousel .carousel-btn:hover{background:var(--green); border-color:var(--green); color:#fff;}
+.hero-carousel .carousel-dots{position:absolute; left:0; right:0; bottom:16px; background:transparent; padding:0;}
+.hero-carousel .carousel-dots .dot{width:9px; height:9px; background:rgba(255,255,255,0.6); box-shadow:0 0 0 1px rgba(22,36,29,0.3);}
+.hero-carousel .carousel-dots .dot.active{background:var(--green); box-shadow:0 0 0 1px rgba(22,36,29,0.15);}
+.hero-ctas{display:flex; gap:14px; margin-top:28px; flex-wrap:wrap; justify-content:center;}
 .btn{font-family:'IBM Plex Mono', monospace; font-size:13px; letter-spacing:0.04em; padding:14px 24px; border-radius:2px; text-transform:uppercase; display:inline-flex; align-items:center; gap:10px; border:1px solid transparent; transition:transform .15s, background .15s, border-color .15s;}
 .btn-primary{background:var(--green); color:var(--ink); font-weight:500;}
 .btn-primary:hover{background:#fff;}
 .btn-ghost{border-color:#46594B; color:#fff;}
 .btn-ghost:hover{border-color:var(--green); color:var(--green);}
-.hero-plate{position:relative; background:var(--steel); border:1px solid #4F6357; border-radius:3px; padding:26px; display:grid; grid-template-columns:1fr 1fr; gap:2px;}
-.hero-plate .cell{background:rgba(20,30,22,0.55); padding:16px 14px; display:flex; flex-direction:column; gap:8px;}
-.hero-plate .cell svg{width:26px;height:26px;stroke:var(--green);}
-.hero-plate .cell .label{font-size:12px; color:#DCE5DC; font-family:'IBM Plex Mono',monospace; letter-spacing:0.03em;}
-.plate-tag{position:absolute; top:-12px; left:20px; background:var(--green); color:var(--ink); font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em; padding:4px 10px; border-radius:2px; font-weight:500;}
+/* Ghost button on the now-white hero — the default is built for dark grounds. */
+.hero-ghost{border-color:var(--ink); color:var(--ink);}
+.hero-ghost:hover{border-color:var(--green); color:var(--green);}
 
 /* ===== Breadcrumb + mini category hero ===== */
 .breadcrumb{background:var(--ink); color:#AEBCB2; padding:14px 0; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.03em;}
@@ -243,8 +252,12 @@ footer{background:var(--ink); color:#AEBCB2; padding:36px 0;}
   nav{position:fixed; inset:64px 0 0 0; background:var(--ink); flex-direction:column; align-items:flex-start; padding:24px 28px; gap:20px; transform:translateX(100%); transition:transform .2s ease; overflow-y:auto;}
   nav.open{transform:translateX(0);}
   .nav-toggle{display:block; background:none; border:1px solid #46594B; color:#fff; padding:8px 12px; border-radius:2px; font-family:'IBM Plex Mono',monospace; font-size:12px;}
-  .hero-inner, .about, .contact-inner{grid-template-columns:1fr;}
-  .hero-plate{order:-1;}
+  .about, .contact-inner{grid-template-columns:1fr;}
+  /* Hero arrows are hidden on phones — at this width they sit right on top of
+     the headline baked into the artwork. Touch swipe (site.js) and the dots
+     both still work, so nothing is lost. */
+  .hero-carousel .carousel-btn{display:none;}
+  .hero-carousel .carousel-dots{bottom:8px;}
   .mini-cta{flex-direction:column; align-items:flex-start;}
 
   /* Products mega-menu becomes a tap-to-expand accordion — no hover on touch */
@@ -436,230 +449,230 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           <ul class="mega-cats">
             <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="welding-materials.html" class="mega-cat-link">Welding Materials</a>
+            <a href="categories/welding-materials.html" class="mega-cat-link">Welding Materials</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Welding Materials items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="mig-wire-er70s-6.html">MIG Wires</a>
+            <a href="items/mig-wire-er70s-6.html">MIG Wires</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="abrasives.html" class="mega-cat-link">Abrasives</a>
+            <a href="categories/abrasives.html" class="mega-cat-link">Abrasives</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Abrasives items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="cut-off-wheel.html">Cut-off Wheel</a>
-            <a href="depressed-center-wheel.html">Depressed Center Wheel</a>
-            <a href="grinding-wheel.html">Grinding Wheel</a>
-            <a href="abrasive-mop-wheel.html">Abrasive Mop Wheel</a>
-            <a href="radial-wheel-flat-stand.html">Radial Wheel (Flat/Stand)</a>
-            <a href="flap-disc.html">Flap Disc</a>
-            <a href="non-woven-wheel.html">Non-Woven Wheel</a>
-            <a href="sanding-belt.html">Sanding Belt</a>
-            <a href="sand-paper.html">Sand Paper</a>
-            <a href="emery-cloth.html">Emery Cloth</a>
-            <a href="honing-stone.html">Honing Stone</a>
-            <a href="mounted-stone.html">Mounted Stone</a>
-            <a href="buffing-pad.html">Buffing Pad</a>
-            <a href="buffing-compound-paste.html">Buffing Compound/Paste</a>
+            <a href="items/cut-off-wheel.html">Cut-off Wheel</a>
+            <a href="items/depressed-center-wheel.html">Depressed Center Wheel</a>
+            <a href="items/grinding-wheel.html">Grinding Wheel</a>
+            <a href="items/abrasive-mop-wheel.html">Abrasive Mop Wheel</a>
+            <a href="items/radial-wheel-flat-stand.html">Radial Wheel (Flat/Stand)</a>
+            <a href="items/flap-disc.html">Flap Disc</a>
+            <a href="items/non-woven-wheel.html">Non-Woven Wheel</a>
+            <a href="items/sanding-belt.html">Sanding Belt</a>
+            <a href="items/sand-paper.html">Sand Paper</a>
+            <a href="items/emery-cloth.html">Emery Cloth</a>
+            <a href="items/honing-stone.html">Honing Stone</a>
+            <a href="items/mounted-stone.html">Mounted Stone</a>
+            <a href="items/buffing-pad.html">Buffing Pad</a>
+            <a href="items/buffing-compound-paste.html">Buffing Compound/Paste</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="cutting-tools.html" class="mega-cat-link">Cutting Tools / Drills</a>
+            <a href="categories/cutting-tools.html" class="mega-cat-link">Cutting Tools / Drills</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Cutting Tools / Drills items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="cutting-tools.html#drill-bits">Drill Bits</a>
-            <a href="cutting-tools.html#cutting-discs">Cutting Discs</a>
+            <a href="categories/cutting-tools.html#drill-bits">Drill Bits</a>
+            <a href="categories/cutting-tools.html#cutting-discs">Cutting Discs</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="power-drills.html" class="mega-cat-link">Power Drills</a>
+            <a href="categories/power-drills.html" class="mega-cat-link">Power Drills</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Power Drills items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="power-drills.html#makita">Makita</a>
-            <a href="power-drills.html#hitachi">Hitachi</a>
-            <a href="power-drills.html#bosch">Bosch</a>
-            <a href="power-drills.html#aeg">AEG</a>
+            <a href="categories/power-drills.html#makita">Makita</a>
+            <a href="categories/power-drills.html#hitachi">Hitachi</a>
+            <a href="categories/power-drills.html#bosch">Bosch</a>
+            <a href="categories/power-drills.html#aeg">AEG</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="pneumatic-tools.html" class="mega-cat-link">Pneumatic Tools</a>
+            <a href="categories/pneumatic-tools.html" class="mega-cat-link">Pneumatic Tools</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Pneumatic Tools items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="pneumatic-tools.html#pneumatic-tools">Pneumatic Tools</a>
+            <a href="categories/pneumatic-tools.html#pneumatic-tools">Pneumatic Tools</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="hydraulic-hose-fittings.html" class="mega-cat-link">Hydraulic Hose & Fittings</a>
+            <a href="categories/hydraulic-hose-fittings.html" class="mega-cat-link">Hydraulic Hose & Fittings</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Hydraulic Hose & Fittings items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="hydraulic-hose-fittings.html#hydraulic-hose">Hydraulic Hose</a>
-            <a href="hydraulic-hose-fittings.html#fittings">Fittings</a>
+            <a href="categories/hydraulic-hose-fittings.html#hydraulic-hose">Hydraulic Hose</a>
+            <a href="categories/hydraulic-hose-fittings.html#fittings">Fittings</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="wires-cables.html" class="mega-cat-link">Electrical Wires / Cables</a>
+            <a href="categories/wires-cables.html" class="mega-cat-link">Electrical Wires / Cables</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Electrical Wires / Cables items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="wires-cables.html#phelps-dodge">Phelps Dodge</a>
-            <a href="wires-cables.html#columbia">Columbia</a>
-            <a href="wires-cables.html#duraflex">Duraflex</a>
-            <a href="wires-cables.html#philflex">Philflex</a>
+            <a href="categories/wires-cables.html#phelps-dodge">Phelps Dodge</a>
+            <a href="categories/wires-cables.html#columbia">Columbia</a>
+            <a href="categories/wires-cables.html#duraflex">Duraflex</a>
+            <a href="categories/wires-cables.html#philflex">Philflex</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="construction-materials.html" class="mega-cat-link">Construction Materials</a>
+            <a href="categories/construction-materials.html" class="mega-cat-link">Construction Materials</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Construction Materials items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="construction-materials.html#paints">Paints</a>
-            <a href="construction-materials.html#plywood">Plywood</a>
-            <a href="construction-materials.html#good-lumber">Good Lumber</a>
+            <a href="categories/construction-materials.html#paints">Paints</a>
+            <a href="categories/construction-materials.html#plywood">Plywood</a>
+            <a href="categories/construction-materials.html#good-lumber">Good Lumber</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="sheets.html" class="mega-cat-link">Sheets</a>
+            <a href="categories/sheets.html" class="mega-cat-link">Sheets</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Sheets items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="sheets.html#acrylic-sheets">Acrylic Sheets</a>
-            <a href="sheets.html#g-i-sheets">G.I. Sheets</a>
-            <a href="sheets.html#b-i-sheets">B.I. Sheets</a>
-            <a href="sheets.html#polycarbonate-sheets">Polycarbonate Sheets</a>
+            <a href="categories/sheets.html#acrylic-sheets">Acrylic Sheets</a>
+            <a href="categories/sheets.html#g-i-sheets">G.I. Sheets</a>
+            <a href="categories/sheets.html#b-i-sheets">B.I. Sheets</a>
+            <a href="categories/sheets.html#polycarbonate-sheets">Polycarbonate Sheets</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="tubing-structural-steel.html" class="mega-cat-link">Tubing & Structural Steel</a>
+            <a href="categories/tubing-structural-steel.html" class="mega-cat-link">Tubing & Structural Steel</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Tubing & Structural Steel items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="angle-bar.html">Angle Bar</a>
-            <a href="flat-bar.html">Flat Bar</a>
-            <a href="square-tube.html">Square Tube</a>
-            <a href="rectangular-tube.html">Rectangular Tube</a>
-            <a href="slotted-angle-bar.html">Slotted Angle Bar</a>
-            <a href="shafting.html">Shafting</a>
-            <a href="bi-gi-pipes.html">B.I./G.I. Pipes</a>
-            <a href="skd11.html">SKD11</a>
-            <a href="s45c.html">S45C</a>
-            <a href="4140.html">4140</a>
+            <a href="items/angle-bar.html">Angle Bar</a>
+            <a href="items/flat-bar.html">Flat Bar</a>
+            <a href="items/square-tube.html">Square Tube</a>
+            <a href="items/rectangular-tube.html">Rectangular Tube</a>
+            <a href="items/slotted-angle-bar.html">Slotted Angle Bar</a>
+            <a href="items/shafting.html">Shafting</a>
+            <a href="items/bi-gi-pipes.html">B.I./G.I. Pipes</a>
+            <a href="items/skd11.html">SKD11</a>
+            <a href="items/s45c.html">S45C</a>
+            <a href="items/4140.html">4140</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="bearings.html" class="mega-cat-link">Bearings</a>
+            <a href="categories/bearings.html" class="mega-cat-link">Bearings</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Bearings items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="bearings.html#fag">FAG</a>
-            <a href="bearings.html#iko">IKO</a>
-            <a href="bearings.html#koyo">KOYO</a>
+            <a href="categories/bearings.html#fag">FAG</a>
+            <a href="categories/bearings.html#iko">IKO</a>
+            <a href="categories/bearings.html#koyo">KOYO</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="gloves.html" class="mega-cat-link">Gloves</a>
+            <a href="categories/gloves.html" class="mega-cat-link">Gloves</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Gloves items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="cotton-gloves.html">Cotton Gloves</a>
-            <a href="leather-gloves.html">Leather Gloves</a>
-            <a href="maong-gloves.html">Maong Gloves</a>
-            <a href="rubberized-gloves.html">Rubberized Gloves</a>
-            <a href="latex-gloves.html">Latex Gloves</a>
-            <a href="cadet-gloves.html">Cadet Gloves</a>
-            <a href="nitrile-gloves.html">Nitrile Gloves</a>
+            <a href="items/cotton-gloves.html">Cotton Gloves</a>
+            <a href="items/leather-gloves.html">Leather Gloves</a>
+            <a href="items/maong-gloves.html">Maong Gloves</a>
+            <a href="items/rubberized-gloves.html">Rubberized Gloves</a>
+            <a href="items/latex-gloves.html">Latex Gloves</a>
+            <a href="items/cadet-gloves.html">Cadet Gloves</a>
+            <a href="items/nitrile-gloves.html">Nitrile Gloves</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="safety-products.html" class="mega-cat-link">Safety Products</a>
+            <a href="categories/safety-products.html" class="mega-cat-link">Safety Products</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Safety Products items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="safety-products.html#goggles">Goggles</a>
-            <a href="safety-products.html#safety-shoes">Safety Shoes</a>
-            <a href="safety-products.html#leak-detector">Leak Detector</a>
+            <a href="categories/safety-products.html#goggles">Goggles</a>
+            <a href="categories/safety-products.html#safety-shoes">Safety Shoes</a>
+            <a href="categories/safety-products.html#leak-detector">Leak Detector</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="packaging-materials.html" class="mega-cat-link">Packaging Materials</a>
+            <a href="categories/packaging-materials.html" class="mega-cat-link">Packaging Materials</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Packaging Materials items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="packaging-tape.html">Packaging Tape</a>
-            <a href="masking-tape.html">Masking Tape</a>
-            <a href="kraft-tape.html">Kraft Tape</a>
-            <a href="corner-angle-board.html">Corner Angle Board</a>
-            <a href="ldpe-hd-pp-plastic-bags-sheets.html">LDPE/HD/PP Plastic Bags/Sheets</a>
-            <a href="pe-foam.html">P.E. Foam</a>
-            <a href="plastic-and-wooden-pallets.html">Plastic and Wooden Pallets</a>
-            <a href="plastic-crates.html">Plastic Crates</a>
-            <a href="bins.html">Bins</a>
-            <a href="bubble-sheets.html">Bubble Sheets</a>
-            <a href="stretch-film.html">Stretch Film</a>
-            <a href="styropore.html">Styropore</a>
-            <a href="nylon-strap.html">Nylon Strap</a>
-            <a href="metal-and-plastic-clip.html">Metal and Plastic Clip</a>
-            <a href="rubber-bands.html">Rubber Bands</a>
-            <a href="tape-dispenser.html">Tape Dispenser</a>
+            <a href="items/packaging-tape.html">Packaging Tape</a>
+            <a href="items/masking-tape.html">Masking Tape</a>
+            <a href="items/kraft-tape.html">Kraft Tape</a>
+            <a href="items/corner-angle-board.html">Corner Angle Board</a>
+            <a href="items/ldpe-hd-pp-plastic-bags-sheets.html">LDPE/HD/PP Plastic Bags/Sheets</a>
+            <a href="items/pe-foam.html">P.E. Foam</a>
+            <a href="items/plastic-and-wooden-pallets.html">Plastic and Wooden Pallets</a>
+            <a href="items/plastic-crates.html">Plastic Crates</a>
+            <a href="items/bins.html">Bins</a>
+            <a href="items/bubble-sheets.html">Bubble Sheets</a>
+            <a href="items/stretch-film.html">Stretch Film</a>
+            <a href="items/styropore.html">Styropore</a>
+            <a href="items/nylon-strap.html">Nylon Strap</a>
+            <a href="items/metal-and-plastic-clip.html">Metal and Plastic Clip</a>
+            <a href="items/rubber-bands.html">Rubber Bands</a>
+            <a href="items/tape-dispenser.html">Tape Dispenser</a>
           </div>
         </li>
         <li class="mega-cat">
           <div class="mega-cat-row">
-            <a href="caster-wheels.html" class="mega-cat-link">Caster Wheels</a>
+            <a href="categories/caster-wheels.html" class="mega-cat-link">Caster Wheels</a>
             <button type="button" class="mega-cat-toggle" aria-expanded="false" aria-label="Show Caster Wheels items">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chev"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </div>
           <div class="mega-sub">
-            <a href="caster-wheels.html#swivel-casters">Swivel Casters</a>
-            <a href="caster-wheels.html#rigid-casters">Rigid Casters</a>
-            <a href="caster-wheels.html#heavy-duty-casters">Heavy-Duty Casters</a>
-            <a href="caster-wheels.html#light-duty-casters">Light-Duty Casters</a>
+            <a href="categories/caster-wheels.html#swivel-casters">Swivel Casters</a>
+            <a href="categories/caster-wheels.html#rigid-casters">Rigid Casters</a>
+            <a href="categories/caster-wheels.html#heavy-duty-casters">Heavy-Duty Casters</a>
+            <a href="categories/caster-wheels.html#light-duty-casters">Light-Duty Casters</a>
           </div>
         </li>
           </ul>
@@ -684,23 +697,41 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 
 <a id="top"></a>
 <section class="hero">
-  <div class="wrap hero-inner" data-reveal>
-    <div>
-      <span class="eyebrow">Wholesaler &middot; Retailer</span>
-      <h1>Top-quality materials. <em>Service you can trust.</em></h1>
-      <p>GLMI goes beyond simply supplying top-quality materials &mdash; we provide responsive, dependable, customer-focused service to make sure every client gets the right products at the right value, every time.</p>
-      <div class="hero-ctas">
-        <a href="products.html" class="btn btn-primary">Browse Products</a>
-        <a href="request-quote.html" class="btn btn-ghost">Request a Quote</a>
-      </div>
+  <h1 class="sr-only">GLMI &mdash; wholesaler and retailer of quality industrial and construction materials, serving contractors and industrial buyers since 2003</h1>
+  <div class="carousel hero-carousel" data-autoplay="6000" aria-roledescription="carousel" aria-label="GLMI highlights">
+    <div class="carousel-track">
+        <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 1 of 5">
+          <img src="images/hero/hero-1.jpg" alt="Trusted wholesaler and retailer since 2003 — top-quality materials, service you can trust. MIG welding wire spools, assorted work gloves, abrasive discs and belts, caster wheels and a fiber drum." width="1600" height="900"
+               fetchpriority="high">
+        </div>
+        <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 2 of 5">
+          <img src="images/hero/hero-2.jpg" alt="Top-notch welding and safety equipment — weld stronger, work safer. Grand Sumoweld MIG wires paired with Sumotech safety gloves in leather, nitrile and cotton." width="1600" height="900"
+               loading="lazy">
+        </div>
+        <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 3 of 5">
+          <img src="images/hero/hero-3.jpg" alt="Quality materials with exceptional service — your industrial supply partner. Cordless power drills, structural steel bar and angle, bearings, sanding belts, flap discs and MIG wire." width="1600" height="900"
+               loading="lazy">
+        </div>
+        <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 4 of 5">
+          <img src="images/hero/hero-4.jpg" alt="Serving our partners since 2003 — a supplier contractors have trusted for over 23 years. Phelps Dodge electrical wire, Davies paints, threaded rod, steel sheets and tubing, and fiberglass ladders." width="1600" height="900"
+               loading="lazy">
+        </div>
+        <div class="carousel-slide" role="group" aria-roledescription="slide" aria-label="Slide 5 of 5">
+          <img src="images/hero/hero-5.jpg" alt="Brands we carry — trusted brands, exceptional service. G-Weld, Sumotech, Grand Sumoweld, Yanase, Mitutoyo, Phelps Dodge, Boysen, Davies, Nation, ABC, Makita and Bosch." width="1600" height="900"
+               loading="lazy">
+        </div>
     </div>
-    <div class="hero-plate">
-      <span class="plate-tag">14 Categories</span>
-      <div class="cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/></svg><span class="label">Welding &amp; Metal Work</span></div>
-      <div class="cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg><span class="label">Bearings</span></div>
-      <div class="cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span class="label">Tools &amp; Equipment</span></div>
-      <div class="cell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><circle cx="7" cy="12" r="3.2"/><circle cx="17" cy="12" r="3.2"/><path d="M10.2 12h3.6M4 12c0-1 .5-2 1.5-2M20 12c0-1-.5-2-1.5-2"/></svg><span class="label">Safety &amp; PPE</span></div>
-    </div>
+    <button class="carousel-btn prev" type="button" aria-label="Previous slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="carousel-btn next" type="button" aria-label="Next slide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <div class="carousel-dots"></div>
+  </div>
+  <div class="wrap hero-ctas">
+    <a href="products.html" class="btn btn-primary">Browse Products</a>
+    <a href="request-quote.html" class="btn btn-ghost hero-ghost">Request a Quote</a>
   </div>
 </section>
 
@@ -749,7 +780,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <p class="sub">14 categories across 7 groups. Browse the full catalog for item-level detail.</p>
       </div>
       <div class="card-grid">
-        <a href="welding-materials.html" class="plate-card" data-reveal data-reveal-delay="0">
+        <a href="categories/welding-materials.html" class="plate-card" data-reveal data-reveal-delay="0">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -764,7 +795,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="power-drills.html" class="plate-card" data-reveal data-reveal-delay="60">
+        <a href="categories/power-drills.html" class="plate-card" data-reveal data-reveal-delay="60">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -779,7 +810,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="wires-cables.html" class="plate-card" data-reveal data-reveal-delay="120">
+        <a href="categories/wires-cables.html" class="plate-card" data-reveal data-reveal-delay="120">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -794,7 +825,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="construction-materials.html" class="plate-card" data-reveal data-reveal-delay="180">
+        <a href="categories/construction-materials.html" class="plate-card" data-reveal data-reveal-delay="180">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -809,7 +840,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="bearings.html" class="plate-card" data-reveal data-reveal-delay="240">
+        <a href="categories/bearings.html" class="plate-card" data-reveal data-reveal-delay="240">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -824,7 +855,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="gloves.html" class="plate-card" data-reveal data-reveal-delay="300">
+        <a href="categories/gloves.html" class="plate-card" data-reveal data-reveal-delay="300">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <img class="thumb-photo" src="images/Products/assorted gloves.png" alt="Safety &amp; PPE" loading="lazy">
@@ -835,7 +866,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <span class="go">View Products &rarr;</span>
           </div>
         </a>
-        <a href="packaging-materials.html" class="plate-card" data-reveal data-reveal-delay="360">
+        <a href="categories/packaging-materials.html" class="plate-card" data-reveal data-reveal-delay="360">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
           <div class="thumb">
           <span class="sample-tag">SAMPLE IMAGE</span>
@@ -951,13 +982,27 @@ const QUOTE_EMAIL_TO = 'jrtchan18@gmail.com';
 // ===== Quote cart (localStorage) =====
 // Shared across every page (product pages add to it, the nav badge reads
 // it, request-quote.html renders and submits it). Item shape:
-// { url: 'cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+// { url: 'items/cotton-gloves.html', name: 'Cotton Gloves', qty: 2 }
+//
+// `url` is always stored site-root-relative ("items/x.html"), never relative
+// to the page that did the adding — request-quote.html sits at the root and
+// renders these straight into hrefs, so a "../"-prefixed value would break
+// there. The add-to-quote buttons emit the root-relative form directly.
 const QUOTE_CART_KEY = 'glmiQuoteCart';
+
+// Product pages used to live at the repo root, so carts saved before that
+// move hold bare filenames ("cotton-gloves.html") that now 404. Rewrite those
+// on read. Safe to delete once no visitor could still be holding an old cart.
+function normalizeCartUrl(url) {
+  if (typeof url !== 'string' || url.includes('/')) return url;
+  return 'items/' + url;
+}
 
 function getQuoteCart() {
   try {
     const raw = JSON.parse(localStorage.getItem(QUOTE_CART_KEY));
-    return Array.isArray(raw) ? raw : [];
+    if (!Array.isArray(raw)) return [];
+    return raw.map((i) => ({ ...i, url: normalizeCartUrl(i.url) }));
   } catch (e) {
     return [];
   }
@@ -1242,7 +1287,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dot.className = 'dot' + (i === 0 ? ' active' : '');
       dot.type = 'button';
       dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-      dot.addEventListener('click', () => goTo(i));
+      dot.addEventListener('click', () => goToManual(i));
       dotsWrap.appendChild(dot);
     });
     const dots = Array.from(dotsWrap.children);
@@ -1252,16 +1297,48 @@ document.addEventListener('DOMContentLoaded', () => {
       track.style.transform = `translateX(-${index * 100}%)`;
       dots.forEach((d, di) => d.classList.toggle('active', di === index));
     }
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo(index - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo(index + 1));
+
+    // Optional autoplay, opted into per-carousel with
+    // <div class="carousel" data-autoplay="6000"> — currently only the
+    // homepage hero. Carousels without the attribute behave exactly as before.
+    const autoplayMs = parseInt(carousel.dataset.autoplay || '0', 10);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let timer = null;
+
+    function stopAuto() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function startAuto() {
+      if (!autoplayMs || reduceMotion || slides.length < 2) return;
+      stopAuto();
+      timer = setInterval(() => goTo(index + 1), autoplayMs);
+    }
+    // Manual navigation restarts the clock, so a slide the visitor just picked
+    // doesn't get yanked away a fraction of a second later.
+    function goToManual(i) { goTo(i); startAuto(); }
+
+    // Pause while the visitor is reading (hover / keyboard focus) or when the
+    // tab is in the background.
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goToManual(index - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToManual(index + 1));
 
     let startX = 0;
     track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
     track.addEventListener('touchend', e => {
       const diff = e.changedTouches[0].clientX - startX;
-      if (diff > 40) goTo(index - 1);
-      else if (diff < -40) goTo(index + 1);
+      if (diff > 40) goToManual(index - 1);
+      else if (diff < -40) goToManual(index + 1);
     }, { passive: true });
+
+    startAuto();
   });
 
   // Product image gallery (main + thumbnail strip)
