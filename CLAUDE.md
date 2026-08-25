@@ -302,8 +302,19 @@ client's live business site. Hover-zoom and carousel/gallery behavior are
 already wired up and will work the same once real `<img>` tags replace the
 placeholders.
 
-**Brand logos are the immediate next step** — the client is uploading brand
-name/logo images to add to `brands.html`.
+**Brand logos: 10 of 19 are real** (2026) — Makita, Bosch, Phelps Dodge,
+G-Weld, Mitutoyo, Sumotech, ABC, Yanase, Boysen, Davies, all in
+`images/Brands/`. The remaining 9 still render placeholder tiles: FAG, IKO,
+KOYO, Hitachi, AEG, Columbia, Duraflex, Philflex, and **Grand Sumoweld**.
+Sumoweld matters more than the rest — it's one of the six brands featured on
+the homepage and is named in the "Trusted Brands" copy, so it's the only
+placeholder sitting among five real logos there.
+
+Note the logos are a mix of wide wordmarks (Yanase 550&times;91) and
+full-bleed coloured squares with the name inside (ABC, Davies, Phelps
+Dodge). `.brand-logo` uses a generous `max-height` + `object-fit:contain`
+so both shapes stay legible and undistorted — don't drop the cap back to a
+small value, it renders the square logos unreadable.
 
 A category with a real photo (`photo=(label, path)` on its `CATEGORIES`
 entry — currently Gloves and Caster Wheels) shows that photo **everywhere
@@ -420,13 +431,18 @@ a single **Add to Quote** button. This is a real feature, not decoration:
 - Real product photos (client is sourcing these)
 - Real product/item list with specs, beyond what's in `generate.py`'s
   `CATEGORIES` list
-- Brand logo images (client uploading soon — go into `brands.html`)
+- Brand logos for the remaining 9 placeholder tiles — **Grand Sumoweld
+  first**, since it's featured on the homepage alongside five real logos
 - Business hours (still a placeholder `[Mon–Sat, 8:00 AM – 5:00 PM]`)
 - Certifications, warehouse location, delivery coverage area — not yet on
   `who-we-are.html`, ask the client if there's more to add beyond the
   established-2003 story
-- Stats band "Clients Served" number — still `[X]`, needs a real figure from
-  the client (years-in-business is now solved via `ESTABLISHED_YEAR`)
+- ~~Stats band "Clients Served" number~~ — moot: the homepage stats band
+  ("N Product Categories / 15+ Brands Carried / N+ Years in Business /
+  [X] Clients Served") was **removed at the client's request (2026)**, along
+  with its `.stats-band`/`.stats-grid` CSS. Don't re-add it. The separate
+  `.stat-plate` on `who-we-are.html` stays, and its category count now
+  derives from `len(CATEGORIES)` rather than a hardcoded 14.
 - Gloves, Packaging Materials, Abrasives, and Tubing & Structural Steel are
   the only categories with per-item pages so far (description + placeholder
   photos, via `product_page()` — see Site structure above). Deciding which

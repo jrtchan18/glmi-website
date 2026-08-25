@@ -173,10 +173,10 @@ section{padding:76px 0;}
 .icon-badge svg{width:24px; height:24px; stroke:#fff; stroke-width:1.8;}
 .why-card h3{font-size:18px; margin-bottom:8px; color:var(--ink);}
 .why-card p{font-size:13.5px; color:var(--steel); line-height:1.6;}
-.stats-band{background:var(--ink); color:var(--white); padding:52px 0;}
-.stats-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:24px; text-align:center;}
-.stats-grid .stat h3{font-family:'Playfair Display',serif; font-size:36px; color:var(--green);}
-.stats-grid .stat p{font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; color:#D9E2DB; margin-top:6px;}
+/* The homepage stats band (.stats-band/.stats-grid — "N Product Categories",
+   "15+ Brands Carried", "[X] Clients Served") was removed in 2026 at the
+   client's request; its CSS went with it. The .stat-plate on who-we-are.html
+   is a different block and is still in use. */
 
 /* ===== Spec-plate cards ===== */
 .group-code{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--white); background:var(--steel); padding:3px 9px; border-radius:2px; letter-spacing:0.05em; display:inline-block;}
@@ -210,9 +210,14 @@ a.plate-card{display:block;}
 /* ===== Brands strip ===== */
 /* Flat, ungrouped logo wall — brands.html (all) and the homepage's curated subset */
 .brand-wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:16px;}
-.brand-tile{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:20px; min-height:96px; display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, transform .15s ease;}
+.brand-tile{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:18px; min-height:120px; display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, transform .15s ease;}
 .brand-tile:hover{border-color:var(--green); transform:translateY(-2px);}
-.brand-logo{max-width:100%; max-height:44px; object-fit:contain;}
+/* Real logos come in wildly different proportions — some are wide wordmarks
+   (Yanase 550x91, Makita, G-Weld), others are full-bleed squares with the
+   name inside them (ABC, Davies, Phelps Dodge, Mitutoyo). A single small
+   max-height renders the squares near-illegible, so the cap is generous and
+   object-fit:contain keeps every logo undistorted inside the tile. */
+.brand-logo{max-width:100%; max-height:78px; object-fit:contain;}
 .brand-placeholder{display:flex; flex-direction:column; align-items:center; gap:8px;}
 .brand-placeholder svg{stroke:var(--green); stroke-width:1.5;}
 .brand-placeholder span{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--steel); text-align:center;}
@@ -804,7 +809,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <div class="why-card" data-reveal data-reveal-delay="160">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg></div>
           <h3>Trusted Brands</h3>
-          <p>FAG, Makita, Bosch, Phelps Dodge, and more &mdash; established names you already recognize and can rely on.</p>
+          <p>Sumotech, Sumoweld, G-Weld, Yanase, ABC, and more &mdash; established names you can rely on.</p>
         </div>
         <div class="why-card" data-reveal data-reveal-delay="240">
           <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
@@ -943,25 +948,16 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <p class="sub">Genuine stock from established manufacturers across our product lines.</p>
       </div>
       <div class="brand-wall">
-        <div class="brand-tile" data-reveal data-reveal-delay="0"><div class="brand-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg><span>Sumotech</span></div></div>
+        <div class="brand-tile" data-reveal data-reveal-delay="0"><img class="brand-logo" src="images/Brands/Sumotech.png" alt="Sumotech"></div>
         <div class="brand-tile" data-reveal data-reveal-delay="60"><img class="brand-logo" src="images/Brands/G Weld PF Series.png" alt="G-Weld"></div>
         <div class="brand-tile" data-reveal data-reveal-delay="120"><div class="brand-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/></svg><span>Grand Sumoweld</span></div></div>
-        <div class="brand-tile" data-reveal data-reveal-delay="180"><div class="brand-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg><span>ABC</span></div></div>
-        <div class="brand-tile" data-reveal data-reveal-delay="240"><div class="brand-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg><span>Yanase</span></div></div>
-        <div class="brand-tile" data-reveal data-reveal-delay="300"><div class="brand-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 1.8 1.8L15 10"/></svg><span>Boysen</span></div></div>
+        <div class="brand-tile" data-reveal data-reveal-delay="180"><img class="brand-logo" src="images/Brands/ABC.jpg" alt="ABC"></div>
+        <div class="brand-tile" data-reveal data-reveal-delay="240"><img class="brand-logo" src="images/Brands/Yanase.jpg" alt="Yanase"></div>
+        <div class="brand-tile" data-reveal data-reveal-delay="300"><img class="brand-logo" src="images/Brands/Boysen.png" alt="Boysen"></div>
       </div>
       <div style="text-align:center;margin-top:32px;">
         <a href="brands.html" class="btn btn-primary" style="display:inline-flex;">View All Brands</a>
       </div>
-    </div>
-  </section>
-
-  <section class="stats-band">
-    <div class="wrap stats-grid">
-      <div class="stat" data-reveal data-reveal-delay="0"><h3>14</h3><p>Product Categories</p></div>
-      <div class="stat" data-reveal data-reveal-delay="60"><h3>15+</h3><p>Brands Carried</p></div>
-      <div class="stat" data-reveal data-reveal-delay="120"><h3>23+</h3><p>Years in Business</p></div>
-      <div class="stat" data-reveal data-reveal-delay="180"><h3>[X]</h3><p>Clients Served</p></div>
     </div>
   </section>
 

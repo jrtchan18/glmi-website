@@ -173,10 +173,10 @@ section{padding:76px 0;}
 .icon-badge svg{width:24px; height:24px; stroke:#fff; stroke-width:1.8;}
 .why-card h3{font-size:18px; margin-bottom:8px; color:var(--ink);}
 .why-card p{font-size:13.5px; color:var(--steel); line-height:1.6;}
-.stats-band{background:var(--ink); color:var(--white); padding:52px 0;}
-.stats-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:24px; text-align:center;}
-.stats-grid .stat h3{font-family:'Playfair Display',serif; font-size:36px; color:var(--green);}
-.stats-grid .stat p{font-family:'IBM Plex Mono', monospace; font-size:11.5px; letter-spacing:0.08em; text-transform:uppercase; color:#D9E2DB; margin-top:6px;}
+/* The homepage stats band (.stats-band/.stats-grid — "N Product Categories",
+   "15+ Brands Carried", "[X] Clients Served") was removed in 2026 at the
+   client's request; its CSS went with it. The .stat-plate on who-we-are.html
+   is a different block and is still in use. */
 
 /* ===== Spec-plate cards ===== */
 .group-code{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--white); background:var(--steel); padding:3px 9px; border-radius:2px; letter-spacing:0.05em; display:inline-block;}
@@ -210,9 +210,14 @@ a.plate-card{display:block;}
 /* ===== Brands strip ===== */
 /* Flat, ungrouped logo wall — brands.html (all) and the homepage's curated subset */
 .brand-wall{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:16px;}
-.brand-tile{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:20px; min-height:96px; display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, transform .15s ease;}
+.brand-tile{background:var(--paper); border:1px solid var(--line); border-radius:8px; padding:18px; min-height:120px; display:flex; align-items:center; justify-content:center; transition:border-color .15s ease, transform .15s ease;}
 .brand-tile:hover{border-color:var(--green); transform:translateY(-2px);}
-.brand-logo{max-width:100%; max-height:44px; object-fit:contain;}
+/* Real logos come in wildly different proportions — some are wide wordmarks
+   (Yanase 550x91, Makita, G-Weld), others are full-bleed squares with the
+   name inside them (ABC, Davies, Phelps Dodge, Mitutoyo). A single small
+   max-height renders the squares near-illegible, so the cap is generous and
+   object-fit:contain keeps every logo undistorted inside the tile. */
+.brand-logo{max-width:100%; max-height:78px; object-fit:contain;}
 .brand-placeholder{display:flex; flex-direction:column; align-items:center; gap:8px;}
 .brand-placeholder svg{stroke:var(--green); stroke-width:1.5;}
 .brand-placeholder span{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--steel); text-align:center;}
@@ -761,7 +766,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <div class="stat-plate">
         <div class="stat"><h3>2003</h3><p>Established</p></div>
         <div class="stat"><h3>23+</h3><p>Years in Business</p></div>
-        <div class="stat"><h3>14</h3><p>Product Categories</p></div>
+        <div class="stat"><h3>15</h3><p>Product Categories</p></div>
         <div class="stat" style="grid-column:span 2;"><h3 style="font-size:20px;">San Juan City</h3><p>Metro Manila, PH</p></div>
       </div>
     </div>
@@ -777,7 +782,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <div class="contact-plate">
         <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg><div><div class="label">Top-Quality Materials</div><div class="value">Genuine, dependable stock across every category we carry.</div></div></div>
         <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/></svg><div><div class="label">Trusted Since 2003</div><div class="value">23+ years supplying contractors and industrial buyers.</div></div></div>
-        <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg><div><div class="label">Trusted Brands</div><div class="value">FAG, Makita, Bosch, Phelps Dodge, and more.</div></div></div>
+        <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg><div><div class="label">Trusted Brands</div><div class="value">Sumotech, Sumoweld, G-Weld, Yanase, ABC, and more.</div></div></div>
         <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><div><div class="label">Exceptional Service</div><div class="value">Direct, responsive support and competitive trade pricing.</div></div></div>
       </div>
     </div>

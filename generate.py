@@ -290,17 +290,18 @@ BRANDS = [
     ("Hitachi", "drill", None),
     ("Bosch", "drill", "images/Brands/bosch.png"),
     ("AEG", "drill", None),
-    ("Phelps Dodge", "wire", None),
+    ("Phelps Dodge", "wire", "images/Brands/Phelps dodge.png"),
     ("Columbia", "wire", None),
     ("Duraflex", "wire", None),
     ("Philflex", "wire", None),
     ("G-Weld", "welding", "images/Brands/G Weld PF Series.png"),
     ("Mitutoyo", "cutting", "images/Brands/mitotuyo.png"),
-    ("Sumotech", "brand", None),
+    ("Sumotech", "brand", "images/Brands/Sumotech.png"),
     ("Grand Sumoweld", "welding", None),
-    ("ABC", "brand", None),
-    ("Yanase", "brand", None),
-    ("Boysen", "brand", None),
+    ("ABC", "brand", "images/Brands/ABC.jpg"),
+    ("Yanase", "brand", "images/Brands/Yanase.jpg"),
+    ("Boysen", "brand", "images/Brands/Boysen.png"),
+    ("Davies", "brand", "images/Brands/Davies.jpg"),
 ]
 BRANDS_BY_NAME = {b[0]: b for b in BRANDS}
 HOMEPAGE_BRAND_NAMES = ["Sumotech", "G-Weld", "Grand Sumoweld", "ABC", "Yanase", "Boysen"]
@@ -721,7 +722,7 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
         <div class="why-card" data-reveal data-reveal-delay="160">
           <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/></svg></div>
           <h3>Trusted Brands</h3>
-          <p>FAG, Makita, Bosch, Phelps Dodge, and more &mdash; established names you already recognize and can rely on.</p>
+          <p>Sumotech, Sumoweld, G-Weld, Yanase, ABC, and more &mdash; established names you can rely on.</p>
         </div>
         <div class="why-card" data-reveal data-reveal-delay="240">
           <div class="icon-badge alt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
@@ -765,15 +766,6 @@ index_page = head(f"{COMPANY} | Industrial Supplies Trading",
       <div style="text-align:center;margin-top:32px;">
         <a href="brands.html" class="btn btn-primary" style="display:inline-flex;">View All Brands</a>
       </div>
-    </div>
-  </section>
-
-  <section class="stats-band">
-    <div class="wrap stats-grid">
-      <div class="stat" data-reveal data-reveal-delay="0"><h3>14</h3><p>Product Categories</p></div>
-      <div class="stat" data-reveal data-reveal-delay="60"><h3>15+</h3><p>Brands Carried</p></div>
-      <div class="stat" data-reveal data-reveal-delay="120"><h3>{YEARS_IN_BUSINESS}+</h3><p>Years in Business</p></div>
-      <div class="stat" data-reveal data-reveal-delay="180"><h3>[X]</h3><p>Clients Served</p></div>
     </div>
   </section>
 
@@ -1159,7 +1151,7 @@ print("Generated brands.html")
 value_rows = [
     ('<path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/>', "Top-Quality Materials", "Genuine, dependable stock across every category we carry."),
     ('<path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/>', f"Trusted Since {ESTABLISHED_YEAR}", f"{YEARS_IN_BUSINESS}+ years supplying contractors and industrial buyers."),
-    ('<circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/>', "Trusted Brands", "FAG, Makita, Bosch, Phelps Dodge, and more."),
+    ('<circle cx="12" cy="8" r="5"/><path d="M8.5 13.5 6 21l6-3 6 3-2.5-7.5"/>', "Trusted Brands", "Sumotech, Sumoweld, G-Weld, Yanase, ABC, and more."),
     ('<path d="M20 6 9 17l-5-5"/>', "Exceptional Service", "Direct, responsive support and competitive trade pricing."),
 ]
 value_rows_html = "\n        ".join(
@@ -1193,7 +1185,7 @@ about_page = head("Who We Are", f"{COMPANY} has been a trusted wholesaler and re
       <div class="stat-plate">
         <div class="stat"><h3>{ESTABLISHED_YEAR}</h3><p>Established</p></div>
         <div class="stat"><h3>{YEARS_IN_BUSINESS}+</h3><p>Years in Business</p></div>
-        <div class="stat"><h3>14</h3><p>Product Categories</p></div>
+        <div class="stat"><h3>{len(CATEGORIES)}</h3><p>Product Categories</p></div>
         <div class="stat" style="grid-column:span 2;"><h3 style="font-size:20px;">San Juan City</h3><p>Metro Manila, PH</p></div>
       </div>
     </div>
