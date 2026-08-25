@@ -150,7 +150,35 @@ invisible: setting `overflow-y` to non-`visible` also computes `overflow-x`
 to `auto`, which clips the `.mega-sub` panel since it escapes to the right
 via `left:100%`. If the category/item list ever gets too tall for the
 viewport, fix it by scrolling an inner wrapper, not `.mega-menu`/`.mega-sub`
-themselves. Item ids are slugified item names (`slugify()`), added to each
+themselves.
+
+**Item panels that would run off the bottom of the screen (2026)** — a
+`.mega-sub` is anchored to the top of the row that opens it, so a category
+low in a 15-row menu used to push its panel past the bottom of the viewport
+(worst case Packaging Materials: 16 items, ~618px tall, opening from a row
+at y≈621). Two layers fix this, and they work together:
+
+1. `positionMegaSub()` in `site.js` nudges the panel up by exactly the
+   amount it overflows — never higher than the top of the menu — so it
+   stays next to the cursor rather than jumping to a fixed spot. Called
+   from the hover-intent `openSub()` and the chevron click handler. It
+   bails out when `.mega-sub` isn't `position:absolute`, which is how it
+   no-ops on the mobile accordion, and it clears any inline `top` there so
+   a stale desktop offset can't leak in.
+2. `.mega-sub-scroll` (an inner wrapper inside `.mega-sub`, emitted by
+   `mega_menu_html()`) carries `max-height:calc(100vh - 96px)` +
+   `overflow-y:auto` as the backstop for viewports too short for step 1.
+   **The scroll must stay on this inner wrapper** — that's the whole point
+   of the warning above. The mobile block resets it to
+   `max-height:none; overflow:visible` so the accordion animates its own
+   height.
+
+Verified at 1280&times;800 (all 15 panels fit, none clipped) and at
+1280&times;600 (still none clipped; Abrasives and Packaging Materials
+scroll internally). If you add a category or a long item list, re-check
+both.
+
+Item ids are slugified item names (`slugify()`), added to each
 item-card in the category page loop — keep item names unique within a
 category or ids collide.
 

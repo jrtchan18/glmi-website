@@ -77,6 +77,14 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 .mega-cat.mega-open .mega-cat-toggle{color:var(--green-dark);}
 .mega-cat.mega-open .mega-cat-toggle .chev{transform:rotate(90deg);}
 .mega-sub{position:absolute; top:0; left:100%; margin-left:0; background:var(--paper); border:1px solid var(--line); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:230px; padding:8px 0; opacity:0; visibility:hidden; pointer-events:none;}
+/* Item lists can be long (Packaging Materials is 16 items ~ 618px tall) while
+   the row that opens them can sit near the bottom of a 15-category menu, so
+   the panel used to run off the bottom of the screen. site.js nudges each
+   panel up just far enough to fit; this cap is the backstop for viewports too
+   short for even that. The scroll lives on this INNER wrapper on purpose —
+   putting overflow on .mega-sub or .mega-menu computes overflow-x to auto and
+   clips the panel, which escapes rightward via left:100%. */
+.mega-sub-scroll{max-height:calc(100vh - 96px); overflow-y:auto; overscroll-behavior:contain;}
 .mega-sub a{display:block; padding:9px 16px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; letter-spacing:0; text-transform:none; color:var(--steel); opacity:1; border:none; transition:background .12s ease, color .12s ease;}
 .mega-sub a:hover{background:var(--plate); color:var(--green-dark);}
 .mega-cta{border-top:1px solid var(--line); padding:11px 16px;}
@@ -265,6 +273,9 @@ footer{background:var(--ink); color:#AEBCB2; padding:36px 0;}
   .mega-cat-toggle{color:#fff; border:1px solid #46594B; border-radius:2px; width:28px; height:28px; margin-right:0;}
   .mega-sub{position:static; opacity:1; visibility:visible; pointer-events:auto; transform:none; box-shadow:none; border:none; background:rgba(255,255,255,0.05); width:100%; min-width:0; padding:0; max-height:0; overflow:hidden; transition:max-height .2s ease;}
   .mega-cat.mega-open .mega-sub{max-height:1600px;}
+  /* The accordion does its own height animation, so the desktop scroll cap
+     must not apply here or long item lists would scroll inside the nav. */
+  .mega-sub-scroll{max-height:none; overflow:visible;}
   .mega-sub a{color:#C7D3C9; padding:9px 16px 9px 28px;}
   .mega-sub a:hover{background:rgba(255,255,255,0.08); color:var(--green);}
   .mega-cta{border-top-color:rgba(255,255,255,0.16);}

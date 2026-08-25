@@ -336,7 +336,9 @@ def mega_menu_html(depth=""):
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             {sub_links}
+            </div>
           </div>
         </li>""")
     return "\n        ".join(rows)

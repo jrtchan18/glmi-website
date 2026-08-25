@@ -263,6 +263,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Desktop mega-menu: an item panel is anchored to the top of the category
+  // row that opens it, so rows low in a 15-category list would push their
+  // panel off the bottom of the screen — worst case Packaging Materials, a
+  // 16-item panel opening from near the bottom. Nudge the panel up by exactly
+  // the amount it overflows, never higher than the top of the menu itself, so
+  // it stays close to the cursor instead of jumping to a fixed position.
+  // Anything still too tall after that is handled by the max-height on
+  // .mega-sub-scroll in styles.css.
+  // On mobile .mega-sub is position:static (the accordion), so this bails out.
+  function positionMegaSub(cat) {
+    const sub = cat.querySelector('.mega-sub');
+    if (!sub) return;
+    if (getComputedStyle(sub).position !== 'absolute') { sub.style.top = ''; return; }
+    sub.style.top = '0px';                       // reset before measuring
+    const menu = cat.closest('.mega-menu');
+    if (!menu) return;
+    const catTop = cat.getBoundingClientRect().top;
+    const gap = 12;
+    const overflow = (catTop + sub.offsetHeight) - (window.innerHeight - gap);
+    if (overflow <= 0) return;                   // already fits, leave it alone
+    const highest = menu.getBoundingClientRect().top - catTop;  // menu's own top
+    sub.style.top = Math.max(-overflow, highest) + 'px';
+  }
+
   // Products mega-menu: hover-intent with a short close delay so a diagonal
   // mouse path from the trigger into the flyout (or from a category row into
   // its item sub-panel) doesn't slip through the gap and close the menu.
@@ -276,7 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       item.querySelectorAll('.mega-cat').forEach(cat => {
         let subCloseTimer;
-        const openSub = () => { clearTimeout(subCloseTimer); clearTimeout(closeTimer); cat.classList.add('mega-open'); };
+        const openSub = () => {
+          clearTimeout(subCloseTimer); clearTimeout(closeTimer);
+          cat.classList.add('mega-open');
+          positionMegaSub(cat);
+        };
         const scheduleCloseSub = () => { subCloseTimer = setTimeout(() => cat.classList.remove('mega-open'), 250); };
         cat.addEventListener('mouseenter', openSub);
         cat.addEventListener('mouseleave', scheduleCloseSub);
@@ -300,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cat = btn.closest('.mega-cat');
       const isOpen = cat.classList.toggle('mega-open');
       btn.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) positionMegaSub(cat);
     });
   });
 

@@ -87,6 +87,14 @@ nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
 .mega-cat.mega-open .mega-cat-toggle{color:var(--green-dark);}
 .mega-cat.mega-open .mega-cat-toggle .chev{transform:rotate(90deg);}
 .mega-sub{position:absolute; top:0; left:100%; margin-left:0; background:var(--paper); border:1px solid var(--line); box-shadow:0 16px 32px rgba(10,20,15,0.22); min-width:230px; padding:8px 0; opacity:0; visibility:hidden; pointer-events:none;}
+/* Item lists can be long (Packaging Materials is 16 items ~ 618px tall) while
+   the row that opens them can sit near the bottom of a 15-category menu, so
+   the panel used to run off the bottom of the screen. site.js nudges each
+   panel up just far enough to fit; this cap is the backstop for viewports too
+   short for even that. The scroll lives on this INNER wrapper on purpose —
+   putting overflow on .mega-sub or .mega-menu computes overflow-x to auto and
+   clips the panel, which escapes rightward via left:100%. */
+.mega-sub-scroll{max-height:calc(100vh - 96px); overflow-y:auto; overscroll-behavior:contain;}
 .mega-sub a{display:block; padding:9px 16px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; letter-spacing:0; text-transform:none; color:var(--steel); opacity:1; border:none; transition:background .12s ease, color .12s ease;}
 .mega-sub a:hover{background:var(--plate); color:var(--green-dark);}
 .mega-cta{border-top:1px solid var(--line); padding:11px 16px;}
@@ -275,6 +283,9 @@ footer{background:var(--ink); color:#AEBCB2; padding:36px 0;}
   .mega-cat-toggle{color:#fff; border:1px solid #46594B; border-radius:2px; width:28px; height:28px; margin-right:0;}
   .mega-sub{position:static; opacity:1; visibility:visible; pointer-events:auto; transform:none; box-shadow:none; border:none; background:rgba(255,255,255,0.05); width:100%; min-width:0; padding:0; max-height:0; overflow:hidden; transition:max-height .2s ease;}
   .mega-cat.mega-open .mega-sub{max-height:1600px;}
+  /* The accordion does its own height animation, so the desktop scroll cap
+     must not apply here or long item lists would scroll inside the nav. */
+  .mega-sub-scroll{max-height:none; overflow:visible;}
   .mega-sub a{color:#C7D3C9; padding:9px 16px 9px 28px;}
   .mega-sub a:hover{background:rgba(255,255,255,0.08); color:var(--green);}
   .mega-cta{border-top-color:rgba(255,255,255,0.16);}
@@ -456,7 +467,9 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="items/mig-wire-er70s-6.html">MIG Wires</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -467,6 +480,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="items/cut-off-wheel.html">Cut-off Wheel</a>
             <a href="items/depressed-center-wheel.html">Depressed Center Wheel</a>
             <a href="items/grinding-wheel.html">Grinding Wheel</a>
@@ -481,6 +495,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <a href="items/mounted-stone.html">Mounted Stone</a>
             <a href="items/buffing-pad.html">Buffing Pad</a>
             <a href="items/buffing-compound-paste.html">Buffing Compound/Paste</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -491,8 +506,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/cutting-tools.html#drill-bits">Drill Bits</a>
             <a href="categories/cutting-tools.html#cutting-discs">Cutting Discs</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -503,10 +520,12 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/power-drills.html#makita">Makita</a>
             <a href="categories/power-drills.html#hitachi">Hitachi</a>
             <a href="categories/power-drills.html#bosch">Bosch</a>
             <a href="categories/power-drills.html#aeg">AEG</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -517,7 +536,9 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/pneumatic-tools.html#pneumatic-tools">Pneumatic Tools</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -528,8 +549,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/hydraulic-hose-fittings.html#hydraulic-hose">Hydraulic Hose</a>
             <a href="categories/hydraulic-hose-fittings.html#fittings">Fittings</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -540,10 +563,12 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/wires-cables.html#phelps-dodge">Phelps Dodge</a>
             <a href="categories/wires-cables.html#columbia">Columbia</a>
             <a href="categories/wires-cables.html#duraflex">Duraflex</a>
             <a href="categories/wires-cables.html#philflex">Philflex</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -554,9 +579,11 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/construction-materials.html#paints">Paints</a>
             <a href="categories/construction-materials.html#plywood">Plywood</a>
             <a href="categories/construction-materials.html#good-lumber">Good Lumber</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -567,10 +594,12 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/sheets.html#acrylic-sheets">Acrylic Sheets</a>
             <a href="categories/sheets.html#g-i-sheets">G.I. Sheets</a>
             <a href="categories/sheets.html#b-i-sheets">B.I. Sheets</a>
             <a href="categories/sheets.html#polycarbonate-sheets">Polycarbonate Sheets</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -581,6 +610,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="items/angle-bar.html">Angle Bar</a>
             <a href="items/flat-bar.html">Flat Bar</a>
             <a href="items/square-tube.html">Square Tube</a>
@@ -591,6 +621,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <a href="items/skd11.html">SKD11</a>
             <a href="items/s45c.html">S45C</a>
             <a href="items/4140.html">4140</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -601,9 +632,11 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/bearings.html#fag">FAG</a>
             <a href="categories/bearings.html#iko">IKO</a>
             <a href="categories/bearings.html#koyo">KOYO</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -614,6 +647,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="items/cotton-gloves.html">Cotton Gloves</a>
             <a href="items/leather-gloves.html">Leather Gloves</a>
             <a href="items/maong-gloves.html">Maong Gloves</a>
@@ -621,6 +655,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <a href="items/latex-gloves.html">Latex Gloves</a>
             <a href="items/cadet-gloves.html">Cadet Gloves</a>
             <a href="items/nitrile-gloves.html">Nitrile Gloves</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -631,9 +666,11 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/safety-products.html#goggles">Goggles</a>
             <a href="categories/safety-products.html#safety-shoes">Safety Shoes</a>
             <a href="categories/safety-products.html#leak-detector">Leak Detector</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -644,6 +681,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="items/packaging-tape.html">Packaging Tape</a>
             <a href="items/masking-tape.html">Masking Tape</a>
             <a href="items/kraft-tape.html">Kraft Tape</a>
@@ -660,6 +698,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             <a href="items/metal-and-plastic-clip.html">Metal and Plastic Clip</a>
             <a href="items/rubber-bands.html">Rubber Bands</a>
             <a href="items/tape-dispenser.html">Tape Dispenser</a>
+            </div>
           </div>
         </li>
         <li class="mega-cat">
@@ -670,10 +709,12 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
             </button>
           </div>
           <div class="mega-sub">
+            <div class="mega-sub-scroll">
             <a href="categories/caster-wheels.html#swivel-casters">Swivel Casters</a>
             <a href="categories/caster-wheels.html#rigid-casters">Rigid Casters</a>
             <a href="categories/caster-wheels.html#heavy-duty-casters">Heavy-Duty Casters</a>
             <a href="categories/caster-wheels.html#light-duty-casters">Light-Duty Casters</a>
+            </div>
           </div>
         </li>
           </ul>
@@ -1211,6 +1252,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Desktop mega-menu: an item panel is anchored to the top of the category
+  // row that opens it, so rows low in a 15-category list would push their
+  // panel off the bottom of the screen — worst case Packaging Materials, a
+  // 16-item panel opening from near the bottom. Nudge the panel up by exactly
+  // the amount it overflows, never higher than the top of the menu itself, so
+  // it stays close to the cursor instead of jumping to a fixed position.
+  // Anything still too tall after that is handled by the max-height on
+  // .mega-sub-scroll in styles.css.
+  // On mobile .mega-sub is position:static (the accordion), so this bails out.
+  function positionMegaSub(cat) {
+    const sub = cat.querySelector('.mega-sub');
+    if (!sub) return;
+    if (getComputedStyle(sub).position !== 'absolute') { sub.style.top = ''; return; }
+    sub.style.top = '0px';                       // reset before measuring
+    const menu = cat.closest('.mega-menu');
+    if (!menu) return;
+    const catTop = cat.getBoundingClientRect().top;
+    const gap = 12;
+    const overflow = (catTop + sub.offsetHeight) - (window.innerHeight - gap);
+    if (overflow <= 0) return;                   // already fits, leave it alone
+    const highest = menu.getBoundingClientRect().top - catTop;  // menu's own top
+    sub.style.top = Math.max(-overflow, highest) + 'px';
+  }
+
   // Products mega-menu: hover-intent with a short close delay so a diagonal
   // mouse path from the trigger into the flyout (or from a category row into
   // its item sub-panel) doesn't slip through the gap and close the menu.
@@ -1224,7 +1289,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       item.querySelectorAll('.mega-cat').forEach(cat => {
         let subCloseTimer;
-        const openSub = () => { clearTimeout(subCloseTimer); clearTimeout(closeTimer); cat.classList.add('mega-open'); };
+        const openSub = () => {
+          clearTimeout(subCloseTimer); clearTimeout(closeTimer);
+          cat.classList.add('mega-open');
+          positionMegaSub(cat);
+        };
         const scheduleCloseSub = () => { subCloseTimer = setTimeout(() => cat.classList.remove('mega-open'), 250); };
         cat.addEventListener('mouseenter', openSub);
         cat.addEventListener('mouseleave', scheduleCloseSub);
@@ -1248,6 +1317,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cat = btn.closest('.mega-cat');
       const isOpen = cat.classList.toggle('mega-open');
       btn.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) positionMegaSub(cat);
     });
   });
 
