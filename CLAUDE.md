@@ -70,7 +70,18 @@ template literal that looks like a broken link but isn't).
   don't reintroduce it.** Each tile is either a real logo (`<img>`) or,
   until the client uploads one, a placeholder tile (icon + brand name text).
   `BRANDS` in `generate.py` is `(name, icon_key, img_path_or_None)` — no
-  group/product-line field anymore. `brand_item_html()` renders one tile;
+  group/product-line field anymore.
+  **Wall order** comes from `BRANDS_FEATURED` (2026): those names render
+  first, in exactly that order (the client's house brands, then the marquee
+  manufacturers), and everything else follows in `BRANDS` order via
+  `BRANDS_ORDERED`. The tail is intentionally *not* shuffled — the client
+  said "random", but randomising at build time would rewrite `brands.html`
+  on every regeneration and fill the git history with meaningless diffs, so
+  a stable arbitrary order serves the same intent. A name in
+  `BRANDS_FEATURED` or `HOMEPAGE_BRAND_NAMES` that doesn't exist in `BRANDS`
+  **aborts the build** with a clear message, rather than silently dropping
+  that brand off the front of the wall — keep that guard.
+  `brand_item_html()` renders one tile;
   `.brand-wall`/`.brand-tile`/`.brand-placeholder`/`.brand-logo` in
   `styles.css`. The homepage's "Brands we carry" section shows a curated
   subset — `HOMEPAGE_BRAND_NAMES` in `generate.py` (currently Sumotech,
@@ -306,9 +317,11 @@ placeholders.
 G-Weld, Mitutoyo, Sumotech, ABC, Yanase, Boysen, Davies, all in
 `images/Brands/`. The remaining 9 still render placeholder tiles: FAG, IKO,
 KOYO, Hitachi, AEG, Columbia, Duraflex, Philflex, and **Grand Sumoweld**.
-Sumoweld matters more than the rest — it's one of the six brands featured on
-the homepage and is named in the "Trusted Brands" copy, so it's the only
-placeholder sitting among five real logos there.
+Sumoweld matters more than the rest — it's named in the "Trusted Brands"
+copy, it's one of the six brands featured on the homepage (the only
+placeholder among five real logos there), and since the 2026 reorder it is
+the **2nd tile on `brands.html`**. It's the most conspicuous missing logo
+on the site.
 
 Note the logos are a mix of wide wordmarks (Yanase 550&times;91) and
 full-bleed coloured squares with the name inside (ABC, Davies, Phelps

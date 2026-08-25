@@ -306,6 +306,28 @@ BRANDS = [
 BRANDS_BY_NAME = {b[0]: b for b in BRANDS}
 HOMEPAGE_BRAND_NAMES = ["Sumotech", "G-Weld", "Grand Sumoweld", "ABC", "Yanase", "Boysen"]
 
+# Order the brands.html wall: these lead, in exactly this order (the client's
+# own house brands first, then the marquee manufacturers). Everything else
+# follows in BRANDS order.
+#
+# The client asked for the tail to be "random" — it's deliberately NOT
+# shuffled at build time. A random order would rewrite brands.html on every
+# regeneration and fill the git history with meaningless diffs; the intent
+# ("order doesn't matter back there") is served by a stable arbitrary order.
+BRANDS_FEATURED = [
+    "Sumotech", "Grand Sumoweld", "G-Weld", "ABC", "Yanase",
+    "Mitutoyo", "Phelps Dodge", "Bosch", "Makita",
+]
+
+# Fail the build loudly on a typo — a misspelled name would otherwise just
+# drop that brand off the front of the wall without any error.
+_unknown_brands = sorted({n for n in BRANDS_FEATURED + HOMEPAGE_BRAND_NAMES if n not in BRANDS_BY_NAME})
+if _unknown_brands:
+    raise SystemExit(f"generate.py: unknown brand name(s) {_unknown_brands} — must match a name in BRANDS")
+
+BRANDS_ORDERED = [BRANDS_BY_NAME[n] for n in BRANDS_FEATURED] + \
+                 [b for b in BRANDS if b[0] not in set(BRANDS_FEATURED)]
+
 def brand_item_html(name, icon_key, img, reveal_delay=None, depth=""):
     if img:
         inner = f'<img class="brand-logo" src="{asset(img, depth)}" alt="{name}">'
@@ -1108,7 +1130,7 @@ print(f"Generated {len(steel_cat['items'])} Tubing & Structural Steel product pa
 # =========================================================
 # 5. Generate dedicated Brands page — flat logo wall, no grouping
 # =========================================================
-all_brand_tiles = "\n        ".join(brand_item_html(*b) for b in BRANDS)
+all_brand_tiles = "\n        ".join(brand_item_html(*b) for b in BRANDS_ORDERED)
 
 brands_page = head("Brands We Carry", f"Genuine stock from established manufacturers {COMPANY} carries — FAG, Makita, Bosch, Phelps Dodge, and more.") + "\n" + header(active="brands") + f"""
 
