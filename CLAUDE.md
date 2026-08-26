@@ -104,7 +104,7 @@ template literal that looks like a broken link but isn't).
 - Per-item product pages in `items/`, one per item (gallery + quick description +
   inquiry box + related items, no spec/packaging tables — we don't have real
   specs beyond MIG Wire), built by the generic `product_page()` helper
-  (section "4b" in `generate.py`). Categories done so far: **Gloves** (7
+  (section "4b" in `generate.py`). Categories done so far: **Gloves** (9
   items), **Packaging Materials** (16 items), **Abrasives** (14 items),
   **Tubing & Structural Steel** (10 items) — see each category's `items`
   list in `CATEGORIES` for the exact filenames (3rd
@@ -304,7 +304,51 @@ right-hand column — **don't reinstate either.** The hero section is white
   `images/Cover Photo.png`) is no longer referenced by any page. Kept in the
   repo in case it's wanted elsewhere; safe to delete otherwise.
 
-## Images — mostly placeholders
+## Product photos — drop files in a folder, that's it
+
+**Gloves is fully photographed (2026)** — all 9 items have real photos and no
+placeholders. Everything else still uses SVG placeholder tiles.
+
+The pipeline (`generate.py`, "Product photos" section) is designed so adding
+photos needs **no code changes**:
+
+1. Put the originals in the folder named by that category's `photo_dir`
+   (Gloves uses `images/Products/Gloves/`), named after the item's page slug:
+   `cotton-gloves.png` is the main/thumbnail shot, `cotton-gloves-2.png`,
+   `-3.png`, … fill out its gallery. Matching is exact — `slug.ext` or
+   `slug-<digits>.ext` — so `anti-cut-gloves` will never swallow a future
+   `anti-cut-gloves-heavy`.
+2. Run `python3 generate.py`. `item_photos()` finds them and
+   `optimize_photo()` writes web-sized JPEGs to `images/items/<category>/`,
+   which is what the pages actually load. Recompression is skipped when the
+   output is newer than the source, so rebuilds are cheap.
+3. **Both the originals and the generated JPEGs are committed** — GitHub
+   Pages serves the generated ones, and the originals are the only copy of
+   the source material.
+
+Client photos arrive big (the glove set was 28 files, 23&nbsp;MB, 1250&times;1250
+PNGs); the build brought that to 2.2&nbsp;MB. **Don't point pages at the
+originals** — a category page showing nine items would pull ~10&nbsp;MB.
+Pillow does the resizing; if it isn't installed the build still works and
+just falls back to the originals uncompressed.
+
+To photograph another category: create its folder, name files after the item
+slugs, add `photo_dir=` to that `CATEGORIES` entry. Items with no matching
+file keep their placeholder, so a category can be half-done without looking
+broken.
+
+Real photos flow through **three** places automatically — the item's own
+product page (gallery + thumbnail strip), its card on the category page, and
+that category's gallery carousel. A category with `photo_dir` also swaps the
+gallery's "Sample placeholders shown below" line for real-photo copy, and its
+carousel switches to `contain` (letterboxed on white) because square product
+shots would otherwise be cropped to a thin band by the 21:9 frame.
+
+**The gallery swap in `site.js` handles both kinds** — real `<img>` galleries
+swap the `src`, placeholder galleries swap `.thumb-visual` markup. Categories
+gain photos one at a time, so both paths must keep working.
+
+## Other images — mostly placeholders
 
 Every product/category/brand image is a styled SVG placeholder tile labeled
 "SAMPLE IMAGE" (built by the `thumb()` / `carousel()` helpers in
@@ -441,7 +485,8 @@ a single **Add to Quote** button. This is a real feature, not decoration:
 - Caster Wheels items list (Swivel/Rigid/Heavy-Duty/Light-Duty Casters) is
   a generic placeholder — ask the client for their actual caster wheel
   product list, same as every other category's real item list
-- Real product photos (client is sourcing these)
+- Real product photos for the remaining 14 categories (Gloves is done; see
+  "Product photos" above for the drop-in-a-folder workflow)
 - Real product/item list with specs, beyond what's in `generate.py`'s
   `CATEGORIES` list
 - Brand logos for the remaining 9 placeholder tiles — **Grand Sumoweld

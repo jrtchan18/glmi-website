@@ -33,6 +33,78 @@ def asset(path, depth=""):
     """Link to a static asset (images/...) from a page at `depth`."""
     return f"{depth}{path}"
 
+# ---- Product photos ----
+# Source photos live in the folder named by a category's `photo_dir`, named
+# after the item's page slug:  cotton-gloves.png, cotton-gloves-2.png, ...
+# The first (unsuffixed) file is the item's main/thumbnail shot; the numbered
+# ones fill out its gallery.
+#
+# Client photos arrive straight off a phone or a supplier (1250x1250, ~1 MB
+# each). The build writes web-sized JPEGs into images/items/<category>/ and
+# the pages reference those — a category page showing nine items would
+# otherwise pull ~10 MB. Recompression is skipped when the output is already
+# newer than the source, so regenerating is cheap.
+#
+# To add photos for a new category: create the folder, name the files after
+# the item slugs, and add `photo_dir=` to that CATEGORIES entry. No other
+# code changes — items with no matching file keep their SVG placeholder.
+PHOTO_MAX_PX = 1000
+PHOTO_QUALITY = 82
+IMG_EXTS = (".png", ".jpg", ".jpeg", ".webp")
+WEB_PHOTO_DIR = "images/items"
+
+try:
+    from PIL import Image as _PILImage
+except ImportError:
+    _PILImage = None
+
+def optimize_photo(src_rel, out_dir_rel):
+    """Web-sized JPEG copy of a source photo; returns a path relative to OUT.
+    Falls back to the original file if Pillow isn't installed, so the build
+    still works (just heavier) on a machine without it."""
+    if _PILImage is None:
+        return src_rel
+    src = os.path.join(OUT, src_rel)
+    stem = os.path.splitext(os.path.basename(src_rel))[0]
+    dst_rel = f"{out_dir_rel}/{stem}.jpg"
+    dst = os.path.join(OUT, dst_rel)
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    if (not os.path.exists(dst)) or os.path.getmtime(dst) < os.path.getmtime(src):
+        im = _PILImage.open(src).convert("RGB")
+        w, h = im.size
+        if max(w, h) > PHOTO_MAX_PX:
+            s = PHOTO_MAX_PX / max(w, h)
+            im = im.resize((round(w * s), round(h * s)), _PILImage.LANCZOS)
+        im.save(dst, "JPEG", quality=PHOTO_QUALITY, optimize=True, progressive=True)
+    return dst_rel
+
+def item_photos(cat, page_slug):
+    """Every photo for one item, ordered: `slug.ext` first, then `slug-2.ext`,
+    `slug-3.ext`, ... Returns [] when the category has no photo_dir or nothing
+    matches, in which case the page keeps its SVG placeholders."""
+    src_dir_rel = cat.get("photo_dir")
+    if not src_dir_rel:
+        return []
+    src_dir = os.path.join(OUT, src_dir_rel)
+    if not os.path.isdir(src_dir):
+        return []
+    base = os.path.splitext(page_slug)[0]          # cut-off-wheel.html -> cut-off-wheel
+    numbered = []
+    for fn in os.listdir(src_dir):
+        stem, ext = os.path.splitext(fn)
+        if ext.lower() not in IMG_EXTS:
+            continue
+        if stem == base:
+            numbered.append((0, fn))
+        else:
+            # Exact `base-<digits>` only, so `anti-cut-gloves` never swallows
+            # a future `anti-cut-gloves-heavy`.
+            m = re.fullmatch(re.escape(base) + r"-(\d+)", stem)
+            if m:
+                numbered.append((int(m.group(1)), fn))
+    out_dir_rel = f"{WEB_PHOTO_DIR}/{cat['slug']}"
+    return [optimize_photo(f"{src_dir_rel}/{fn}", out_dir_rel) for _, fn in sorted(numbered)]
+
 COMPANY = "GLMI"
 # Contact details are placeholders — real numbers/email not finalized yet.
 # PHONE/EMAIL (used in tel:/mailto: hrefs) are intentionally blank so the
@@ -101,10 +173,12 @@ def thumb_visual(label, icon_key, size=32, show_label=True):
             {label_html}
           </div>"""
 
-def carousel(slides, depth=""):
+def carousel(slides, depth="", contain=False):
     """slides: list of (label, icon_key) or (label, icon_key, img). Renders a prev/next + dots carousel.
     Pass img (a file path) on a slide to show a real photo instead of the SVG placeholder.
-    `depth` prefixes image paths for pages in subfolders (see "Output layout" up top)."""
+    `depth` prefixes image paths for pages in subfolders (see "Output layout" up top).
+    `contain` letterboxes photos on white instead of cropping them to fill — use it
+    when the slides are square product shots rather than wide scene photos."""
     def render_slide(slide):
         lbl, ic = slide[0], slide[1]
         img = slide[2] if len(slide) > 2 else None
@@ -119,7 +193,7 @@ def carousel(slides, depth=""):
         </div>"""
     slide_html = "\n        ".join(render_slide(s) for s in slides)
     return f"""<div class="gallery-wrap">
-      <div class="carousel">
+      <div class="carousel{' photo-contain' if contain else ''}">
         <div class="carousel-track">
         {slide_html}
         </div>
@@ -226,15 +300,22 @@ CATEGORIES = [
        ]),
   dict(slug="gloves", title="Gloves", sec="SEC.12", group="Safety & PPE", icon="glove",
        desc="Work gloves for industrial, construction, and general handling use.",
-       photo=("Assorted Gloves — Sample Photo", "images/Products/assorted gloves.png"),
+       photo=("Assorted Gloves", "images/Products/assorted gloves.png"),
+       photo_dir="images/Products/Gloves",
+       # This list is the client's actual glove range (2026) — it mirrors the
+       # photos in photo_dir exactly. Maong, Latex and Cadet Gloves were
+       # removed because the client doesn't stock them. Descriptions for the
+       # five newly added types are drafts pending the client's own wording.
        items=[
          ("Cotton Gloves", "Lightweight cotton work gloves for general handling and light-duty tasks.", "cotton-gloves.html"),
-         ("Leather Gloves", "Heavy-duty leather gloves built for grip and abrasion resistance on tougher jobs.", "leather-gloves.html"),
-         ("Maong Gloves", "Heavy-duty denim work gloves for general construction and handling work.", "maong-gloves.html"),
+         ("Dotted Gloves", "Cotton gloves with PVC dot grip across the palm for a firmer hold on smooth surfaces.", "dotted-gloves.html"),
+         ("Palm Fit Gloves", "Palm-coated gloves that keep fingertip dexterity for assembly and precision handling.", "palm-fit-gloves.html"),
+         ("Top Fit Gloves", "Snug-fitting coated gloves for general assembly, sorting, and warehouse handling.", "top-fit-gloves.html"),
          ("Rubberized Gloves", "Rubber-coated gloves for improved grip and light liquid protection.", "rubberized-gloves.html"),
-         ("Latex Gloves", "Latex-coated gloves for wet, slippery, or fine-handling work.", "latex-gloves.html"),
-         ("Cadet Gloves", "Cadet-style industrial work gloves for general-purpose handling.", "cadet-gloves.html"),
          ("Nitrile Gloves", "Nitrile-coated gloves offering chemical and oil resistance.", "nitrile-gloves.html"),
+         ("Leather Gloves", "Heavy-duty leather gloves built for grip and abrasion resistance on tougher jobs.", "leather-gloves.html"),
+         ("Anti-Cut Gloves", "Cut-resistant gloves for handling sheet metal, glass, and other sharp-edged materials.", "anti-cut-gloves.html"),
+         ("Anti-Static Gloves", "Anti-static gloves for electronics work and any handling where static discharge is a risk.", "anti-static-gloves.html"),
        ]),
   dict(slug="safety-products", title="Safety Products", sec="SEC.13", group="Safety & PPE", icon="safety",
        desc="Personal protective equipment and safety accessories for industrial sites.",
@@ -502,24 +583,42 @@ for idx, cat in enumerate(CATEGORIES):
     prev_cat = CATEGORIES[idx - 1] if idx > 0 else CATEGORIES[-1]
     next_cat = CATEGORIES[idx + 1] if idx < len(CATEGORIES) - 1 else CATEGORIES[0]
 
-    item_cards = "\n          ".join(
-        (f"""<a href="{item_page_href(link, depth)}" id="{slugify(name)}" class="item-card">
-            {thumb(name, cat["icon"], size=30, depth=depth)}
+    _cards = []
+    for item in cat["items"]:
+        name, _d, link = item if len(item) == 3 else (item[0], item[1], None)
+        photos = item_photos(cat, link or f"{slugify(name)}.html")
+        pic = thumb(name, cat["icon"], size=30,
+                    img=(photos[0] if photos else None), depth=depth)
+        if link:
+            _cards.append(f"""<a href="{item_page_href(link, depth)}" id="{slugify(name)}" class="item-card">
+            {pic}
             <div class="item-body"><h4>{name}</h4></div>
-          </a>""" if link else
-         f"""<div id="{slugify(name)}" class="item-card">
-            {thumb(name, cat["icon"], size=30, depth=depth)}
+          </a>""")
+        else:
+            _cards.append(f"""<div id="{slugify(name)}" class="item-card">
+            {pic}
             <div class="item-body"><h4>{name}</h4></div>
           </div>""")
-        for item in cat["items"]
-        for name, d, link in [item if len(item) == 3 else (item[0], item[1], None)]
-    )
+    item_cards = "\n          ".join(_cards)
 
-    gallery_slides = [(item[0], cat["icon"]) for item in cat["items"]] or [(cat["title"], cat["icon"])]
+    gallery_slides = []
+    for item in cat["items"]:
+        nm = item[0]
+        lk = item[2] if len(item) == 3 else None
+        ph = item_photos(cat, lk or f"{slugify(nm)}.html")
+        gallery_slides.append((nm, cat["icon"], ph[0]) if ph else (nm, cat["icon"]))
+    if not gallery_slides:
+        gallery_slides = [(cat["title"], cat["icon"])]
     if cat.get("photo"):
         photo_label, photo_img = cat["photo"]
         gallery_slides = [(photo_label, cat["icon"], photo_img)] + gallery_slides
-    gallery_html = carousel(gallery_slides, depth=depth)
+    # Product shots are square on white; the gallery frame is 21:9, so letterbox
+    # them (contain) instead of cropping a thin band out of the middle.
+    gallery_html = carousel(gallery_slides, depth=depth, contain=bool(cat.get("photo_dir")))
+    # Categories with real photography shouldn't still apologise for placeholders.
+    gallery_sub = ("Real product photos &mdash; ask us for more angles or specs on any item."
+                   if cat.get("photo_dir")
+                   else "Sample placeholders shown below &mdash; swap in real product photos once available.")
 
     page = head(cat["title"], cat["desc"]) + "\n" + header(active="products", depth=depth) + f"""
 
@@ -547,7 +646,7 @@ for idx, cat in enumerate(CATEGORIES):
           <span class="kicker">Photo Gallery</span>
           <h2>{cat['title']} &mdash; Gallery</h2>
         </div>
-        <p class="sub">Sample placeholders shown below &mdash; swap in real product photos once available.</p>
+        <p class="sub">{gallery_sub}</p>
       </div>
       {gallery_html}
 
@@ -1008,11 +1107,40 @@ print(f"Generated product page: {ITEM_DIR}/{MIG_SLUG}")
 # 4b. Generate simple product pages (description + photos only, no spec/
 # packaging tables) — for items whose CATEGORIES entry has a page link.
 # =========================================================
-def product_page(cat, name, desc, gallery_items, slug):
-    depth = "../"  # product pages live in items/
-    gallery_thumbs_html = "\n          ".join(
+def product_gallery(name, photos, gallery_items, depth):
+    """Main image + thumbnail strip. Uses the item's real photos when it has
+    any, otherwise falls back to the labelled SVG placeholders."""
+    if photos:
+        thumbs = "\n          ".join(
+            f"""<div class="gthumb{' active' if i == 0 else ''}">
+            <img src="{asset(p, depth)}" alt="{name} — view {i + 1}" loading="lazy">
+          </div>""" for i, p in enumerate(photos)
+        )
+        return f"""<div class="product-gallery">
+        <div class="gallery-main has-photo">
+          <img class="gallery-photo" src="{asset(photos[0], depth)}" alt="{name}">
+        </div>
+        <div class="gallery-thumbs">
+          {thumbs}
+        </div>
+      </div>"""
+    thumbs = "\n          ".join(
         gthumb(lbl, ic, active=(i == 0)) for i, (lbl, ic) in enumerate(gallery_items)
     )
+    return f"""<div class="product-gallery">
+        <div class="gallery-main">
+          <span class="sample-tag">SAMPLE IMAGE</span>
+          {thumb_visual(gallery_items[0][0], gallery_items[0][1], size=64)}
+        </div>
+        <div class="gallery-thumbs">
+          {thumbs}
+        </div>
+      </div>"""
+
+def product_page(cat, name, desc, gallery_items, slug):
+    depth = "../"  # product pages live in items/
+    photos = item_photos(cat, slug)
+    gallery_html = product_gallery(name, photos, gallery_items, depth)
     related = [it for it in cat["items"] if it[0] != name and len(it) == 3 and it[2]]
     related_html = "\n        ".join(
         f"""<a href="{item_page_href(it[2], depth)}" class="plate-card">
@@ -1033,15 +1161,7 @@ def product_page(cat, name, desc, gallery_items, slug):
   <section style="padding-top:48px;">
     <div class="wrap product-hero">
 
-      <div class="product-gallery">
-        <div class="gallery-main">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          {thumb_visual(gallery_items[0][0], gallery_items[0][1], size=64)}
-        </div>
-        <div class="gallery-thumbs">
-          {gallery_thumbs_html}
-        </div>
-      </div>
+      {gallery_html}
 
       <div class="product-info">
         <h1>{name}</h1>

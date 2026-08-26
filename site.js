@@ -476,8 +476,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbs = g.querySelectorAll('.gthumb');
     thumbs.forEach(t => {
       t.addEventListener('click', () => {
-        const html = t.querySelector('.thumb-visual').innerHTML;
-        main.querySelector('.thumb-visual').innerHTML = html;
+        // Two kinds of gallery: real product photos (swap the <img> src) and
+        // the SVG placeholder tiles used by items with no photos yet (swap the
+        // .thumb-visual markup). Items gain photos one category at a time, so
+        // both have to keep working side by side.
+        const thumbImg = t.querySelector('img');
+        const mainImg = main.querySelector('img');
+        if (thumbImg && mainImg) {
+          mainImg.src = thumbImg.src;
+          mainImg.alt = thumbImg.alt;
+        } else {
+          const visual = t.querySelector('.thumb-visual');
+          const mainVisual = main.querySelector('.thumb-visual');
+          if (!visual || !mainVisual) return;
+          mainVisual.innerHTML = visual.innerHTML;
+        }
         thumbs.forEach(x => x.classList.remove('active'));
         t.classList.add('active');
       });

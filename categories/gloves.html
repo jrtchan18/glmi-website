@@ -345,6 +345,11 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .carousel-slide .sample-tag{position:absolute;top:10px;right:10px;}
 .carousel-slide.has-photo::before{display:none;}
 .cs-photo{width:100%;height:100%;object-fit:cover;display:block;}
+/* Category galleries whose slides are square product shots (carousel(...,
+   contain=True)) — letterbox on white instead of cropping a thin band out of
+   the middle of a 1:1 photo in a 21:9 frame. */
+.carousel.photo-contain .carousel-slide{background:#fff;}
+.carousel.photo-contain .cs-photo{object-fit:contain;}
 .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(20,30,22,0.7);border:1px solid #46594B;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:4;transition:background .15s,border-color .15s;}
 .carousel-btn:hover{background:var(--green);border-color:var(--green);color:var(--ink);}
 .carousel-btn.prev{left:12px;}
@@ -361,6 +366,12 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 /* ===== Single Product Page ===== */
 .product-hero{display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:flex-start;}
 .gallery-main{position:relative; aspect-ratio:4/3; border-radius:3px; overflow:hidden; border:1px solid var(--line); background:var(--ink);}
+/* Real product photos are square shots on white; letterbox them on a white
+   ground rather than cropping to fill the 4:3 frame. The dark background above
+   stays for the SVG placeholder galleries. */
+.gallery-main.has-photo{background:#fff;}
+.gallery-main .gallery-photo{width:100%; height:100%; object-fit:contain; display:block;}
+.gallery-thumbs .gthumb img{width:100%; height:100%; object-fit:contain; background:#fff; display:block;}
 .gallery-main .thumb-visual{width:100%;height:100%;}
 .gallery-main .thumb-visual svg{width:64px;height:64px;}
 .gallery-main .thumb-visual .thumb-label{font-size:13px;}
@@ -654,12 +665,14 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           <div class="mega-sub">
             <div class="mega-sub-scroll">
             <a href="../items/cotton-gloves.html">Cotton Gloves</a>
-            <a href="../items/leather-gloves.html">Leather Gloves</a>
-            <a href="../items/maong-gloves.html">Maong Gloves</a>
+            <a href="../items/dotted-gloves.html">Dotted Gloves</a>
+            <a href="../items/palm-fit-gloves.html">Palm Fit Gloves</a>
+            <a href="../items/top-fit-gloves.html">Top Fit Gloves</a>
             <a href="../items/rubberized-gloves.html">Rubberized Gloves</a>
-            <a href="../items/latex-gloves.html">Latex Gloves</a>
-            <a href="../items/cadet-gloves.html">Cadet Gloves</a>
             <a href="../items/nitrile-gloves.html">Nitrile Gloves</a>
+            <a href="../items/leather-gloves.html">Leather Gloves</a>
+            <a href="../items/anti-cut-gloves.html">Anti-Cut Gloves</a>
+            <a href="../items/anti-static-gloves.html">Anti-Static Gloves</a>
             </div>
           </div>
         </li>
@@ -766,48 +779,40 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           <span class="kicker">Photo Gallery</span>
           <h2>Gloves &mdash; Gallery</h2>
         </div>
-        <p class="sub">Sample placeholders shown below &mdash; swap in real product photos once available.</p>
+        <p class="sub">Real product photos &mdash; ask us for more angles or specs on any item.</p>
       </div>
       <div class="gallery-wrap">
-      <div class="carousel">
+      <div class="carousel photo-contain">
         <div class="carousel-track">
         <div class="carousel-slide has-photo">
-          <img class="cs-photo" src="../images/Products/assorted gloves.png" alt="Assorted Gloves — Sample Photo" loading="lazy">
+          <img class="cs-photo" src="../images/Products/assorted gloves.png" alt="Assorted Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Cotton Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/cotton-gloves.jpg" alt="Cotton Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Leather Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/dotted-gloves.jpg" alt="Dotted Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Maong Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/palm-fit-gloves.jpg" alt="Palm Fit Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Rubberized Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/top-fit-gloves.jpg" alt="Top Fit Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Latex Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/rubberized-gloves.jpg" alt="Rubberized Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Cadet Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/nitrile-gloves.jpg" alt="Nitrile Gloves" loading="lazy">
         </div>
-        <div class="carousel-slide">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-          <span class="cs-label">Nitrile Gloves</span>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/leather-gloves.jpg" alt="Leather Gloves" loading="lazy">
+        </div>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/anti-cut-gloves.jpg" alt="Anti-Cut Gloves" loading="lazy">
+        </div>
+        <div class="carousel-slide has-photo">
+          <img class="cs-photo" src="../images/items/gloves/anti-static-gloves.jpg" alt="Anti-Static Gloves" loading="lazy">
         </div>
         </div>
         <button class="carousel-btn prev" type="button" aria-label="Previous photo">
@@ -830,73 +835,57 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <div class="card-grid" style="grid-template-columns:repeat(auto-fill, minmax(240px,1fr));">
           <a href="../items/cotton-gloves.html" id="cotton-gloves" class="item-card">
             <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Cotton Gloves</span>
-          </div>
+          <img class="thumb-photo" src="../images/items/gloves/cotton-gloves.jpg" alt="Cotton Gloves" loading="lazy">
         </div>
             <div class="item-body"><h4>Cotton Gloves</h4></div>
           </a>
-          <a href="../items/leather-gloves.html" id="leather-gloves" class="item-card">
+          <a href="../items/dotted-gloves.html" id="dotted-gloves" class="item-card">
             <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Leather Gloves</span>
-          </div>
+          <img class="thumb-photo" src="../images/items/gloves/dotted-gloves.jpg" alt="Dotted Gloves" loading="lazy">
         </div>
-            <div class="item-body"><h4>Leather Gloves</h4></div>
+            <div class="item-body"><h4>Dotted Gloves</h4></div>
           </a>
-          <a href="../items/maong-gloves.html" id="maong-gloves" class="item-card">
+          <a href="../items/palm-fit-gloves.html" id="palm-fit-gloves" class="item-card">
             <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Maong Gloves</span>
-          </div>
+          <img class="thumb-photo" src="../images/items/gloves/palm-fit-gloves.jpg" alt="Palm Fit Gloves" loading="lazy">
         </div>
-            <div class="item-body"><h4>Maong Gloves</h4></div>
+            <div class="item-body"><h4>Palm Fit Gloves</h4></div>
+          </a>
+          <a href="../items/top-fit-gloves.html" id="top-fit-gloves" class="item-card">
+            <div class="thumb">
+          <img class="thumb-photo" src="../images/items/gloves/top-fit-gloves.jpg" alt="Top Fit Gloves" loading="lazy">
+        </div>
+            <div class="item-body"><h4>Top Fit Gloves</h4></div>
           </a>
           <a href="../items/rubberized-gloves.html" id="rubberized-gloves" class="item-card">
             <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Rubberized Gloves</span>
-          </div>
+          <img class="thumb-photo" src="../images/items/gloves/rubberized-gloves.jpg" alt="Rubberized Gloves" loading="lazy">
         </div>
             <div class="item-body"><h4>Rubberized Gloves</h4></div>
           </a>
-          <a href="../items/latex-gloves.html" id="latex-gloves" class="item-card">
-            <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Latex Gloves</span>
-          </div>
-        </div>
-            <div class="item-body"><h4>Latex Gloves</h4></div>
-          </a>
-          <a href="../items/cadet-gloves.html" id="cadet-gloves" class="item-card">
-            <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Cadet Gloves</span>
-          </div>
-        </div>
-            <div class="item-body"><h4>Cadet Gloves</h4></div>
-          </a>
           <a href="../items/nitrile-gloves.html" id="nitrile-gloves" class="item-card">
             <div class="thumb">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:30px;height:30px;"><path d="M7 22V2m0 0h6a4 4 0 0 1 0 8H7m10 12v-8m0 0h-4a4 4 0 0 0 0 8h4"/></svg>
-            <span class="thumb-label">Nitrile Gloves</span>
-          </div>
+          <img class="thumb-photo" src="../images/items/gloves/nitrile-gloves.jpg" alt="Nitrile Gloves" loading="lazy">
         </div>
             <div class="item-body"><h4>Nitrile Gloves</h4></div>
+          </a>
+          <a href="../items/leather-gloves.html" id="leather-gloves" class="item-card">
+            <div class="thumb">
+          <img class="thumb-photo" src="../images/items/gloves/leather-gloves.jpg" alt="Leather Gloves" loading="lazy">
+        </div>
+            <div class="item-body"><h4>Leather Gloves</h4></div>
+          </a>
+          <a href="../items/anti-cut-gloves.html" id="anti-cut-gloves" class="item-card">
+            <div class="thumb">
+          <img class="thumb-photo" src="../images/items/gloves/anti-cut-gloves.jpg" alt="Anti-Cut Gloves" loading="lazy">
+        </div>
+            <div class="item-body"><h4>Anti-Cut Gloves</h4></div>
+          </a>
+          <a href="../items/anti-static-gloves.html" id="anti-static-gloves" class="item-card">
+            <div class="thumb">
+          <img class="thumb-photo" src="../images/items/gloves/anti-static-gloves.jpg" alt="Anti-Static Gloves" loading="lazy">
+        </div>
+            <div class="item-body"><h4>Anti-Static Gloves</h4></div>
           </a>
       </div>
 
@@ -1411,8 +1400,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const thumbs = g.querySelectorAll('.gthumb');
     thumbs.forEach(t => {
       t.addEventListener('click', () => {
-        const html = t.querySelector('.thumb-visual').innerHTML;
-        main.querySelector('.thumb-visual').innerHTML = html;
+        // Two kinds of gallery: real product photos (swap the <img> src) and
+        // the SVG placeholder tiles used by items with no photos yet (swap the
+        // .thumb-visual markup). Items gain photos one category at a time, so
+        // both have to keep working side by side.
+        const thumbImg = t.querySelector('img');
+        const mainImg = main.querySelector('img');
+        if (thumbImg && mainImg) {
+          mainImg.src = thumbImg.src;
+          mainImg.alt = thumbImg.alt;
+        } else {
+          const visual = t.querySelector('.thumb-visual');
+          const mainVisual = main.querySelector('.thumb-visual');
+          if (!visual || !mainVisual) return;
+          mainVisual.innerHTML = visual.innerHTML;
+        }
         thumbs.forEach(x => x.classList.remove('active'));
         t.classList.add('active');
       });
