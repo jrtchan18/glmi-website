@@ -78,10 +78,27 @@ def optimize_photo(src_rel, out_dir_rel):
         im.save(dst, "JPEG", quality=PHOTO_QUALITY, optimize=True, progressive=True)
     return dst_rel
 
+_photo_cache = {}
+
 def item_photos(cat, page_slug):
     """Every photo for one item, ordered: `slug.ext` first, then `slug-2.ext`,
     `slug-3.ext`, ... Returns [] when the category has no photo_dir or nothing
-    matches, in which case the page keeps its SVG placeholders."""
+    matches, in which case the page keeps its SVG placeholders.
+
+    Cached: the same item is looked up from its own page, its category page,
+    the category carousel, and every sibling's "related items" grid."""
+    key = (cat.get("slug"), page_slug)
+    if key in _photo_cache:
+        return _photo_cache[key]
+    _photo_cache[key] = result = _item_photos_uncached(cat, page_slug)
+    return result
+
+def _first_photo(cat, page_slug):
+    """An item's main photo, or None so thumb() falls back to a placeholder."""
+    photos = item_photos(cat, page_slug)
+    return photos[0] if photos else None
+
+def _item_photos_uncached(cat, page_slug):
     src_dir_rel = cat.get("photo_dir")
     if not src_dir_rel:
         return []
@@ -992,7 +1009,7 @@ related_items = [c for c in CATEGORIES if c["group"] == "Welding & Metal Work" a
 related_html = "\n        ".join(
     f"""<a href="{cat_href(c['slug'], mig_depth)}" class="plate-card">
           <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-          {thumb(c['title'], c['icon'], depth=mig_depth)}
+          {thumb(c['title'], c['icon'], img=(c['photo'][1] if c.get('photo') else None), depth=mig_depth)}
           <div class="plate-body"><h4>{c['title']}</h4><span class="go">View &rarr;</span></div>
         </a>""" for c in related_items
 )
@@ -1145,7 +1162,7 @@ def product_page(cat, name, desc, gallery_items, slug):
     related_html = "\n        ".join(
         f"""<a href="{item_page_href(it[2], depth)}" class="plate-card">
             <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
-            {thumb(it[0], cat["icon"], depth=depth)}
+            {thumb(it[0], cat["icon"], img=_first_photo(cat, it[2]), depth=depth)}
             <div class="plate-body"><h4>{it[0]}</h4><span class="go">View &rarr;</span></div>
           </a>""" for it in related
     )
