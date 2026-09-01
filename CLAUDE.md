@@ -139,8 +139,15 @@ arrow-vs-navigate distinction impossible before.
 - **Desktop** (`@media (hover: hover) and (pointer: fine)`): hovering the
   row opens the flyout via a hover-intent script in `site.js` (adds/removes
   `.mega-open` with a ~250ms close delay so a diagonal mouse path from the
-  trigger into the flyout, or from a category into its item sub-panel,
-  doesn't slip through the gap and close it early). A plain CSS `:hover`
+  trigger into the flyout doesn't slip through the gap and close it early).
+  **Moving between two categories is instant** (2026): `openSub()` closes
+  every sibling category immediately rather than letting each one's own
+  250ms timer expire. Before that, the row you had just left kept its panel
+  open while the new one was already showing, so two panels overlapped for a
+  quarter second and sweeping the list felt laggy. The delay still applies
+  when drifting off a category *without* landing on another, and to leaving
+  the menu entirely — don't remove those, they're what stop the menu
+  flickering shut on a slightly imprecise mouse path. A plain CSS `:hover`
   fallback (same media guard) and `:focus-within` (keyboard, ungated) cover
   the no-JS case. The chevron button also works here (click toggles
   `.mega-open` directly) but is mostly redundant with hover.

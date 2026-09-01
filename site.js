@@ -298,14 +298,34 @@ document.addEventListener('DOMContentLoaded', () => {
       item.addEventListener('mouseenter', open);
       item.addEventListener('mouseleave', scheduleClose);
 
-      item.querySelectorAll('.mega-cat').forEach(cat => {
-        let subCloseTimer;
+      // Moving BETWEEN categories is instant. The close delay below only
+      // applies to drifting off a category without landing on another one —
+      // without the immediate sibling close, the row you just left kept its
+      // panel for 250ms while the new one was already open, so two panels
+      // overlapped and sweeping the list felt laggy.
+      const cats = Array.from(item.querySelectorAll('.mega-cat'));
+      const subTimers = new Map();
+      const closeSubNow = (c) => {
+        clearTimeout(subTimers.get(c));
+        subTimers.delete(c);
+        c.classList.remove('mega-open');
+      };
+
+      cats.forEach(cat => {
         const openSub = () => {
-          clearTimeout(subCloseTimer); clearTimeout(closeTimer);
+          clearTimeout(closeTimer);
+          clearTimeout(subTimers.get(cat));
+          subTimers.delete(cat);
+          cats.forEach(other => { if (other !== cat) closeSubNow(other); });
           cat.classList.add('mega-open');
           positionMegaSub(cat);
         };
-        const scheduleCloseSub = () => { subCloseTimer = setTimeout(() => cat.classList.remove('mega-open'), 250); };
+        const scheduleCloseSub = () => {
+          subTimers.set(cat, setTimeout(() => {
+            cat.classList.remove('mega-open');
+            subTimers.delete(cat);
+          }, 250));
+        };
         cat.addEventListener('mouseenter', openSub);
         cat.addEventListener('mouseleave', scheduleCloseSub);
       });
