@@ -1337,9 +1337,9 @@ about_page = head("Who We Are", f"{COMPANY} has been a trusted wholesaler and re
     <div class="wrap about">
       <div class="about-copy">
         <span class="kicker">Our Story</span>
-        <h2>More than two decades of industrial supply.</h2>
-        <p>{COMPANY} was established in {ESTABLISHED_YEAR} as a wholesaler and retailer of quality industrial and construction materials. What began as a direct line between suppliers and the trade has grown into a catalog spanning welding materials, tools, bearings, electrical wires, safety gear, and construction hardware.</p>
-        <p>We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices. No storefront browsing, no cart &mdash; just a direct line to people who know the stock.</p>
+        <h2>Proudly Serving Since {ESTABLISHED_YEAR}</h2>
+        <p>Since {ESTABLISHED_YEAR}, {COMPANY} has been serving individuals, fabricators, contractors, and industrial buyers with quality industrial and construction materials. From welding supplies and abrasives to gloves, hardware, and safety equipment, we supply businesses across the Philippines with trusted brands, reliable stock, and competitive prices &mdash; backed by service you can count on.</p>
+        <p>With a dedicated team built on service, quality, and trust, {COMPANY} has grown alongside our clients who depend on us for the right materials at the right value.</p>
       </div>
       <div class="stat-plate">
         <div class="stat"><h3>{ESTABLISHED_YEAR}</h3><p>Established</p></div>
