@@ -515,10 +515,10 @@ a single **Add to Quote** button. This is a real feature, not decoration:
 - Brand logos for the remaining 8 placeholder tiles (FAG, IKO, KOYO,
   Hitachi, AEG, Columbia, Duraflex, Philflex) — all third-party brands now,
   so lower priority than the house brands were
-- Which diameters are actually available in each MIG packaging format — the
-  Add to Quote dropdowns currently offer all 4 diameters against all 3
-  formats, and the packaging table says "Ask for availability" for every
-  row. If, say, drums only come in 1.0/1.2mm, the dropdowns should reflect it
+- ~~Which diameters are available in each MIG packaging format~~ — answered
+  by the client (2026): **all 4 diameters come in all 3 formats**, so the
+  Add to Quote dropdowns are correct as they stand and the two lists are
+  genuinely independent. Don't add cross-constraints between them.
 - Optional: the MIG box lists approvals (ISO, CE, ABS, GL, LR, TÜV, DB, BV,
   CCS, NK). Deliberately not published — confirm with the client before
   putting third-party certification marks on the site

@@ -1056,12 +1056,12 @@ spec_html = "\n        ".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in s
 # special order" — the client sells both as normal stock. The drum's trade name
 # on their own label is "pail pack", so it's shown alongside "drum".
 pack_rows = [
-    ("Spool", "15kg", "Ask for availability"),
-    ("Drum (pail pack)", "125kg", "Ask for availability"),
-    ("Drum (pail pack)", "250kg", "Ask for availability"),
+    ("Spool", "15kg"),
+    ("Drum (pail pack)", "125kg"),
+    ("Drum (pail pack)", "250kg"),
 ]
 pack_html = "\n        ".join(
-    f"<tr><td>{d}</td><td>{p}</td><td>{n}</td></tr>" for d, p, n in pack_rows
+    f"<tr><td>{fmt}</td><td>{size}</td></tr>" for fmt, size in pack_rows
 )
 
 MIG_SLUG = "mig-wire-er70s-6.html"
@@ -1102,7 +1102,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
           <span class="qf">Material: <b>Copper-coated mild steel</b></span>
           <span class="qf">Diameters: <b>0.8&ndash;1.2mm</b></span>
         </div>
-        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 15kg spools and 125kg or 250kg drums &mdash; contact us for current stock and pricing.</p>
+        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 15kg spools and 125kg or 250kg drums.</p>
 
         <div class="inquire-box">
           <div class="row">
@@ -1158,7 +1158,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
         <h2>Packaging Options</h2>
         <div class="table-scroll">
           <table class="spec-table">
-            <thead><tr><th>Format</th><th>Size</th><th>Notes</th></tr></thead>
+            <thead><tr><th>Format</th><th>Size</th></tr></thead>
             <tbody>
               {pack_html}
             </tbody>
