@@ -228,8 +228,9 @@ def carousel(slides, depth="", contain=False):
 # slug, title, section code+name, icon key, short description, list of (item name, item desc)
 CATEGORIES = [
   dict(slug="welding-materials", title="Welding Materials", sec="SEC.01", group="Welding & Metal Work", icon="welding",
-       desc="MIG wires for welding and fabrication work, available in standard spool sizes and wire diameters.",
-       items=[("MIG Wires", "Various wire diameters and spool sizes for MIG welding applications.", "mig-wire-er70s-6.html")]),
+       desc="MIG wires for welding and fabrication work, available in spools and bulk drums across standard wire diameters.",
+       photo_dir="images/Products/Migwires",
+       items=[("MIG Wires", "Gas-shielded copper-coated MIG wire in spools and bulk drums, across standard diameters.", "mig-wire-er70s-6.html")]),
   dict(slug="abrasives", title="Abrasives", sec="SEC.02", group="Welding & Metal Work", icon="abrasive",
        desc="A full abrasives line for grinding, sanding, and surface finishing on metal and other materials.",
        items=[
@@ -959,44 +960,98 @@ def gthumb(label, icon_key, active=False):
             {thumb_visual(label, icon_key, size=22, show_label=True)}
           </div>"""
 
+def product_gallery(name, photos, gallery_items, depth, photo_labels=None):
+    """Main image + thumbnail strip. Uses the item's real photos when it has
+    any, otherwise falls back to the labelled SVG placeholders.
+
+    `photo_labels` optionally names each shot ("spool", "250kg drum") so the
+    alt text says what the viewer is actually looking at instead of
+    "view 2" — worth passing wherever the shots differ meaningfully."""
+    def alt_for(i):
+        if photo_labels and i < len(photo_labels):
+            return f"{name} &mdash; {photo_labels[i]}"
+        return f"{name} &mdash; view {i + 1}"
+    if photos:
+        thumbs = "\n          ".join(
+            f"""<div class="gthumb{' active' if i == 0 else ''}">
+            <img src="{asset(p, depth)}" alt="{alt_for(i)}" loading="lazy">
+          </div>""" for i, p in enumerate(photos)
+        )
+        return f"""<div class="product-gallery">
+        <div class="gallery-main has-photo">
+          <img class="gallery-photo" src="{asset(photos[0], depth)}" alt="{name}">
+        </div>
+        <div class="gallery-thumbs">
+          {thumbs}
+        </div>
+      </div>"""
+    thumbs = "\n          ".join(
+        gthumb(lbl, ic, active=(i == 0)) for i, (lbl, ic) in enumerate(gallery_items)
+    )
+    return f"""<div class="product-gallery">
+        <div class="gallery-main">
+          <span class="sample-tag">SAMPLE IMAGE</span>
+          {thumb_visual(gallery_items[0][0], gallery_items[0][1], size=64)}
+        </div>
+        <div class="gallery-thumbs">
+          {thumbs}
+        </div>
+      </div>"""
+
 mig_gallery_items = [
     ("MIG Wire — Spool View", "welding"),
     ("MIG Wire — Coil Packaging", "packaging"),
     ("MIG Wire — Wire Surface Detail", "welding"),
     ("MIG Wire — Diameter Reference", "tag"),
 ]
-gallery_thumbs_html = "\n          ".join(
-    gthumb(lbl, ic, active=(i == 0)) for i, (lbl, ic) in enumerate(mig_gallery_items)
-)
+# Real photos live in the Welding Materials photo_dir under this item's slug —
+# same drop-in-a-folder pipeline as every other category. The labels match the
+# order of the files (main, -2, -3), so re-check them if photos are added.
+MIG_PHOTO_LABELS = ["spool", "retail box", "250kg drum (pail pack)"]
 
+# Rewritten (2026) from the supplier's own datasheet for this wire, which is
+# written in translated-from-Chinese English ("the weld is beautiful", "the
+# welding smoke and splash are small") — the technical claims are theirs, the
+# phrasing is ours.
 feat_items = [
-    "Copper-coated mild steel wire for smooth, consistent wire feeding.",
-    "Suitable for 100% CO2 or Argon-CO2 mixed shielding gas.",
-    "Stable arc performance with low spatter and clean bead appearance.",
-    "Supports flat, horizontal, vertical, and overhead welding positions.",
-    "Available across common diameters for light to heavy fabrication work.",
-    "Spool and coil packaging options for shop use or bulk supply.",
+    "Copper-coated wire that feeds stably for a consistent, uninterrupted arc.",
+    "Runs under 100% CO2 or Argon-rich shielding gas.",
+    "Low spatter and low welding fume, leaving a clean bead appearance.",
+    "High tensile strength with good low-temperature impact resistance.",
+    "Suitable for all-position welding across a wide current range.",
+    "Used on coal-mining and construction machinery and other 500 MPa low-alloy steel.",
+    "Also suited to high-speed welding of thin sheet and pipeline steel.",
+    "Supplied in spools for shop use and in bulk drums for production welding.",
 ]
 feat_html = "\n        ".join(
     f'<li>{icon("tag", size=16)}<span>{t}</span></li>' for t in feat_items
 )
 
+# Equivalent standards are printed on the client's own packaging (the box reads
+# AWS ER70S-6 / GB/T ER50-6 / EN G3Si1, the drum label "ACCORD TO GB/T8110-08
+# (ER50-6), DIN8575-1(SG2), AWS A5.18(ER70S-6)"). Worth listing: buyers here see
+# the GB "ER50-6" code as often as the AWS one, and without this the page looks
+# like a different product to anyone holding a supplier sheet that uses it.
 spec_rows = [
-    ("Classification", "ER70S-6"),
+    ("Classification", "AWS A5.18 ER70S-6"),
+    ("Equivalent Standards", "GB/T 8110 ER50-6 &middot; DIN 8575-1 SG2 &middot; EN G3Si1"),
     ("Material", "Mild steel, copper coated"),
     ("Available Diameters", "0.8mm, 0.9mm, 1.0mm, 1.2mm"),
-    ("Shielding Gas", "100% CO2 or Argon-CO2 mixed gas"),
+    ("Shielding Gas", "100% CO2 or Argon-rich mixed gas"),
     ("Welding Position", "All positions (flat, horizontal, vertical, overhead)"),
-    ("Standard Packaging", "5kg / 15kg / 20kg spool"),
-    ("Bulk Packaging", "125kg or 250kg drum"),
+    ("Packaging", "5kg / 15kg / 20kg spool &mdash; 125kg / 250kg drum"),
 ]
 spec_html = "\n        ".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in spec_rows)
 
+# Spools and drums are listed as equal formats, not "standard plus a bulk
+# special order" — the client sells both as normal stock. The drum's trade name
+# on their own label is "pail pack", so it's shown alongside "drum".
 pack_rows = [
-    ("0.8mm", "5kg / spool", "Ask for availability"),
-    ("0.9mm", "15kg / spool", "Ask for availability"),
-    ("1.0mm", "15kg / spool", "Ask for availability"),
-    ("1.2mm", "15kg / spool", "Ask for availability"),
+    ("Spool", "5kg", "Ask for availability"),
+    ("Spool", "15kg", "Ask for availability"),
+    ("Spool", "20kg", "Ask for availability"),
+    ("Drum (pail pack)", "125kg", "Ask for availability"),
+    ("Drum (pail pack)", "250kg", "Ask for availability"),
 ]
 pack_html = "\n        ".join(
     f"<tr><td>{d}</td><td>{p}</td><td>{n}</td></tr>" for d, p, n in pack_rows
@@ -1004,6 +1059,11 @@ pack_html = "\n        ".join(
 
 MIG_SLUG = "mig-wire-er70s-6.html"
 mig_depth = "../"  # this is an item page — lives in items/
+mig_gallery_html = product_gallery(
+    "MIG Welding Wire &mdash; ER70S-6",
+    item_photos(by_slug["welding-materials"], MIG_SLUG),
+    mig_gallery_items, mig_depth, photo_labels=MIG_PHOTO_LABELS,
+)
 
 related_items = [c for c in CATEGORIES if c["group"] == "Welding & Metal Work" and c["slug"] != "welding-materials"]
 related_html = "\n        ".join(
@@ -1026,15 +1086,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
   <section style="padding-top:48px;">
     <div class="wrap product-hero">
 
-      <div class="product-gallery">
-        <div class="gallery-main">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          {thumb_visual(mig_gallery_items[0][0], mig_gallery_items[0][1], size=64)}
-        </div>
-        <div class="gallery-thumbs">
-          {gallery_thumbs_html}
-        </div>
-      </div>
+      {mig_gallery_html}
 
       <div class="product-info">
         <h1>MIG Welding Wire &mdash; ER70S-6</h1>
@@ -1043,7 +1095,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
           <span class="qf">Material: <b>Copper-coated mild steel</b></span>
           <span class="qf">Diameters: <b>0.8&ndash;1.2mm</b></span>
         </div>
-        <p class="desc">A general-purpose copper-coated MIG welding wire suited for CO2 and Argon-CO2 shielded welding of mild and medium-strength steel. Commonly used across structural fabrication, general repair, and light-to-medium industrial welding work. Available in spools for shop use and in 125kg or 250kg drums for high-volume production &mdash; contact us for current stock and pricing.</p>
+        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 5&ndash;20kg spools and 125kg or 250kg drums &mdash; contact us for current stock and pricing.</p>
 
         <div class="inquire-box">
           <div class="row">
@@ -1091,13 +1143,12 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
         <h2>Packaging Options</h2>
         <div class="table-scroll">
           <table class="spec-table">
-            <thead><tr><th>Diameter</th><th>Standard Packaging</th><th>Notes</th></tr></thead>
+            <thead><tr><th>Format</th><th>Size</th><th>Notes</th></tr></thead>
             <tbody>
               {pack_html}
             </tbody>
           </table>
         </div>
-        <p class="table-note">Also available in <b>125kg and 250kg drums</b> for high-volume production welding &mdash; message us with the diameter and quantity you need.</p>
       </div>
 
       <div class="pd-block">
@@ -1125,36 +1176,6 @@ print(f"Generated product page: {ITEM_DIR}/{MIG_SLUG}")
 # 4b. Generate simple product pages (description + photos only, no spec/
 # packaging tables) — for items whose CATEGORIES entry has a page link.
 # =========================================================
-def product_gallery(name, photos, gallery_items, depth):
-    """Main image + thumbnail strip. Uses the item's real photos when it has
-    any, otherwise falls back to the labelled SVG placeholders."""
-    if photos:
-        thumbs = "\n          ".join(
-            f"""<div class="gthumb{' active' if i == 0 else ''}">
-            <img src="{asset(p, depth)}" alt="{name} — view {i + 1}" loading="lazy">
-          </div>""" for i, p in enumerate(photos)
-        )
-        return f"""<div class="product-gallery">
-        <div class="gallery-main has-photo">
-          <img class="gallery-photo" src="{asset(photos[0], depth)}" alt="{name}">
-        </div>
-        <div class="gallery-thumbs">
-          {thumbs}
-        </div>
-      </div>"""
-    thumbs = "\n          ".join(
-        gthumb(lbl, ic, active=(i == 0)) for i, (lbl, ic) in enumerate(gallery_items)
-    )
-    return f"""<div class="product-gallery">
-        <div class="gallery-main">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          {thumb_visual(gallery_items[0][0], gallery_items[0][1], size=64)}
-        </div>
-        <div class="gallery-thumbs">
-          {thumbs}
-        </div>
-      </div>"""
-
 def product_page(cat, name, desc, gallery_items, slug):
     depth = "../"  # product pages live in items/
     photos = item_photos(cat, slug)

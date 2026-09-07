@@ -406,10 +406,6 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .feat-list li{list-style:none; display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--steel); line-height:1.5;}
 .feat-list li svg{width:16px;height:16px;stroke:var(--green-dark);flex-shrink:0;margin-top:3px;}
 
-/* Footnote under a spec/packaging table — for options that apply across every
-   row rather than to one, so they don't belong in a per-row cell. */
-.table-note{margin-top:12px; font-size:13.5px; color:var(--steel); line-height:1.6;}
-.table-note b{color:var(--ink); font-weight:600;}
 .spec-table{width:100%; border-collapse:collapse; font-size:13px;}
 .spec-table th, .spec-table td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line);}
 .spec-table th{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--steel); background:var(--paper); white-space:nowrap;}
@@ -770,37 +766,18 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
     <div class="wrap product-hero">
 
       <div class="product-gallery">
-        <div class="gallery-main">
-          <span class="sample-tag">SAMPLE IMAGE</span>
-          <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:64px;height:64px;"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/></svg>
-            <span class="thumb-label">MIG Wire — Spool View</span>
-          </div>
+        <div class="gallery-main has-photo">
+          <img class="gallery-photo" src="../images/items/welding-materials/mig-wire-er70s-6.jpg" alt="MIG Welding Wire &mdash; ER70S-6">
         </div>
         <div class="gallery-thumbs">
           <div class="gthumb active">
-            <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/></svg>
-            <span class="thumb-label">MIG Wire — Spool View</span>
-          </div>
+            <img src="../images/items/welding-materials/mig-wire-er70s-6.jpg" alt="MIG Welding Wire &mdash; ER70S-6 &mdash; spool" loading="lazy">
           </div>
           <div class="gthumb">
-            <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M3 12h18M9 7V5a3 3 0 0 1 6 0v2"/></svg>
-            <span class="thumb-label">MIG Wire — Coil Packaging</span>
-          </div>
+            <img src="../images/items/welding-materials/mig-wire-er70s-6-2.jpg" alt="MIG Welding Wire &mdash; ER70S-6 &mdash; retail box" loading="lazy">
           </div>
           <div class="gthumb">
-            <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/></svg>
-            <span class="thumb-label">MIG Wire — Wire Surface Detail</span>
-          </div>
-          </div>
-          <div class="gthumb">
-            <div class="thumb-visual">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg>
-            <span class="thumb-label">MIG Wire — Diameter Reference</span>
-          </div>
+            <img src="../images/items/welding-materials/mig-wire-er70s-6-3.jpg" alt="MIG Welding Wire &mdash; ER70S-6 &mdash; 250kg drum (pail pack)" loading="lazy">
           </div>
         </div>
       </div>
@@ -812,7 +789,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           <span class="qf">Material: <b>Copper-coated mild steel</b></span>
           <span class="qf">Diameters: <b>0.8&ndash;1.2mm</b></span>
         </div>
-        <p class="desc">A general-purpose copper-coated MIG welding wire suited for CO2 and Argon-CO2 shielded welding of mild and medium-strength steel. Commonly used across structural fabrication, general repair, and light-to-medium industrial welding work. Available in spools for shop use and in 125kg or 250kg drums for high-volume production &mdash; contact us for current stock and pricing.</p>
+        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 5&ndash;20kg spools and 125kg or 250kg drums &mdash; contact us for current stock and pricing.</p>
 
         <div class="inquire-box">
           <div class="row">
@@ -841,12 +818,14 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
       <div class="pd-block">
         <h2>Key Features</h2>
         <ul class="feat-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Copper-coated mild steel wire for smooth, consistent wire feeding.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Suitable for 100% CO2 or Argon-CO2 mixed shielding gas.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Stable arc performance with low spatter and clean bead appearance.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Supports flat, horizontal, vertical, and overhead welding positions.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Available across common diameters for light to heavy fabrication work.</span></li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Spool and coil packaging options for shop use or bulk supply.</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Copper-coated wire that feeds stably for a consistent, uninterrupted arc.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Runs under 100% CO2 or Argon-rich shielding gas.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Low spatter and low welding fume, leaving a clean bead appearance.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>High tensile strength with good low-temperature impact resistance.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Suitable for all-position welding across a wide current range.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Used on coal-mining and construction machinery and other 500 MPa low-alloy steel.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Also suited to high-speed welding of thin sheet and pipeline steel.</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="8" cy="8.5" r="1.2"/></svg><span>Supplied in spools for shop use and in bulk drums for production welding.</span></li>
         </ul>
       </div>
 
@@ -855,13 +834,13 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <div class="table-scroll">
           <table class="spec-table">
             <tbody>
-              <tr><td>Classification</td><td>ER70S-6</td></tr>
+              <tr><td>Classification</td><td>AWS A5.18 ER70S-6</td></tr>
+        <tr><td>Equivalent Standards</td><td>GB/T 8110 ER50-6 &middot; DIN 8575-1 SG2 &middot; EN G3Si1</td></tr>
         <tr><td>Material</td><td>Mild steel, copper coated</td></tr>
         <tr><td>Available Diameters</td><td>0.8mm, 0.9mm, 1.0mm, 1.2mm</td></tr>
-        <tr><td>Shielding Gas</td><td>100% CO2 or Argon-CO2 mixed gas</td></tr>
+        <tr><td>Shielding Gas</td><td>100% CO2 or Argon-rich mixed gas</td></tr>
         <tr><td>Welding Position</td><td>All positions (flat, horizontal, vertical, overhead)</td></tr>
-        <tr><td>Standard Packaging</td><td>5kg / 15kg / 20kg spool</td></tr>
-        <tr><td>Bulk Packaging</td><td>125kg or 250kg drum</td></tr>
+        <tr><td>Packaging</td><td>5kg / 15kg / 20kg spool &mdash; 125kg / 250kg drum</td></tr>
             </tbody>
           </table>
         </div>
@@ -871,16 +850,16 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
         <h2>Packaging Options</h2>
         <div class="table-scroll">
           <table class="spec-table">
-            <thead><tr><th>Diameter</th><th>Standard Packaging</th><th>Notes</th></tr></thead>
+            <thead><tr><th>Format</th><th>Size</th><th>Notes</th></tr></thead>
             <tbody>
-              <tr><td>0.8mm</td><td>5kg / spool</td><td>Ask for availability</td></tr>
-        <tr><td>0.9mm</td><td>15kg / spool</td><td>Ask for availability</td></tr>
-        <tr><td>1.0mm</td><td>15kg / spool</td><td>Ask for availability</td></tr>
-        <tr><td>1.2mm</td><td>15kg / spool</td><td>Ask for availability</td></tr>
+              <tr><td>Spool</td><td>5kg</td><td>Ask for availability</td></tr>
+        <tr><td>Spool</td><td>15kg</td><td>Ask for availability</td></tr>
+        <tr><td>Spool</td><td>20kg</td><td>Ask for availability</td></tr>
+        <tr><td>Drum (pail pack)</td><td>125kg</td><td>Ask for availability</td></tr>
+        <tr><td>Drum (pail pack)</td><td>250kg</td><td>Ask for availability</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="table-note">Also available in <b>125kg and 250kg drums</b> for high-volume production welding &mdash; message us with the diameter and quantity you need.</p>
       </div>
 
       <div class="pd-block">
