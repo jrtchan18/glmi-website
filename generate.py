@@ -971,7 +971,6 @@ gallery_thumbs_html = "\n          ".join(
 
 feat_items = [
     "Copper-coated mild steel wire for smooth, consistent wire feeding.",
-    "Stainless steel MIG wire also stocked for corrosion-resistant fabrication.",
     "Suitable for 100% CO2 or Argon-CO2 mixed shielding gas.",
     "Stable arc performance with low spatter and clean bead appearance.",
     "Supports flat, horizontal, vertical, and overhead welding positions.",
@@ -982,20 +981,14 @@ feat_html = "\n        ".join(
     f'<li>{icon("tag", size=16)}<span>{t}</span></li>' for t in feat_items
 )
 
-# ER70S-6 is by definition a copper-coated carbon-steel wire, so the stainless
-# stock the client also carries is a different AWS classification (ER308L /
-# ER316L and friends) — it is listed as a separate "also stocked" line rather
-# than folded into the Material row, which would wrongly imply ER70S-6 comes
-# in a stainless variant. Swap this for real grades once the client confirms
-# which ones they hold.
 spec_rows = [
     ("Classification", "ER70S-6"),
     ("Material", "Mild steel, copper coated"),
-    ("Also Stocked", "Stainless steel MIG wire &mdash; ask for grades and sizes"),
     ("Available Diameters", "0.8mm, 0.9mm, 1.0mm, 1.2mm"),
     ("Shielding Gas", "100% CO2 or Argon-CO2 mixed gas"),
     ("Welding Position", "All positions (flat, horizontal, vertical, overhead)"),
     ("Standard Packaging", "5kg / 15kg / 20kg spool"),
+    ("Bulk Packaging", "125kg or 250kg drum"),
 ]
 spec_html = "\n        ".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in spec_rows)
 
@@ -1021,7 +1014,7 @@ related_html = "\n        ".join(
         </a>""" for c in related_items
 )
 
-mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, copper coated, plus stainless steel MIG wire — multiple diameters, for CO2 and Argon-CO2 shielded welding.") + "\n" + header(active="products", depth=mig_depth) + f"""
+mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, copper coated, in multiple diameters — available in spools and 125kg/250kg drums, for CO2 and Argon-CO2 shielded welding.") + "\n" + header(active="products", depth=mig_depth) + f"""
 
 <div class="breadcrumb">
   <div class="wrap">
@@ -1047,10 +1040,10 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
         <h1>MIG Welding Wire &mdash; ER70S-6</h1>
         <div class="quickfacts">
           <span class="qf">Classification: <b>ER70S-6</b></span>
-          <span class="qf">Material: <b>Copper-coated or stainless</b></span>
+          <span class="qf">Material: <b>Copper-coated mild steel</b></span>
           <span class="qf">Diameters: <b>0.8&ndash;1.2mm</b></span>
         </div>
-        <p class="desc">A general-purpose copper-coated MIG welding wire suited for CO2 and Argon-CO2 shielded welding of mild and medium-strength steel. Commonly used across structural fabrication, general repair, and light-to-medium industrial welding work. We also stock <b>stainless steel MIG wire</b> alongside the copper-coated line &mdash; message us with the grade and diameter you need. Available in multiple diameters and packaging sizes &mdash; contact us for current stock and pricing.</p>
+        <p class="desc">A general-purpose copper-coated MIG welding wire suited for CO2 and Argon-CO2 shielded welding of mild and medium-strength steel. Commonly used across structural fabrication, general repair, and light-to-medium industrial welding work. Available in spools for shop use and in 125kg or 250kg drums for high-volume production &mdash; contact us for current stock and pricing.</p>
 
         <div class="inquire-box">
           <div class="row">
@@ -1104,6 +1097,7 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
             </tbody>
           </table>
         </div>
+        <p class="table-note">Also available in <b>125kg and 250kg drums</b> for high-volume production welding &mdash; message us with the diameter and quantity you need.</p>
       </div>
 
       <div class="pd-block">

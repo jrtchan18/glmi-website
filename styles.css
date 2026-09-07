@@ -396,6 +396,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .feat-list li{list-style:none; display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--steel); line-height:1.5;}
 .feat-list li svg{width:16px;height:16px;stroke:var(--green-dark);flex-shrink:0;margin-top:3px;}
 
+/* Footnote under a spec/packaging table — for options that apply across every
+   row rather than to one, so they don't belong in a per-row cell. */
+.table-note{margin-top:12px; font-size:13.5px; color:var(--steel); line-height:1.6;}
+.table-note b{color:var(--ink); font-weight:600;}
 .spec-table{width:100%; border-collapse:collapse; font-size:13px;}
 .spec-table th, .spec-table td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line);}
 .spec-table th{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--steel); background:var(--paper); white-space:nowrap;}
