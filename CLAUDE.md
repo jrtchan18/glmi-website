@@ -364,15 +364,17 @@ client's live business site. Hover-zoom and carousel/gallery behavior are
 already wired up and will work the same once real `<img>` tags replace the
 placeholders.
 
-**Brand logos: 10 of 19 are real** (2026) — Makita, Bosch, Phelps Dodge,
-G-Weld, Mitutoyo, Sumotech, ABC, Yanase, Boysen, Davies, all in
-`images/Brands/`. The remaining 9 still render placeholder tiles: FAG, IKO,
-KOYO, Hitachi, AEG, Columbia, Duraflex, Philflex, and **Grand Sumoweld**.
-Sumoweld matters more than the rest — it's named in the "Trusted Brands"
-copy, it's one of the six brands featured on the homepage (the only
-placeholder among five real logos there), and since the 2026 reorder it is
-the **2nd tile on `brands.html`**. It's the most conspicuous missing logo
-on the site.
+**Brand logos: 11 of 19 are real** (2026) — Makita, Bosch, Phelps Dodge,
+G-Weld, Mitutoyo, Sumotech, ABC, Yanase, Boysen, Davies and Grand Sumoweld,
+all in `images/Brands/`. The remaining 8 still render placeholder tiles:
+FAG, IKO, KOYO, Hitachi, AEG, Columbia, Duraflex, Philflex.
+
+`images/Brands/Grand Sumoweld.png` is **not supplier artwork** — it's cropped
+out of the drum label in `images/Products/Migwires/mig-wire-er70s-6-3.jpg`
+(Grand Sumoweld is GLMI's own house brand and no vector logo exists), then
+white-balanced to kill the label's blue-grey paper cast. It reads fine at
+tile size but is a photo, not a logo file — replace it if real artwork ever
+turns up. The crop recipe is in the commit that added it.
 
 Note the logos are a mix of wide wordmarks (Yanase 550&times;91) and
 full-bleed coloured squares with the name inside (ABC, Davies, Phelps
@@ -444,8 +446,22 @@ a single **Add to Quote** button. This is a real feature, not decoration:
   no visitor could still be holding one.
 - **"Add to Quote"** buttons (`.add-to-quote`, in `product_page()` and the
   hardcoded MIG Wire page) read the page's own quantity stepper, merge into
-  the cart by `url`, give a 1.6s "Added ✓" confirmation. They never
-  navigate — always `type="button"`.
+  the cart, give a 1.6s "Added ✓" confirmation. They never navigate — always
+  `type="button"`.
+- **Per-item options (2026).** Any `<select data-opt="Label">` inside the
+  `.inquire-box` is picked up automatically and stored on the cart line as
+  `opts` — a display string like `"Diameter: 1.2mm · Packaging: Drum 250kg"`.
+  Only the MIG wire page uses this so far (diameter × packaging); pages with
+  no such selects behave exactly as before and get `opts: ""`.
+  **Cart lines are keyed by `cartKey()` = url + '|' + opts, not url alone**,
+  so the same product in two specs stays two separate lines with independent
+  quantities. Everything that looks a line up — merge-on-add, the qty
+  steppers, remove — goes through that key, and `renderQuoteItems()` puts it
+  in `data-key`. If you ever key any of these off `url` again, two specs of
+  one product will fight over a single row. The options also ride into the
+  EmailJS `items_list` in square brackets, so the salesman sees the spec.
+  Add options to another product by dropping selects into its inquire box —
+  no JS changes needed.
 - **`request-quote.html`** is a static shell (`generate.py` section "7")
   with empty containers (`#quoteItems`, `#quoteEmptyState`,
   `#quoteSuccessState`, `#quoteForm`) — Python can't know a visitor's cart
@@ -496,8 +512,16 @@ a single **Add to Quote** button. This is a real feature, not decoration:
   "Product photos" above for the drop-in-a-folder workflow)
 - Real product/item list with specs, beyond what's in `generate.py`'s
   `CATEGORIES` list
-- Brand logos for the remaining 9 placeholder tiles — **Grand Sumoweld
-  first**, since it's featured on the homepage alongside five real logos
+- Brand logos for the remaining 8 placeholder tiles (FAG, IKO, KOYO,
+  Hitachi, AEG, Columbia, Duraflex, Philflex) — all third-party brands now,
+  so lower priority than the house brands were
+- Which diameters are actually available in each MIG packaging format — the
+  Add to Quote dropdowns currently offer all 4 diameters against all 3
+  formats, and the packaging table says "Ask for availability" for every
+  row. If, say, drums only come in 1.0/1.2mm, the dropdowns should reflect it
+- Optional: the MIG box lists approvals (ISO, CE, ABS, GL, LR, TÜV, DB, BV,
+  CCS, NK). Deliberately not published — confirm with the client before
+  putting third-party certification marks on the site
 - Business hours (still a placeholder `[Mon–Sat, 8:00 AM – 5:00 PM]`)
 - Certifications, warehouse location, delivery coverage area — not yet on
   `who-we-are.html`, ask the client if there's more to add beyond the

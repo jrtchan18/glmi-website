@@ -392,6 +392,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .inquire-box .row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);}
 .inquire-box .row:last-of-type{border-bottom:none;}
 .inquire-box label{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--steel);}
+/* Product option pickers (diameter, packaging) inside the inquire box. */
+.opt-select{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink); background:var(--paper); border:1px solid #B9C9BD; border-radius:2px; padding:8px 10px; min-width:150px; cursor:pointer;}
+.opt-select:hover{border-color:var(--green);}
+.opt-select:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
 .qty-stepper{display:flex; align-items:center; border:1px solid var(--line); border-radius:2px; overflow:hidden;}
 .qty-stepper button{background:var(--plate); border:none; width:30px; height:30px; font-size:16px; cursor:pointer; color:var(--ink);}
 .qty-stepper button:hover{background:var(--green); color:var(--ink);}
@@ -421,8 +425,13 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 /* ===== Request a Quote page ===== */
 .quote-items{display:flex; flex-direction:column; gap:10px;}
 .quote-item{display:flex; align-items:center; gap:16px; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:14px 16px;}
-.quote-item-name{flex:1; font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink);}
+.quote-item-main{flex:1; display:flex; flex-direction:column; gap:3px; min-width:0;}
+.quote-item-name{font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink);}
 .quote-item-name:hover{color:var(--green-dark);}
+/* The chosen spec (diameter, packaging) for items that have options — the
+   same product in two specs is two separate lines, so this is what tells
+   them apart. */
+.quote-item-opts{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.03em; color:var(--steel);}
 .quote-item-remove{background:none; border:1px solid var(--line); border-radius:2px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; color:var(--steel); cursor:pointer; flex-shrink:0; transition:border-color .15s, color .15s;}
 .quote-item-remove:hover{border-color:#c0392b; color:#c0392b;}
 .quote-item-remove svg{width:14px; height:14px; stroke:currentColor;}
@@ -938,9 +947,19 @@ function saveQuoteCart(cart) {
   updateQuoteBadge();
 }
 
+// A cart line is identified by page URL *plus* its chosen options, so the same
+// product in two specs (1.2mm on a 15kg spool vs a 250kg drum) stays two
+// separate lines instead of merging into one meaningless quantity. Items with
+// no options — every product page except MIG wire so far — key on the bare
+// url, exactly as before.
+function cartKey(item) {
+  return item.url + '|' + (item.opts || '');
+}
+
 function addToQuoteCart(item) {
   const cart = getQuoteCart();
-  const existing = cart.find((i) => i.url === item.url);
+  const key = cartKey(item);
+  const existing = cart.find((i) => cartKey(i) === key);
   if (existing) {
     existing.qty += item.qty;
   } else {
@@ -949,8 +968,8 @@ function addToQuoteCart(item) {
   saveQuoteCart(cart);
 }
 
-function removeFromQuoteCart(url) {
-  saveQuoteCart(getQuoteCart().filter((i) => i.url !== url));
+function removeFromQuoteCart(key) {
+  saveQuoteCart(getQuoteCart().filter((i) => cartKey(i) !== key));
 }
 
 function updateQuoteBadge() {
@@ -969,9 +988,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // confirmation. Never navigates (type="button").
   document.querySelectorAll('.add-to-quote').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const qtyInput = btn.closest('.inquire-box')?.querySelector('.qty-stepper input');
+      const box = btn.closest('.inquire-box');
+      const qtyInput = box?.querySelector('.qty-stepper input');
       const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
-      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty });
+      // Any <select data-opt="Label"> in the inquire box becomes part of the
+      // line's spec, e.g. "Diameter: 1.2mm · Packaging: Drum 250kg". Pages
+      // with no such selects behave exactly as before.
+      const opts = Array.from(box?.querySelectorAll('select[data-opt]') || [])
+        .map((s) => `${s.dataset.opt}: ${s.value}`)
+        .join(' · ');
+      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty, opts });
       const label = btn.querySelector('.btn-txt');
       const original = label ? label.textContent : btn.textContent;
       if (label) label.textContent = 'Added ✓'; else btn.textContent = 'Added ✓';
@@ -1010,8 +1036,11 @@ document.addEventListener('DOMContentLoaded', () => {
       emptyState.hidden = true;
       formWrap.hidden = false;
       quoteItemsEl.innerHTML = cart.map((item) => `
-        <div class="quote-item" data-url="${item.url}">
-          <a href="${item.url}" class="quote-item-name">${item.name}</a>
+        <div class="quote-item" data-key="${cartKey(item).replace(/"/g, '&quot;')}">
+          <div class="quote-item-main">
+            <a href="${item.url}" class="quote-item-name">${item.name}</a>
+            ${item.opts ? `<span class="quote-item-opts">${item.opts}</span>` : ''}
+          </div>
           <div class="qty-stepper">
             <button type="button" class="qty-minus" aria-label="Decrease quantity">&minus;</button>
             <input type="text" value="${item.qty}" inputmode="numeric" aria-label="Quantity">
@@ -1024,19 +1053,19 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
 
       quoteItemsEl.querySelectorAll('.quote-item').forEach((row) => {
-        const url = row.dataset.url;
+        const key = row.dataset.key;
         row.querySelector('.qty-minus').addEventListener('click', () => {
           const cart2 = getQuoteCart();
-          const item = cart2.find((i) => i.url === url);
+          const item = cart2.find((i) => cartKey(i) === key);
           if (item) { item.qty = Math.max(1, item.qty - 1); saveQuoteCart(cart2); renderQuoteItems(); }
         });
         row.querySelector('.qty-plus').addEventListener('click', () => {
           const cart2 = getQuoteCart();
-          const item = cart2.find((i) => i.url === url);
+          const item = cart2.find((i) => cartKey(i) === key);
           if (item) { item.qty += 1; saveQuoteCart(cart2); renderQuoteItems(); }
         });
         row.querySelector('.quote-item-remove').addEventListener('click', () => {
-          removeFromQuoteCart(url);
+          removeFromQuoteCart(key);
           renderQuoteItems();
         });
       });
@@ -1064,7 +1093,9 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending...';
 
-      const itemsList = cart.map((i) => `- ${i.name} (x${i.qty})`).join('\n');
+      const itemsList = cart
+        .map((i) => `- ${i.name}${i.opts ? ` [${i.opts}]` : ''} (x${i.qty})`)
+        .join('\n');
       const params = {
         to_email: QUOTE_EMAIL_TO,
         from_name: name,

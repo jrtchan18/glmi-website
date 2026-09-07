@@ -396,7 +396,10 @@ BRANDS = [
     ("G-Weld", "welding", "images/Brands/G Weld PF Series.png"),
     ("Mitutoyo", "cutting", "images/Brands/mitotuyo.png"),
     ("Sumotech", "brand", "images/Brands/Sumotech.png"),
-    ("Grand Sumoweld", "welding", None),
+    # Cropped from the GRAND SUMOWELD drum label in images/Products/Migwires/
+    # (the client's own house brand, no vector logo supplied) — replace with
+    # real artwork if it ever turns up.
+    ("Grand Sumoweld", "welding", "images/Brands/Grand Sumoweld.png"),
     ("ABC", "brand", "images/Brands/ABC.jpg"),
     ("Yanase", "brand", "images/Brands/Yanase.jpg"),
     ("Boysen", "brand", "images/Brands/Boysen.png"),
@@ -1039,17 +1042,21 @@ spec_rows = [
     ("Available Diameters", "0.8mm, 0.9mm, 1.0mm, 1.2mm"),
     ("Shielding Gas", "100% CO2 or Argon-rich mixed gas"),
     ("Welding Position", "All positions (flat, horizontal, vertical, overhead)"),
-    ("Packaging", "5kg / 15kg / 20kg spool &mdash; 125kg / 250kg drum"),
+    ("Packaging", "15kg spool &mdash; 125kg / 250kg drum"),
 ]
+
+# Single source of truth for the Add to Quote dropdowns on the MIG page. The
+# packaging list must stay in step with pack_rows below — both describe the
+# same three formats the client actually sells.
+MIG_DIAMETERS = ["0.8mm", "0.9mm", "1.0mm", "1.2mm"]
+MIG_PACKAGING = ["Spool 15kg", "Drum 125kg", "Drum 250kg"]
 spec_html = "\n        ".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in spec_rows)
 
 # Spools and drums are listed as equal formats, not "standard plus a bulk
 # special order" — the client sells both as normal stock. The drum's trade name
 # on their own label is "pail pack", so it's shown alongside "drum".
 pack_rows = [
-    ("Spool", "5kg", "Ask for availability"),
     ("Spool", "15kg", "Ask for availability"),
-    ("Spool", "20kg", "Ask for availability"),
     ("Drum (pail pack)", "125kg", "Ask for availability"),
     ("Drum (pail pack)", "250kg", "Ask for availability"),
 ]
@@ -1095,15 +1102,23 @@ mig_page = head("MIG Welding Wire — ER70S-6", "MIG welding wire ER70S-6, coppe
           <span class="qf">Material: <b>Copper-coated mild steel</b></span>
           <span class="qf">Diameters: <b>0.8&ndash;1.2mm</b></span>
         </div>
-        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 5&ndash;20kg spools and 125kg or 250kg drums &mdash; contact us for current stock and pricing.</p>
+        <p class="desc">A gas-shielded, copper-coated MIG welding wire that runs under 100% CO2 or Argon-rich gas. It feeds stably with low spatter and low fume for a clean bead, and the finished weld combines high tensile strength with good low-temperature impact resistance. Suitable for all-position welding across a wide current range &mdash; commonly used on coal-mining and construction machinery and other 500&nbsp;MPa low-alloy steel, as well as high-speed welding of thin sheet and pipeline steel. Supplied in 15kg spools and 125kg or 250kg drums &mdash; contact us for current stock and pricing.</p>
 
         <div class="inquire-box">
           <div class="row">
-            <label>Diameter</label>
-            <span class="qf" style="margin:0;">1.2mm (standard) &mdash; other sizes on request</span>
+            <label for="migDiameter">Diameter</label>
+            <select id="migDiameter" class="opt-select" data-opt="Diameter">
+              {"".join(f'<option>{d}</option>' for d in MIG_DIAMETERS)}
+            </select>
           </div>
           <div class="row">
-            <label>Quantity (spools)</label>
+            <label for="migPackaging">Packaging</label>
+            <select id="migPackaging" class="opt-select" data-opt="Packaging">
+              {"".join(f'<option>{p}</option>' for p in MIG_PACKAGING)}
+            </select>
+          </div>
+          <div class="row">
+            <label>Quantity</label>
             <div class="qty-stepper">
               <button type="button" class="qty-minus" aria-label="Decrease quantity">&minus;</button>
               <input type="text" value="1" inputmode="numeric" aria-label="Quantity">

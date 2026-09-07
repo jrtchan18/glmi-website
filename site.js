@@ -43,9 +43,19 @@ function saveQuoteCart(cart) {
   updateQuoteBadge();
 }
 
+// A cart line is identified by page URL *plus* its chosen options, so the same
+// product in two specs (1.2mm on a 15kg spool vs a 250kg drum) stays two
+// separate lines instead of merging into one meaningless quantity. Items with
+// no options — every product page except MIG wire so far — key on the bare
+// url, exactly as before.
+function cartKey(item) {
+  return item.url + '|' + (item.opts || '');
+}
+
 function addToQuoteCart(item) {
   const cart = getQuoteCart();
-  const existing = cart.find((i) => i.url === item.url);
+  const key = cartKey(item);
+  const existing = cart.find((i) => cartKey(i) === key);
   if (existing) {
     existing.qty += item.qty;
   } else {
@@ -54,8 +64,8 @@ function addToQuoteCart(item) {
   saveQuoteCart(cart);
 }
 
-function removeFromQuoteCart(url) {
-  saveQuoteCart(getQuoteCart().filter((i) => i.url !== url));
+function removeFromQuoteCart(key) {
+  saveQuoteCart(getQuoteCart().filter((i) => cartKey(i) !== key));
 }
 
 function updateQuoteBadge() {
@@ -74,9 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // confirmation. Never navigates (type="button").
   document.querySelectorAll('.add-to-quote').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const qtyInput = btn.closest('.inquire-box')?.querySelector('.qty-stepper input');
+      const box = btn.closest('.inquire-box');
+      const qtyInput = box?.querySelector('.qty-stepper input');
       const qty = qtyInput ? Math.max(1, parseInt(qtyInput.value, 10) || 1) : 1;
-      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty });
+      // Any <select data-opt="Label"> in the inquire box becomes part of the
+      // line's spec, e.g. "Diameter: 1.2mm · Packaging: Drum 250kg". Pages
+      // with no such selects behave exactly as before.
+      const opts = Array.from(box?.querySelectorAll('select[data-opt]') || [])
+        .map((s) => `${s.dataset.opt}: ${s.value}`)
+        .join(' · ');
+      addToQuoteCart({ url: btn.dataset.url, name: btn.dataset.name, qty, opts });
       const label = btn.querySelector('.btn-txt');
       const original = label ? label.textContent : btn.textContent;
       if (label) label.textContent = 'Added ✓'; else btn.textContent = 'Added ✓';
@@ -115,8 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
       emptyState.hidden = true;
       formWrap.hidden = false;
       quoteItemsEl.innerHTML = cart.map((item) => `
-        <div class="quote-item" data-url="${item.url}">
-          <a href="${item.url}" class="quote-item-name">${item.name}</a>
+        <div class="quote-item" data-key="${cartKey(item).replace(/"/g, '&quot;')}">
+          <div class="quote-item-main">
+            <a href="${item.url}" class="quote-item-name">${item.name}</a>
+            ${item.opts ? `<span class="quote-item-opts">${item.opts}</span>` : ''}
+          </div>
           <div class="qty-stepper">
             <button type="button" class="qty-minus" aria-label="Decrease quantity">&minus;</button>
             <input type="text" value="${item.qty}" inputmode="numeric" aria-label="Quantity">
@@ -129,19 +149,19 @@ document.addEventListener('DOMContentLoaded', () => {
       `).join('');
 
       quoteItemsEl.querySelectorAll('.quote-item').forEach((row) => {
-        const url = row.dataset.url;
+        const key = row.dataset.key;
         row.querySelector('.qty-minus').addEventListener('click', () => {
           const cart2 = getQuoteCart();
-          const item = cart2.find((i) => i.url === url);
+          const item = cart2.find((i) => cartKey(i) === key);
           if (item) { item.qty = Math.max(1, item.qty - 1); saveQuoteCart(cart2); renderQuoteItems(); }
         });
         row.querySelector('.qty-plus').addEventListener('click', () => {
           const cart2 = getQuoteCart();
-          const item = cart2.find((i) => i.url === url);
+          const item = cart2.find((i) => cartKey(i) === key);
           if (item) { item.qty += 1; saveQuoteCart(cart2); renderQuoteItems(); }
         });
         row.querySelector('.quote-item-remove').addEventListener('click', () => {
-          removeFromQuoteCart(url);
+          removeFromQuoteCart(key);
           renderQuoteItems();
         });
       });
@@ -169,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending...';
 
-      const itemsList = cart.map((i) => `- ${i.name} (x${i.qty})`).join('\n');
+      const itemsList = cart
+        .map((i) => `- ${i.name}${i.opts ? ` [${i.opts}]` : ''} (x${i.qty})`)
+        .join('\n');
       const params = {
         to_email: QUOTE_EMAIL_TO,
         from_name: name,

@@ -382,6 +382,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .inquire-box .row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--line);}
 .inquire-box .row:last-of-type{border-bottom:none;}
 .inquire-box label{font-family:'IBM Plex Mono',monospace; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase; color:var(--steel);}
+/* Product option pickers (diameter, packaging) inside the inquire box. */
+.opt-select{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink); background:var(--paper); border:1px solid #B9C9BD; border-radius:2px; padding:8px 10px; min-width:150px; cursor:pointer;}
+.opt-select:hover{border-color:var(--green);}
+.opt-select:focus-visible{outline:2px solid var(--green); outline-offset:1px;}
 .qty-stepper{display:flex; align-items:center; border:1px solid var(--line); border-radius:2px; overflow:hidden;}
 .qty-stepper button{background:var(--plate); border:none; width:30px; height:30px; font-size:16px; cursor:pointer; color:var(--ink);}
 .qty-stepper button:hover{background:var(--green); color:var(--ink);}
@@ -411,8 +415,13 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 /* ===== Request a Quote page ===== */
 .quote-items{display:flex; flex-direction:column; gap:10px;}
 .quote-item{display:flex; align-items:center; gap:16px; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:14px 16px;}
-.quote-item-name{flex:1; font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink);}
+.quote-item-main{flex:1; display:flex; flex-direction:column; gap:3px; min-width:0;}
+.quote-item-name{font-family:'Playfair Display',serif; font-weight:700; font-size:15px; color:var(--ink);}
 .quote-item-name:hover{color:var(--green-dark);}
+/* The chosen spec (diameter, packaging) for items that have options — the
+   same product in two specs is two separate lines, so this is what tells
+   them apart. */
+.quote-item-opts{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.03em; color:var(--steel);}
 .quote-item-remove{background:none; border:1px solid var(--line); border-radius:2px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; color:var(--steel); cursor:pointer; flex-shrink:0; transition:border-color .15s, color .15s;}
 .quote-item-remove:hover{border-color:#c0392b; color:#c0392b;}
 .quote-item-remove svg{width:14px; height:14px; stroke:currentColor;}
