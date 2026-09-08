@@ -492,7 +492,7 @@ LOGO_MARK = """<svg class="logo-mark" viewBox="0 0 40 40" width="36" height="36"
           </linearGradient>
         </defs>
         <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
-        <text x="20" y="27" font-family="'Playfair Display', serif" font-size="21" font-weight="700" fill="#FAF8F2" text-anchor="middle">G</text>
+        <text x="20" y="27" font-family="'Fraunces', Georgia, serif" font-size="21" font-weight="700" fill="#FAF8F2" text-anchor="middle">G</text>
       </svg>"""
 
 def header(active=None, depth=""):
@@ -565,7 +565,7 @@ def head(title, desc, extra_head=""):
 <title>{title} | {COMPANY}</title>
 <meta name="description" content="{desc}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,600,60,1;9..144,700,60,1&family=Nunito+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 {CSS_CONTENT}
 </style>
@@ -813,7 +813,7 @@ hero_slides_html = "\n        ".join(
     for i, (src, alt) in enumerate(HERO_SLIDES)
 )
 
-index_page = head(f"{COMPANY} | Industrial Supplies Trading",
+index_page = head("Industrial Supplies Trading",
                    f"{COMPANY} supplies welding materials, tools, bearings, electrical wires, safety gear, and construction hardware to contractors and industrial buyers — backed by responsive, dependable service.",
                    extra_head=ANIME_JS_TAG) + "\n" + header() + f"""
 

@@ -237,8 +237,22 @@ artifact, not a site bug, and doesn't affect real visitors.)
   `styles.css` (e.g. `#C7D3C9`, `#46594B`) for text/borders on dark
   backgrounds where a CSS var didn't fit — keep new ones in that same
   green-gray family, don't reach for blue-gray defaults.
-- Headings: Playfair Display (serif, echoes the client's card wordmark). Body:
-  IBM Plex Sans. Labels/kickers/mono chips: IBM Plex Mono.
+- **Typography goes through three tokens** in `:root` — `--font-display`,
+  `--font-body`, `--font-mono`. Every `font-family` in `styles.css` uses
+  them, so the site's whole voice changes in one place.
+  Current (2026, "make it more fun" pass): **Fraunces** display (a soft serif
+  requested at SOFT=60 / WONK=1 — those axis values are baked into the files
+  the Google Fonts URL asks for, and they're what make it warm and slightly
+  off-kilter), **Nunito Sans** body, **IBM Plex Mono** unchanged for
+  labels/kickers/chips/buttons. The mono is deliberately kept: it's what
+  stops the friendlier serif+rounded-sans pairing drifting from "industrial
+  supplier" into "boutique".
+  It replaced **Playfair Display** (display) + **IBM Plex Sans** (body).
+  **The client may ask to revert this** — to do so, restore those two
+  families in the tokens and swap the font `<link>` in `generate.py`'s
+  `head()` back; nothing else needs touching. Two other spots reference a
+  family by name and must move with the tokens: the `<link>` URL, and the
+  `font-family` on the `LOGO_MARK` SVG's "G" monogram in `generate.py`.
 - Cards have a border + hover lift, ~12px radius (no box-shadow on plain
   cards — `.why-card`/`.mega-menu`/`.mega-sub` do use a subtle shadow, see
   their rules). Icon badges (`.icon-badge`) are circular gradient, alternating
@@ -251,6 +265,17 @@ artifact, not a site bug, and doesn't affect real visitors.)
   has one; nothing else needs to change since every page pulls from
   `header()`. `.logo` is now a row (`.logo-mark` + `.logo-text`), not a
   column — don't collapse that back to just text.
+
+**Mobile overrides and source order** — `styles.css` has the main
+`@media (max-width:860px)` block partway down the file, but several rules it
+would need to beat (`.product-hero`, `.opt-select`, `.inquire-box .row`) are
+defined *below* it. A media query adds no specificity, so at equal
+specificity the later base rule wins and the override silently does nothing —
+only the properties the base rule doesn't declare get through, which makes
+the failure look like a partial success. There's a **"Late mobile overrides"
+block at the very end of the file** for exactly this case. If a mobile rule
+seems to be ignored, check whether the rule it's fighting is defined further
+down, and if so move the override to that late block.
 
 ## Hero slideshow
 
