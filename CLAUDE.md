@@ -241,18 +241,19 @@ artifact, not a site bug, and doesn't affect real visitors.)
   `--font-display-weight`, `--font-display-tracking`, `--font-body`,
   `--font-mono`. Every `font-family` (and every display-face `font-weight`)
   in `styles.css` uses them, so the site's whole voice changes in one place.
-  Current (2026, client's pick): **Montserrat** display at weight **900** +
-  **DM Sans** body, with **IBM Plex Mono** unchanged for
-  labels/kickers/chips/buttons. Picked off ateneoceladon.com, which uses
-  Montserrat 900 headings over 400 body; the mono is deliberately kept
-  because it's what anchors the site as an industrial supplier.
+  Current (2026): **Outfit** display at weight **900** + **DM Sans** body,
+  with **IBM Plex Mono** unchanged for labels/kickers/chips/buttons. The
+  mono is deliberately kept because it's what anchors the site as an
+  industrial supplier.
   History: **Playfair Display + IBM Plex Sans** (original) →
   **Fraunces + Nunito Sans** ("make it fun" pass) → **Archivo Black + DM
-  Sans** (briefly) → current.
+  Sans** → **Montserrat + DM Sans** (picked off ateneoceladon.com, which
+  uses Montserrat 900 over 400 body) → current. The client is still trying
+  options; expect this to move again.
   **`--font-display-weight` is load-bearing, not decoration** — the correct
   value depends entirely on the family, and getting it wrong is a silent
   visual bug rather than an error:
-  Montserrat → **900** (real weights; 900 is what gives the impact) ·
+  Outfit / Montserrat → **900** (real weights; 900 gives the impact) ·
   Archivo Black → **400** (ships one weight, already black — asking for more
   gets synthetic bold and smears the letterforms) ·
   Playfair / Fraunces → **700**.

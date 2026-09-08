@@ -6,7 +6,7 @@
 <title>Depressed Center Wheel | GLMI</title>
 <meta name="description" content="Depressed center grinding wheels for heavy-duty material removal on angle grinders.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700..900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700..900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#16241D;
@@ -26,17 +26,19 @@
        Playfair Display + IBM Plex Sans   (original: high-contrast, formal)
        Fraunces + Nunito Sans             (2026 "make it fun" pass)
        Archivo Black + DM Sans            (briefly)
-       Montserrat + DM Sans               (current — client's pick)
-     Montserrat at 900 gives heavy geometric headings — the client picked it
-     off ateneoceladon.com, which uses Montserrat 900 for headings and 400 for
-     body — with DM Sans keeping body copy calm underneath. IBM Plex Mono
+       Montserrat + DM Sans               (briefly)
+       Outfit + DM Sans                   (current — trying it out)
+     Outfit at 900 gives heavy geometric headings — cleaner and more
+     rounded than Montserrat, which the client tried first after seeing it on
+     ateneoceladon.com — with DM Sans keeping body copy calm underneath. IBM Plex Mono
      stays on buttons, breadcrumbs and spec chips: it's what anchors the site
      as an industrial supplier rather than a lifestyle brand.
 
      --font-display-weight is load-bearing, not decoration. Every rule using
      --font-display takes its weight from here, and the right value depends
      entirely on the family:
-       Montserrat     -> 900  (real weights; 900 is what gives the impact)
+       Outfit         -> 900  (real weights; 900 is what gives the impact)
+       Montserrat     -> 900
        Archivo Black  -> 400  (ships ONE weight and is already black; asking
                                for more gets synthetic bold and smears)
        Playfair/Fraunces -> 700
@@ -44,7 +46,7 @@
      the browser substitutes the nearest one it has.
      To change fonts: edit these tokens and the font <link> in generate.py's
      head(). Nothing else needs touching. */
-  --font-display:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --font-display:'Outfit', 'Helvetica Neue', Arial, sans-serif;
   --font-display-weight:900;
   --font-display-tracking:-0.015em;
   --font-body:'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -81,7 +83,9 @@ header{position:sticky; top:0; z-index:50; background:var(--ink); color:var(--wh
 .logo-text{display:flex; flex-direction:column; line-height:1.1;}
 .logo .name{font-family:var(--font-display); font-size:23px; font-weight:var(--font-display-weight); letter-spacing:0.01em;}
 .logo .name span{color:var(--green);}
-.logo .tagline{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; color:var(--steel-light); text-transform:uppercase; margin-top:3px;}
+/* The "Wholesaler · Retailer" line that sat under the wordmark was removed at
+   the client's request (2026) — the .logo-text wrapper stays so the mark and
+   name keep their row layout. */
 nav{display:flex; gap:28px; align-items:center;}
 nav a{font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--white); opacity:0.85; padding:6px 2px; border-bottom:2px solid transparent; transition:border-color .15s, opacity .15s;}
 nav a:hover, nav a[aria-current="page"]{opacity:1; border-color:var(--green);}
@@ -515,11 +519,10 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           </linearGradient>
         </defs>
         <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
-        <text x="20" y="27" font-family="'Montserrat', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="900" fill="#FAF8F2" text-anchor="middle">G</text>
+        <text x="20" y="27" font-family="'Outfit', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="900" fill="#FAF8F2" text-anchor="middle">G</text>
       </svg>
       <span class="logo-text">
         <span class="name">GL<span>MI</span></span>
-        <span class="tagline">Wholesaler &middot; Retailer</span>
       </span>
     </a>
     <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">MENU</button>
