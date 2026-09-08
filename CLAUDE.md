@@ -241,19 +241,24 @@ artifact, not a site bug, and doesn't affect real visitors.)
   `--font-display-weight`, `--font-display-tracking`, `--font-body`,
   `--font-mono`. Every `font-family` (and every display-face `font-weight`)
   in `styles.css` uses them, so the site's whole voice changes in one place.
-  Current (2026, client's pick): **Archivo Black** display + **DM Sans**
-  body, with **IBM Plex Mono** unchanged for labels/kickers/chips/buttons.
-  Archivo Black reads loud and confident — hardware-store signage — rather
-  than soft; the mono is deliberately kept because it's what anchors the
-  site as an industrial supplier.
+  Current (2026, client's pick): **Montserrat** display at weight **900** +
+  **DM Sans** body, with **IBM Plex Mono** unchanged for
+  labels/kickers/chips/buttons. Picked off ateneoceladon.com, which uses
+  Montserrat 900 headings over 400 body; the mono is deliberately kept
+  because it's what anchors the site as an industrial supplier.
   History: **Playfair Display + IBM Plex Sans** (original) →
-  **Fraunces + Nunito Sans** ("make it fun" pass) → current.
-  **`--font-display-weight` is not decoration.** Archivo Black ships a
-  *single* weight (400) and is already black by design, so any rule asking
-  for 700 gets synthetic bold and the letterforms smear. All six component
-  rules that use the display face take their weight from this token. **If
-  you swap in a family with real weights (Playfair, Fraunces), set it back
-  to 700** — otherwise headings render too light.
+  **Fraunces + Nunito Sans** ("make it fun" pass) → **Archivo Black + DM
+  Sans** (briefly) → current.
+  **`--font-display-weight` is load-bearing, not decoration** — the correct
+  value depends entirely on the family, and getting it wrong is a silent
+  visual bug rather than an error:
+  Montserrat → **900** (real weights; 900 is what gives the impact) ·
+  Archivo Black → **400** (ships one weight, already black — asking for more
+  gets synthetic bold and smears the letterforms) ·
+  Playfair / Fraunces → **700**.
+  All six component rules that use the display face take their weight from
+  this token, and **the Google Fonts `<link>` must request whatever weight
+  it's set to**, or the browser silently substitutes the nearest one it has.
   Three spots outside the tokens name a family and must move with them: the
   Google Fonts `<link>` in `generate.py`'s `head()`, and the `font-family`
   **and `font-weight`** on the `LOGO_MARK` SVG's "G" monogram (also 400 now,
