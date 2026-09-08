@@ -237,22 +237,27 @@ artifact, not a site bug, and doesn't affect real visitors.)
   `styles.css` (e.g. `#C7D3C9`, `#46594B`) for text/borders on dark
   backgrounds where a CSS var didn't fit — keep new ones in that same
   green-gray family, don't reach for blue-gray defaults.
-- **Typography goes through three tokens** in `:root` — `--font-display`,
-  `--font-body`, `--font-mono`. Every `font-family` in `styles.css` uses
-  them, so the site's whole voice changes in one place.
-  Current (2026, "make it more fun" pass): **Fraunces** display (a soft serif
-  requested at SOFT=60 / WONK=1 — those axis values are baked into the files
-  the Google Fonts URL asks for, and they're what make it warm and slightly
-  off-kilter), **Nunito Sans** body, **IBM Plex Mono** unchanged for
-  labels/kickers/chips/buttons. The mono is deliberately kept: it's what
-  stops the friendlier serif+rounded-sans pairing drifting from "industrial
-  supplier" into "boutique".
-  It replaced **Playfair Display** (display) + **IBM Plex Sans** (body).
-  **The client may ask to revert this** — to do so, restore those two
-  families in the tokens and swap the font `<link>` in `generate.py`'s
-  `head()` back; nothing else needs touching. Two other spots reference a
-  family by name and must move with the tokens: the `<link>` URL, and the
-  `font-family` on the `LOGO_MARK` SVG's "G" monogram in `generate.py`.
+- **Typography goes through tokens** in `:root` — `--font-display`,
+  `--font-display-weight`, `--font-display-tracking`, `--font-body`,
+  `--font-mono`. Every `font-family` (and every display-face `font-weight`)
+  in `styles.css` uses them, so the site's whole voice changes in one place.
+  Current (2026, client's pick): **Archivo Black** display + **DM Sans**
+  body, with **IBM Plex Mono** unchanged for labels/kickers/chips/buttons.
+  Archivo Black reads loud and confident — hardware-store signage — rather
+  than soft; the mono is deliberately kept because it's what anchors the
+  site as an industrial supplier.
+  History: **Playfair Display + IBM Plex Sans** (original) →
+  **Fraunces + Nunito Sans** ("make it fun" pass) → current.
+  **`--font-display-weight` is not decoration.** Archivo Black ships a
+  *single* weight (400) and is already black by design, so any rule asking
+  for 700 gets synthetic bold and the letterforms smear. All six component
+  rules that use the display face take their weight from this token. **If
+  you swap in a family with real weights (Playfair, Fraunces), set it back
+  to 700** — otherwise headings render too light.
+  Three spots outside the tokens name a family and must move with them: the
+  Google Fonts `<link>` in `generate.py`'s `head()`, and the `font-family`
+  **and `font-weight`** on the `LOGO_MARK` SVG's "G" monogram (also 400 now,
+  for the same reason).
 - Cards have a border + hover lift, ~12px radius (no box-shadow on plain
   cards — `.why-card`/`.mega-menu`/`.mega-sub` do use a subtle shadow, see
   their rules). Icon badges (`.icon-badge`) are circular gradient, alternating

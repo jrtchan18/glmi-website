@@ -6,7 +6,7 @@
 <title>MIG Welding Wire — ER70S-6 | GLMI</title>
 <meta name="description" content="MIG welding wire ER70S-6, copper coated, in multiple diameters — available in spools and 125kg/250kg drums, for CO2 and Argon-CO2 shielded welding.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,600,60,1;9..144,700,60,1&family=Nunito+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#16241D;
@@ -20,21 +20,28 @@
   --line:#DDE2DF;
   --white:#FFFFFF;
 
-  /* ---- Typography (2026: friendlier pass) ----
-     Every font-family in this file goes through these three tokens, so the
-     whole site's voice changes here and nowhere else. Was:
-       --font-display: 'Playfair Display', serif;   (high-contrast, formal)
-       --font-body:    'IBM Plex Sans', sans-serif; (neutral, technical)
-     Fraunces is a soft serif carrying SOFT=60 / WONK=1 (baked into the files
-     the Google Fonts URL requests) — that's what gives it the warm, slightly
-     off-kilter feel instead of Playfair's austere elegance. Nunito Sans is
-     rounded and friendly for body copy. IBM Plex Mono stays: the mono chips
-     and buttons are what keep this reading "industrial supplier" rather than
-     drifting into something soft and boutique.
-     To revert the whole thing, restore the two lines above and swap the font
-     link in generate.py's head() back. */
-  --font-display:'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-body:'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* ---- Typography ----
+     Every font-family in this file goes through these tokens, so the whole
+     site's voice changes here and nowhere else. Previous settings, in order:
+       Playfair Display + IBM Plex Sans   (original: high-contrast, formal)
+       Fraunces + Nunito Sans             (2026 "make it fun" pass)
+       Archivo Black + DM Sans            (current — client's pick)
+     Archivo Black is loud and confident rather than soft — hardware-signage
+     energy — with DM Sans keeping body copy calm underneath. IBM Plex Mono
+     stays on buttons, breadcrumbs and spec chips: it's what anchors the site
+     as an industrial supplier rather than a lifestyle brand.
+
+     --font-display-weight exists because ARCHIVO BLACK SHIPS ONE WEIGHT (400).
+     It is already black by design, so a rule asking for 700 gets synthetic
+     bold and the letterforms smear. Every rule that uses --font-display takes
+     its weight from this token — if you swap in a family with real weights
+     (Playfair, Fraunces), set this back to 700.
+     To change fonts: edit these tokens and the font <link> in generate.py's
+     head(). Nothing else needs touching. */
+  --font-display:'Archivo Black', 'Helvetica Neue', Arial, sans-serif;
+  --font-display-weight:400;
+  --font-display-tracking:-0.015em;
+  --font-body:'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono:'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -51,8 +58,8 @@ body{
 }
 h1,h2,h3,.display{
   font-family:var(--font-display);
-  letter-spacing:0;
-  font-weight:700;
+  letter-spacing:var(--font-display-tracking);
+  font-weight:var(--font-display-weight);
 }
 .mono{font-family:var(--font-mono);}
 a{color:inherit;text-decoration:none;}
@@ -66,7 +73,7 @@ header{position:sticky; top:0; z-index:50; background:var(--ink); color:var(--wh
 .logo{display:flex; align-items:center; gap:10px;}
 .logo-mark{flex-shrink:0;}
 .logo-text{display:flex; flex-direction:column; line-height:1.1;}
-.logo .name{font-family:var(--font-display); font-size:23px; font-weight:700; letter-spacing:0.01em;}
+.logo .name{font-family:var(--font-display); font-size:23px; font-weight:var(--font-display-weight); letter-spacing:0.01em;}
 .logo .name span{color:var(--green);}
 .logo .tagline{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.14em; color:var(--steel-light); text-transform:uppercase; margin-top:3px;}
 nav{display:flex; gap:28px; align-items:center;}
@@ -207,7 +214,7 @@ a.plate-card{display:block;}
 .plate-card .rivet.bl{bottom:8px;left:8px;}
 .plate-card .rivet.br{bottom:8px;right:8px;}
 .plate-card svg{width:30px;height:30px;stroke:var(--green-dark);stroke-width:1.6;margin-bottom:12px;}
-.plate-card h4{font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--ink); margin-bottom:8px;}
+.plate-card h4{font-family:var(--font-display); font-size:17px; font-weight:var(--font-display-weight); color:var(--ink); margin-bottom:8px;}
 .plate-card p{font-size:12.8px; color:var(--steel); line-height:1.5;}
 .plate-card .go{font-family:var(--font-mono); font-size:11px; color:var(--green-dark); letter-spacing:0.05em; margin-top:12px; display:inline-block;}
 
@@ -215,7 +222,7 @@ a.plate-card{display:block;}
 .item-card{position:relative; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:18px; display:flex; gap:14px; align-items:flex-start;}
 .item-card .tag-icon{background:var(--ink); border-radius:3px; padding:9px; flex-shrink:0;}
 .item-card .tag-icon svg{width:16px;height:16px;stroke:var(--green);}
-.item-card h4{font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--ink); margin-bottom:4px;}
+.item-card h4{font-family:var(--font-display); font-size:16px; font-weight:var(--font-display-weight); color:var(--ink); margin-bottom:4px;}
 
 /* ===== Prev/Next category nav ===== */
 .cat-pagination{display:flex; justify-content:space-between; gap:16px; border-top:1px solid var(--line); padding-top:28px; margin-top:56px; flex-wrap:wrap;}
@@ -343,7 +350,7 @@ a.item-card{display:flex;}
 a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .item-card:target{border-color:var(--green-dark); box-shadow:0 0 0 3px rgba(28,122,65,0.22);}
 .item-card .item-body{padding:14px 16px;}
-.item-card h4{font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--ink); margin-bottom:0; text-align:center;}
+.item-card h4{font-family:var(--font-display); font-size:16px; font-weight:var(--font-display-weight); color:var(--ink); margin-bottom:0; text-align:center;}
 
 /* plate-card gets a thumb on top too */
 .plate-card{padding:0;overflow:hidden;}
@@ -443,7 +450,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
 .quote-items{display:flex; flex-direction:column; gap:10px;}
 .quote-item{display:flex; align-items:center; gap:16px; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:14px 16px;}
 .quote-item-main{flex:1; display:flex; flex-direction:column; gap:3px; min-width:0;}
-.quote-item-name{font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--ink);}
+.quote-item-name{font-family:var(--font-display); font-weight:var(--font-display-weight); font-size:15px; color:var(--ink);}
 .quote-item-name:hover{color:var(--green-dark);}
 /* The chosen spec (diameter, packaging) for items that have options — the
    same product in two specs is two separate lines, so this is what tells
@@ -502,7 +509,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
           </linearGradient>
         </defs>
         <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
-        <text x="20" y="27" font-family="'Fraunces', Georgia, serif" font-size="21" font-weight="700" fill="#FAF8F2" text-anchor="middle">G</text>
+        <text x="20" y="27" font-family="'Archivo Black', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="400" fill="#FAF8F2" text-anchor="middle">G</text>
       </svg>
       <span class="logo-text">
         <span class="name">GL<span>MI</span></span>
