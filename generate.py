@@ -492,7 +492,7 @@ LOGO_MARK = """<svg class="logo-mark" viewBox="0 0 40 40" width="36" height="36"
           </linearGradient>
         </defs>
         <rect x="1" y="1" width="38" height="38" rx="10" fill="url(#logoMarkGrad)"/>
-        <text x="20" y="27" font-family="'Outfit', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="900" fill="#FAF8F2" text-anchor="middle">G</text>
+        <text x="20" y="27" font-family="'Montserrat', 'Helvetica Neue', Arial, sans-serif" font-size="21" font-weight="800" fill="#FAF8F2" text-anchor="middle">G</text>
       </svg>"""
 
 def header(active=None, depth=""):
@@ -564,7 +564,7 @@ def head(title, desc, extra_head=""):
 <title>{title} | {COMPANY}</title>
 <meta name="description" content="{desc}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700..900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700..900&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 {CSS_CONTENT}
 </style>
