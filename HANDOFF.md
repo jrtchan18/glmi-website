@@ -165,14 +165,15 @@ specs collapsed into one line. Now keyed on URL + options.
 **A drum-label crop for the Grand Sumoweld logo.** Reasonable stopgap,
 superseded when the client supplied real artwork.
 
-**My own mistake, recorded because it cost real data:** commit `945d538`
-says it only corrects doc counts, but it also **deleted
-`images/Home.jpg` and `images/Home 2.JPG`**. I used `git add -A`, which
-staged a working-tree deletion I never inspected, and the commit message
-said nothing about it. The live site was unaffected — pages load the
-optimised copies in `images/about/` — and the originals have been restored
-from history. **Lesson: check `git status` before `git add -A`, and read the
-staged list before committing.**
+**A commit that did more than it said.** `945d538` is titled as a doc-count
+fix, but it also **deleted `images/Home.jpg` and `images/Home 2.JPG`**. The
+files had been removed from the working tree by accident; `git add -A` then
+swept that deletion into an unrelated commit whose message never mentioned
+it. The live site was unaffected — pages load the optimised copies in
+`images/about/` — and the originals were restored from history in `81687b3`.
+**Lesson: `git add -A` stages whatever the working tree happens to be in.
+Read the staged list before committing, or an accidental deletion rides
+along inside a change that claims to be something else.**
 
 ---
 
