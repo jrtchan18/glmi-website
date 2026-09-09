@@ -297,16 +297,59 @@ document.addEventListener('DOMContentLoaded', () => {
   function positionMegaSub(cat) {
     const sub = cat.querySelector('.mega-sub');
     if (!sub) return;
-    if (getComputedStyle(sub).position !== 'absolute') { sub.style.top = ''; return; }
-    sub.style.top = '0px';                       // reset before measuring
+    sub.style.top = '';                          // reset before measuring
+    sub.style.left = '';
+    const pos = getComputedStyle(sub).position;
+    if (pos !== 'absolute' && pos !== 'fixed') return;   // mobile accordion
     const menu = cat.closest('.mega-menu');
     if (!menu) return;
-    const catTop = cat.getBoundingClientRect().top;
+    const catRect = cat.getBoundingClientRect();
     const gap = 12;
-    const overflow = (catTop + sub.offsetHeight) - (window.innerHeight - gap);
+
+    // Scrolling mode (see syncMegaMenuHeight): the panel is position:fixed to
+    // escape the scroll container's clipping, so it has no useful CSS default
+    // and must be placed against its row in viewport coordinates every time.
+    if (pos === 'fixed') {
+      sub.style.left = catRect.right + 'px';
+      const lowest = window.innerHeight - gap - sub.offsetHeight;
+      sub.style.top = Math.max(gap, Math.min(catRect.top, lowest)) + 'px';
+      return;
+    }
+
+    sub.style.top = '0px';
+    const overflow = (catRect.top + sub.offsetHeight) - (window.innerHeight - gap);
     if (overflow <= 0) return;                   // already fits, leave it alone
-    const highest = menu.getBoundingClientRect().top - catTop;  // menu's own top
+    const highest = menu.getBoundingClientRect().top - catRect.top;  // menu's own top
     sub.style.top = Math.max(-overflow, highest) + 'px';
+  }
+
+  // The 15 category rows are ~700px tall, so a short window — a 1366x768
+  // laptop, or any zoom above 100% — used to cut the last few off with no way
+  // to reach them. Measure on open and, only when the list genuinely doesn't
+  // fit, let it scroll; the "View Full Catalog" row sits outside the scroller
+  // and stays pinned below it.
+  // Scrolling a container computes its overflow-x to auto too, which would
+  // clip the item panels escaping rightward via left:100% — so the same class
+  // switches .mega-sub to position:fixed (positioned above). When the menu
+  // fits, nothing is applied at all and behaviour is unchanged.
+  // On mobile .mega-menu is position:static (the accordion), so this clears
+  // itself out and bails rather than capping the accordion's height.
+  function syncMegaMenuHeight(menu) {
+    const cats = menu.querySelector('.mega-cats');
+    if (!cats) return;
+    menu.classList.remove('mega-scrolling');     // reset before measuring
+    cats.style.maxHeight = '';
+    if (getComputedStyle(menu).position !== 'absolute') return;
+    const cta = menu.querySelector('.mega-cta');
+    const gap = 12;
+    const room = window.innerHeight - menu.getBoundingClientRect().top
+               - (cta ? cta.offsetHeight : 0) - gap;
+    // Floor it: on an extremely short viewport a scrollable stub is still
+    // more usable than a menu squeezed to nothing.
+    const usable = Math.max(room, 160);
+    if (usable >= cats.offsetHeight) return;     // fits, leave it alone
+    cats.style.maxHeight = usable + 'px';
+    menu.classList.add('mega-scrolling');
   }
 
   // Products mega-menu: hover-intent with a short close delay so a diagonal
@@ -315,7 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     document.querySelectorAll('.nav-item.has-mega').forEach(item => {
       let closeTimer;
-      const open = () => { clearTimeout(closeTimer); item.classList.add('mega-open'); };
+      const menuEl = item.querySelector('.mega-menu');
+      const open = () => {
+        clearTimeout(closeTimer);
+        if (menuEl) syncMegaMenuHeight(menuEl);
+        item.classList.add('mega-open');
+      };
       const scheduleClose = () => { closeTimer = setTimeout(() => item.classList.remove('mega-open'), 250); };
       item.addEventListener('mouseenter', open);
       item.addEventListener('mouseleave', scheduleClose);
@@ -361,6 +409,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.mega-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
       const item = btn.closest('.nav-item.has-mega');
+      const menu = item.querySelector('.mega-menu');
+      if (menu) syncMegaMenuHeight(menu);
       const isOpen = item.classList.toggle('mega-open');
       btn.setAttribute('aria-expanded', String(isOpen));
     });
@@ -371,6 +421,33 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = cat.classList.toggle('mega-open');
       btn.setAttribute('aria-expanded', String(isOpen));
       if (isOpen) positionMegaSub(cat);
+    });
+  });
+
+  // Resizing or zooming changes whether the category list still fits, and in
+  // scrolling mode an open item panel is position:fixed, so it has to be
+  // re-placed whenever the list scrolls underneath it. Keyboard focus opens
+  // panels through CSS (:focus-within) with no JS involved at all, which is
+  // fine while they're absolutely positioned but leaves a fixed one at the
+  // wrong coordinates — hence the focusin handler.
+  document.querySelectorAll('.nav-item.has-mega').forEach(item => {
+    const menu = item.querySelector('.mega-menu');
+    const cats = item.querySelector('.mega-cats');
+    if (!menu || !cats) return;
+    const repositionOpenSub = () => {
+      const openCat = cats.querySelector('.mega-cat.mega-open') ||
+                      cats.querySelector('.mega-cat:focus-within');
+      if (openCat) positionMegaSub(openCat);
+    };
+    item.addEventListener('focusin', (e) => {
+      syncMegaMenuHeight(menu);
+      const cat = e.target.closest('.mega-cat');
+      if (cat) positionMegaSub(cat);
+    });
+    cats.addEventListener('scroll', repositionOpenSub, { passive: true });
+    window.addEventListener('resize', () => {
+      syncMegaMenuHeight(menu);
+      repositionOpenSub();
     });
   });
 

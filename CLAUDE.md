@@ -204,6 +204,43 @@ Verified at 1280&times;800 (all 15 panels fit, none clipped) and at
 scroll internally). If you add a category or a long item list, re-check
 both.
 
+**The category list itself scrolls on short viewports (2026)** — the same
+problem one level up. Fifteen rows are ~648px tall (~699px with the "View
+Full Catalog" footer), so any window under ~755px cut the last rows off
+with no way to reach them: a 1366&times;768 laptop, or any zoom above
+100%. `syncMegaMenuHeight()` in `site.js` measures on every open and, **only
+when the list genuinely doesn't fit**, adds `.mega-scrolling` to
+`.mega-menu` plus an inline `max-height` on `.mega-cats`. The footer sits
+outside `.mega-cats`, so it stays pinned below the scroll area. When the
+menu fits, nothing is applied at all and behaviour is byte-identical to
+before — don't "simplify" this into an unconditional `max-height`.
+
+This is the one sanctioned exception to the overflow warning above, and it
+only works because of the second half of the mechanism: scrolling
+`.mega-cats` computes its `overflow-x` to `auto`, which **would** clip the
+`.mega-sub` panels escaping rightward — so `.mega-scrolling` also switches
+`.mega-sub` to `position:fixed`, and `positionMegaSub()` gained a branch
+that places it in viewport coordinates (against the row's right edge,
+clamped to stay on screen). **The two halves are a package.** Removing the
+`position:fixed` rule while leaving the scroll on brings the original
+invisible-flyout bug straight back.
+
+Because a fixed panel is out of flow, three things have to keep it in sync,
+and all three are load-bearing: a `scroll` listener on `.mega-cats` (the
+panel tracks its row as the list scrolls, until the bottom clamp takes
+over), a `resize` listener (zoom changes whether it fits at all), and a
+`focusin` listener — keyboard focus opens panels through CSS
+`:focus-within` with **no JS involved**, which was harmless while they were
+absolutely positioned but leaves a fixed one at stale coordinates.
+
+Verified on both a root page and a subfolder page at 1280&times;650,
+1280&times;620 and 1280&times;420 (~200% zoom): every row reachable, footer
+still visible, item panels on screen and unclipped, no horizontal overflow.
+At 1440&times;900 the class is never added and `.mega-sub` stays
+`absolute`. Resizing down to 375px clears the class and the inline
+`max-height`, so the mobile accordion is untouched (the mobile block also
+resets both properties defensively).
+
 Item ids are slugified item names (`slugify()`), added to each
 item-card in the category page loop — keep item names unique within a
 category or ids collide.
