@@ -32,7 +32,7 @@ root stays readable:
 /                      index.html, products.html, brands.html,
                        who-we-are.html, request-quote.html   (5 only)
 /categories/           15 category pages
-/items/                48 per-item product pages
+/items/                50 per-item product pages
 /images/               real photos + brand logos
 ```
 
@@ -131,7 +131,7 @@ category opens a second flyout listing that category's items. Each item
 links to its own product page if its `CATEGORIES` entry has one (see
 Gloves), otherwise falls back to `categories/{category}.html#{item-slug}`
 (`item_href(cat, item, depth)` in `generate.py`). Because the menu is inlined
-into all 68 pages at two different depths, it's built once per depth and
+into all 70 pages at two different depths, it's built once per depth and
 cached by `mega_menu(depth)` — that replaced the old single
 `MEGA_MENU_HTML` constant, which produced root-relative links that broke
 once pages moved into subfolders. Built from `CATEGORIES`/`mega_menu()`
