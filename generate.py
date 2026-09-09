@@ -396,10 +396,10 @@ BRANDS = [
     ("G-Weld", "welding", "images/Brands/G Weld PF Series.png"),
     ("Mitutoyo", "cutting", "images/Brands/mitotuyo.png"),
     ("Sumotech", "brand", "images/Brands/Sumotech.png"),
-    # Cropped from the GRAND SUMOWELD drum label in images/Products/Migwires/
-    # (the client's own house brand, no vector logo supplied) — replace with
-    # real artwork if it ever turns up.
-    ("Grand Sumoweld", "welding", "images/Brands/Grand Sumoweld.png"),
+    # Real supplier artwork (2026), replacing an earlier crop taken off a drum
+    # label. Trimmed of its blank margin — the wordmark sat in the middle 15%
+    # of a 2000x2000 canvas, which rendered ~12px tall inside the tile.
+    ("Grand Sumoweld", "welding", "images/Brands/grand-sumoweld.jpg"),
     ("ABC", "brand", "images/Brands/ABC.jpg"),
     ("Yanase", "brand", "images/Brands/Yanase.jpg"),
     ("Boysen", "brand", "images/Brands/Boysen.png"),
@@ -777,6 +777,25 @@ homepage_brand_tiles = "\n        ".join(
     for i, name in enumerate(HOMEPAGE_BRAND_NAMES)
 )
 
+# ---- Homepage "Who We Are" photos ----
+# Real warehouse shots, which replaced the Established / San Juan City stat
+# plate that used to sit in this column (2026). Sources are phone photos at
+# 2048x1536; optimize_photo() writes web-sized copies into images/about/ the
+# same way product photos are handled, so the page never loads the originals.
+# The alt text carries what the photos actually show, since they're the only
+# evidence on the homepage that there's real stock behind the catalog.
+ABOUT_PHOTOS = [
+    ("images/Home.jpg",
+     "Pallets of Grand Sumoweld and G-Weld MIG wire drums stacked on racking in the GLMI warehouse"),
+    ("images/Home 2.JPG",
+     "Cartons of Sumoweld AWS ER70S-6 gas-shielded welding wire stacked on pallets in the GLMI warehouse"),
+]
+about_slides_html = "\n          ".join(
+    f"""<div class="carousel-slide has-photo" role="group" aria-roledescription="slide" aria-label="Photo {i + 1} of {len(ABOUT_PHOTOS)}">
+            <img class="cs-photo" src="{asset(optimize_photo(src, 'images/about'))}" alt="{alt}" loading="lazy">
+          </div>""" for i, (src, alt) in enumerate(ABOUT_PHOTOS)
+)
+
 # ---- Homepage hero slideshow ----
 # Client-supplied banner artwork (images/Hero Photos/*.png, kept as the
 # untouched originals; the page loads the compressed images/hero/*.jpg).
@@ -918,9 +937,18 @@ index_page = head("Industrial Supplies Trading",
         <p>{COMPANY} is a trusted wholesaler and retailer of quality industrial and construction materials, established in {ESTABLISHED_YEAR}. We supply contractors, fabricators, and industrial buyers with top-quality materials and equipment from trusted brands &mdash; backed by exceptional service and competitive prices.</p>
         <p><a href="who-we-are.html" class="btn btn-ghost" style="color:var(--ink);border-color:var(--ink);display:inline-flex;margin-top:8px;">Read Our Full Story &rarr;</a></p>
       </div>
-      <div class="stat-plate" data-reveal data-reveal-delay="120">
-        <div class="stat"><h3>{ESTABLISHED_YEAR}</h3><p>Established</p></div>
-        <div class="stat"><h3 style="font-size:20px;">San Juan City</h3><p>Metro Manila, PH</p></div>
+      <div class="carousel about-carousel" data-autoplay="5000" data-loop data-reveal data-reveal-delay="120"
+           aria-roledescription="carousel" aria-label="Inside the {COMPANY} warehouse">
+        <div class="carousel-track">
+          {about_slides_html}
+        </div>
+        <button class="carousel-btn prev" type="button" aria-label="Previous photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="carousel-btn next" type="button" aria-label="Next photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="carousel-dots"></div>
       </div>
     </div>
   </section>

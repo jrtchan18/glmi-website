@@ -51,9 +51,17 @@ generated HTML (resolve every `href`/`src` relative to its own file, ignoring
 template literal that looks like a broken link but isn't).
 
 - `index.html` — homepage: hero (**banner slideshow** on white,
-  CTAs centered below it — see "Hero slideshow") → "Why GLMI" (4 trust pillars) →
-  product groups teaser → brands teaser → stats band → Who We Are teaser
-  (links out to `who-we-are.html`) → Contact
+  CTAs centered below it — see "Hero slideshow") → "Why GLMI" (4 trust
+  pillars) → product groups teaser → brands teaser → Who We Are teaser
+  (copy on the left, **warehouse photo carousel** on the right, links out to
+  `who-we-are.html`) → Contact. There is no stats band any more.
+  The Who We Are teaser's right column was an Established / San Juan City
+  `.stat-plate`; it's now `.about-carousel` (2026), built from
+  `ABOUT_PHOTOS` in `generate.py` and reusing the `.carousel` markup +
+  `site.js` controller with `data-autoplay="5000" data-loop`, exactly like
+  the hero. Slides are 4:3 because the source photos are; the gallery
+  default of 21:9 would crop a band out of the middle. **`.stat-plate` CSS
+  stays** — `who-we-are.html` still uses it for its four-stat plate.
 - `who-we-are.html` — dedicated About page: story/history, established-year +
   years-in-business + location stat plate, "What We Stand For" pillars, CTA
 - `products.html` — hub listing all 15 categories as one flat A&ndash;Z grid
@@ -406,12 +414,13 @@ G-Weld, Mitutoyo, Sumotech, ABC, Yanase, Boysen, Davies and Grand Sumoweld,
 all in `images/Brands/`. The remaining 8 still render placeholder tiles:
 FAG, IKO, KOYO, Hitachi, AEG, Columbia, Duraflex, Philflex.
 
-`images/Brands/Grand Sumoweld.png` is **not supplier artwork** — it's cropped
-out of the drum label in `images/Products/Migwires/mig-wire-er70s-6-3.jpg`
-(Grand Sumoweld is GLMI's own house brand and no vector logo exists), then
-white-balanced to kill the label's blue-grey paper cast. It reads fine at
-tile size but is a photo, not a logo file — replace it if real artwork ever
-turns up. The crop recipe is in the commit that added it.
+`images/Brands/grand-sumoweld.jpg` is **real supplier artwork** (2026),
+replacing an earlier crop taken off a drum label. It arrived as a
+2000&times;2000 canvas with the wordmark occupying only the middle 15% of
+the height — inside a tile that caps logo height, that renders the wordmark
+about 12px tall — so it was **trimmed of its blank margin** before use. If a
+future logo arrives looking tiny in its tile, check for the same thing
+before touching `.brand-logo`'s sizing.
 
 Note the logos are a mix of wide wordmarks (Yanase 550&times;91) and
 full-bleed coloured squares with the name inside (ABC, Davies, Phelps

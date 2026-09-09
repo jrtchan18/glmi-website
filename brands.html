@@ -263,6 +263,22 @@ a.plate-card{display:block;}
 .about-copy .kicker{font-family:var(--font-mono); color:var(--green-dark); font-size:12px; letter-spacing:0.16em; margin-bottom:10px; display:block;}
 .about-copy h2{font-size:clamp(24px,3vw,30px); margin-bottom:16px;}
 .about-copy p{color:var(--steel); font-size:15px; margin-bottom:14px; max-width:480px;}
+/* Homepage "Who We Are" photo carousel — took over the column the stat plate
+   used to occupy. Reuses the .carousel markup and the site.js controller
+   (arrows, dots, swipe, plus data-autoplay and data-loop) exactly like the
+   hero does; only the framing differs. The source photos are 4:3, so the
+   slide is 4:3 rather than the gallery default of 21:9, which would crop a
+   band out of the middle. */
+.about-carousel{border:1px solid var(--line); border-radius:3px;}
+.about-carousel .carousel-slide{aspect-ratio:4/3; display:block; gap:0;}
+.about-carousel .carousel-btn{width:36px; height:36px; background:rgba(255,255,255,0.88); border-color:rgba(22,36,29,0.18); color:var(--ink);}
+.about-carousel .carousel-btn:hover{background:var(--green); border-color:var(--green); color:#fff;}
+.about-carousel .carousel-dots{position:absolute; left:0; right:0; bottom:12px; background:transparent; padding:0;}
+.about-carousel .carousel-dots .dot{width:8px; height:8px; background:rgba(255,255,255,0.65); box-shadow:0 0 0 1px rgba(22,36,29,0.35);}
+.about-carousel .carousel-dots .dot.active{background:var(--green); box-shadow:0 0 0 1px rgba(22,36,29,0.2);}
+
+/* Still used by who-we-are.html's four-stat plate — the homepage no longer
+   has one. */
 .stat-plate{background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:28px; display:grid; grid-template-columns:1fr 1fr; gap:22px;}
 .stat-plate .stat h3{font-size:32px; color:var(--green-dark); font-family:var(--font-display);}
 .stat-plate .stat p{font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--steel); margin-top:4px;}
@@ -835,7 +851,7 @@ a.item-card:hover{border-color:var(--green-dark); transform:translateY(-2px);}
     <div class="wrap">
       <div class="brand-wall">
         <div class="brand-tile"><img class="brand-logo" src="images/Brands/Sumotech.png" alt="Sumotech"></div>
-        <div class="brand-tile"><img class="brand-logo" src="images/Brands/Grand Sumoweld.png" alt="Grand Sumoweld"></div>
+        <div class="brand-tile"><img class="brand-logo" src="images/Brands/grand-sumoweld.jpg" alt="Grand Sumoweld"></div>
         <div class="brand-tile"><img class="brand-logo" src="images/Brands/G Weld PF Series.png" alt="G-Weld"></div>
         <div class="brand-tile"><img class="brand-logo" src="images/Brands/ABC.jpg" alt="ABC"></div>
         <div class="brand-tile"><img class="brand-logo" src="images/Brands/Yanase.jpg" alt="Yanase"></div>
